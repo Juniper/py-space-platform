@@ -1,18 +1,13 @@
 import requests
-#import json
 import logging
 import logging.config
 
 from lxml import etree
 
-my_space_url = "https://10.204.79.100"
-my_space_user = "super"
-my_space_passwd = "juniper123"
-
 class Space:
 
     """Encapsulates a Space REST endpoint"""
-    def __init__(self, url=my_space_url, user=my_space_user, passwd=my_space_passwd):
+    def __init__(self, url, user, passwd):
         self.space_url = url
         self.space_user = user
         self.space_passwd = passwd
@@ -88,31 +83,40 @@ class Resource(object):
 
         # Check if it is an element in xml data
         el = self._data.find(attr)
-        if (el != None):
+        if el is not None:
             return el.text
 
         # Check if it is an attribute in xml data
         val = self._data.get(attr)
-        if (val != None):
+        if val is not None:
             return val
         else:
             raise Exception('No field named %s!' % attr)
 
     def get(self):
         response = self._rest_end_point.get(self.get_href())
-        if (response.status_code != 200):
+        if response.status_code != 200:
             raise Exception(response.text)
 
-        return response.text
+        r = response.text
+        # Skip the <?xml> line to avoid encoding errors in lxml
+        start = r.index('?><') + 2
+        xml_data = etree.fromstring(r[start:])
 
-    def put(self, new_val_obj):
-        x = new_val_obj.form_xml()
+        return self.__class__(self._rest_end_point, xml_data, None)
+
+    def put(self, new_val_obj = None):
+        if new_val_obj is not None:
+            x = new_val_obj.form_xml()
+        else:
+            x = self.form_xml()
+
         response = self._rest_end_point.put(
                             self.get_href(),
                             {'content-type': self._media_type},
                             etree.tostring(x)
                         )
-        if (response.status_code != 200):
+        if response.status_code != 200:
             raise Exception(response.text)
 
         r = response.text
@@ -123,28 +127,37 @@ class Resource(object):
 
     def delete(self):
         response = self._rest_end_point.delete(self.get_href())
-        if (response.status_code != 204):
+        if response.status_code != 204:
             raise Exception(response.text)
 
     def get_href(self):
         href = self._data.get('href')
-        if (href != None):
+        if href is not None:
             return href
         else:
             return self._service_url + "/" + self._collection_name + "/" + str(self.id)
 
     def form_xml(self):
-        if (self._data != None):
-            return self._data
-        elif (self._attrs_dict != None):
-            e = etree.Element(self._xml_name)
-            for key, value in self._attrs_dict.iteritems():
-                if (key == 'href'):
-                    e.attrib[key] = str(value)
-                else:
-                    etree.SubElement(e, key).text = str(value)
+#        if (self._data != None):
+#            return self._data
 
-            return e
+        e = etree.Element(self._xml_name)
+        attributes = {}
+        if self._attrs_dict is not None:
+            attributes = self._attrs_dict
+        else:
+            attributes = self.__dict__
+
+        for key, value in attributes.iteritems():
+            if key.startswith('_'):
+                continue
+
+            if key == 'href':
+                e.attrib[key] = str(value)
+            else:
+                etree.SubElement(e, key).text = str(value)
+
+        return e
 
     def __str__(self):
         return etree.tostring(self._data)
@@ -160,19 +173,19 @@ class Collection(object):
         self._parent = parent
 
     def get_href(self):
-        if (self._href != None):
+        if self._href is not None:
             return self._href
         else:
             return self._parent.get_href() + "/" + self._name
 
-    def get(self, get_filter=None):
+    def get(self, filter_=None):
         url = self.get_href()
-        if (get_filter != None):
-            url = url + self._stringify_filter(get_filter)
+        if filter_ is not None:
+            url = url + self._stringify_filter(filter_)
 
         resource_list = []
         response = self._rest_end_point.get(url)
-        if (response.status_code != 200):
+        if response.status_code != 200:
             raise Exception(response.text)
 
         r = response.text
@@ -187,7 +200,6 @@ class Collection(object):
 
     def post(self, new_obj):
         x = None
-        media_type = ''
         if isinstance(new_obj, list):
             media_type = self._media_type
             x = etree.Element(self._name)
@@ -197,11 +209,13 @@ class Collection(object):
             media_type = new_obj._media_type
             x = new_obj.form_xml()
 
-        response = self._rest_end_point.post(self.get_href(), {'content-type': media_type}, etree.tostring(x))
-        if ((response.status_code != 202) and (response.status_code != 200)):
+        response = self._rest_end_point.post(self.get_href(),
+                                             {'content-type': media_type},
+                                             etree.tostring(x))
+        if (response.status_code != 202) and (response.status_code != 200):
             raise Exception(response.text)
 
-        if (not isinstance(new_obj, list)):
+        if not isinstance(new_obj, list):
             r = response.text
             # Skip the <?xml> line to avoid encoding errors in lxml
             start = r.index('?><') + 2
@@ -212,16 +226,16 @@ class Collection(object):
         return new_obj
 
 
-    def _stringify_filter(self, get_filter):
-        if isinstance(get_filter, basestring):
-            return '?filter=(' + get_filter + ')'
+    def _stringify_filter(self, filter_):
+        if isinstance(filter_, basestring):
+            return '?filter=(' + filter_ + ')'
 
-        if isinstance(get_filter, dict):
+        if isinstance(filter_, dict):
             filter_str = '?filter=('
             index = 1
-            for key, value in get_filter.iteritems():
+            for key, value in filter_.iteritems():
                 cond = "(" + key + " eq '" + str(value) + "')"
-                if (index < len(get_filter)):
+                if (index < len(filter_)):
                     filter_str += cond + ' and '
                 else:
                     filter_str += cond
@@ -239,9 +253,9 @@ class Service(object):
         self._methods = {}
 
     def __getattr__(self, attr):
-        if (attr in self._collections):
+        if attr in self._collections:
             return self._collections[attr]
-        elif (attr in self._methods):
+        elif attr in self._methods:
             return self._methods[attr]
         else:
             raise AttributeError
