@@ -1,7 +1,8 @@
 import logging.config
+#import yaml
 
-from jnpr.space.platform.core import rest
-from jnpr.space.platform.tag_management import tags
+from jnpr.space.platform.core.v0 import rest
+from jnpr.space.platform.v0.tag_management import tags
 
 if __name__ == "__main__":
     # Initialize logging
@@ -13,10 +14,13 @@ if __name__ == "__main__":
     passwd = '123Juniper'
     my_space = rest.Space(url, user, passwd)
 
+    #print yaml.dump(my_space)
+
     print "Hello"
     try:
         tags_list = my_space.tag_management.tags.get(filter_=
-                                                     {'name' : 'NewTag'})
+                                                     {'name' : 'NewTag',
+                                                      'type' : 'private'})
         for t in tags_list:
             print "Getting details of ", t
             tag_details = t.get()

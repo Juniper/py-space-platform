@@ -9,19 +9,14 @@ from lxml import etree
 class Collection(object):
     """Encapsulates a collection of Space Resources"""
 
-    def __init__(self, parent, name, meta_object):
-        self._parent = parent
-        self._rest_end_point = parent._rest_end_point
+    def __init__(self, rest_end_point, name, href, parent):
+        self._rest_end_point = rest_end_point
         self._name = name
-        self._meta_object = meta_object
-        self._xml_name = meta_object['xml_name']
-        self._media_type = meta_object['media_type']
-        self._resource_type = meta_object['resource_type']
-        if 'url' in meta_object:
-            self._href = meta_object['url']
+        self._href = href
+        self._parent = parent
 
     def get_href(self):
-        if hasattr(self, '_href') and self._href is not None:
+        if self._href is not None:
             return self._href
         else:
             return self._parent.get_href() + "/" + self._name
@@ -34,8 +29,6 @@ class Collection(object):
         resource_list = []
         response = self._rest_end_point.get(url)
         if response.status_code != 200:
-            if response.status_code == 204:
-                return []
             raise Exception(response.text)
 
         r = response.text
@@ -47,12 +40,6 @@ class Collection(object):
             resource_list.append(self._create_resource(child))
 
         return resource_list
-
-    def _create_resource(self, xml_data):
-        from jnpr.space.platform.core.resource import Resource
-        return Resource(type_=self._resource_type,
-                                 rest_end_point=self._rest_end_point,
-                                 xml_data=xml_data)
 
     def post(self, new_obj):
         x = None
@@ -76,7 +63,7 @@ class Collection(object):
             # Skip the <?xml> line to avoid encoding errors in lxml
             start = r.index('?><') + 2
             root = etree.fromstring(r[start:])
-            new_obj._xml_data = root
+            new_obj._data = root
             new_obj._rest_end_point = self._rest_end_point
 
         return new_obj

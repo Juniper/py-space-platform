@@ -1,4 +1,6 @@
-from jnpr.space.platform.core import resource, collection, service
+from jnpr.space.platform.v0.core import service
+from jnpr.space.platform.v0.core import resource
+from jnpr.space.platform.v0.core import collection
 
 class Device(resource.Resource):
     """Represents a Device object"""

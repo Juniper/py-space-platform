@@ -3,8 +3,8 @@ Created on 20-Jun-2014
 
 @author: rjoyce
 '''
-from jnpr.space.platform.core import rest
-from jnpr.space.platform.tag_management import tags
+from jnpr.space.platform.core.v0 import rest
+from jnpr.space.platform.v0.tag_management import tags
 
 import logging.config
 

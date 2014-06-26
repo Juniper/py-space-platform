@@ -1,8 +1,6 @@
-import os
-
 import requests
 import logging
-import yaml
+
 
 class Space:
     """Encapsulates a Space REST endpoint"""
@@ -15,17 +13,8 @@ class Space:
         self.services = self._init_services()
 
     def _init_services(self):
-        path = os.path.abspath(__file__)
-        dir_path = os.path.dirname(path)
-        with open(dir_path + '/services.yml') as f:
-            services_dict = yaml.load(f)['services']
-
-        services = {}
-        from jnpr.space.platform.core import service
-        for key, value in services_dict.iteritems():
-            services[key] = service.Service(self, key, value)
-
-        return services
+        return {'tag_management': self._get_class_def('jnpr.space.platform.tag_management.tags.TagManager')(self),
+                'device_management':self._get_class_def('jnpr.space.platform.device_management.devices.DeviceManager')(self)}
 
     def _get_class_def(self, class_name):
         parts = class_name.split('.')

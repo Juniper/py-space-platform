@@ -1,0 +1,12 @@
+---
+services:
+    tag_management:
+      class: 'jnpr.space.platform.tag_management.tags.TagManager'
+      service_name: 'tag-management'
+      url: '/api/space/tag-management'
+
+    device_management:
+      class: 'jnpr.space.platform.device_management.devices.DeviceManager'
+      service_name: 'device-management'
+      url: '/api/space/device-management'
+...

@@ -1,0 +1,17 @@
+---
+collections:
+    devices:
+      class: 'jnpr.space.platform.device_management.devices.DeviceCollection'
+      xml_name: 'devices'
+      media_type: 'application/vnd.net.juniper.space.device-management.devices+xml;version=1;charset=UTF-8'
+      url: '/api/space/device-management/devices'
+
+resources:
+    device:
+      class: 'jnpr.space.platform.device_management.devices.Device'
+      xml_name: 'device'
+      media_type: 'application/vnd.net.juniper.space.device-management.device+xml;version=1;charset=UTF-8'
+      collection_name: 'devices'
+
+methods:
+...
