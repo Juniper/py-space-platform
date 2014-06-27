@@ -1,33 +1,29 @@
 ---
 collections:
     tags:
-      class: 'jnpr.space.platform.tag_management.tags.TagCollection'
-      xml_name: 'tags'
-      media_type: 'application/vnd.net.juniper.space.tag-management.tags+xml;version=1;charset=UTF-8'
-      url: '/api/space/tag-management/tags'
-      resource_type: 'tag_management.tag'
+        xml_name: 'tags'
+        media_type: 'application/vnd.net.juniper.space.tag-management.tags+xml;version=1;charset=UTF-8'
+        url: '/api/space/tag-management/tags'
+        resource_type: 'tag_management.tag'
 
 resources:
     tag:
-      class: 'jnpr.space.platform.tag_management.tags.Tag'
-      xml_name: 'tag'
-      media_type: 'application/vnd.net.juniper.space.tag-management.tag+xml;version=1;charset=UTF-8'
-      collection_name: 'tags'
-      service_url: '/api/space/tag-management'
-      collections:
-        targets:
-          class: 'jnpr.space.platform.tag_management.tags.TargetCollection'
-          xml_name: 'targets'
-          media_type: 'application/vnd.net.juniper.space.tag-management.targets+xml;version=1;charset=UTF-8'
-          resource_type: 'tag_management.target'
+        xml_name: 'tag'
+        media_type: 'application/vnd.net.juniper.space.tag-management.tag+xml;version=1;charset=UTF-8'
+        collection_name: 'tags'
+        service_url: '/api/space/tag-management'
+        collections:
+            targets:
+                xml_name: 'targets'
+                media_type: 'application/vnd.net.juniper.space.tag-management.targets+xml;version=1;charset=UTF-8'
+                resource_type: 'tag_management.target'
 
     target:
-      class: 'jnpr.space.platform.tag_management.tags.Target'
-      xml_name: 'target'
-      media_type: 'application/vnd.net.juniper.space.tag-management.target+xml;version=1;charset=UTF-8'
-      collection_name: 'targets'
-      service_url: '/api/space/tag-management'
-      use_uri_for_delete: true
+        xml_name: 'target'
+        media_type: 'application/vnd.net.juniper.space.tag-management.target+xml;version=1;charset=UTF-8'
+        collection_name: 'targets'
+        service_url: '/api/space/tag-management'
+        use_uri_for_delete: true
 
 methods:
 ...
