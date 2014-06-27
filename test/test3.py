@@ -6,7 +6,7 @@ from jnpr.space.platform.core import resource as resource
 
 if __name__ == "__main__":
     # Initialize logging
-    logging.config.fileConfig('./junos_space/logging.conf')
+    logging.config.fileConfig('./logging.conf')
 
     # Create a Space REST end point
     url = 'https://10.155.67.76'

@@ -1,12 +1,12 @@
 import logging.config
 #import yaml
 
-from jnpr.space.platform.core.v0 import rest
+from jnpr.space.platform.v0.core import rest
 from jnpr.space.platform.v0.tag_management import tags
 
 if __name__ == "__main__":
     # Initialize logging
-    logging.config.fileConfig('./junos_space/logging.conf')
+    logging.config.fileConfig('./logging.conf')
 
     # Create a Space REST end point
     url = 'https://10.204.79.100'

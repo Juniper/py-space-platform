@@ -3,8 +3,7 @@ Created on 20-Jun-2014
 
 @author: rjoyce
 '''
-from jnpr.space.platform.v0.core import rest
-from jnpr.space.platform.v0.tag_management import tags
+from jnpr.space.platform.core import rest, resource
 
 import logging.config
 
@@ -18,16 +17,21 @@ if __name__ == "__main__":
 
     try:
         # Create a new public tag named 'Bangalore'
-        new_tag = tags.Tag(my_space)
+        new_tag = resource.Resource('tag_management.tag', my_space)
         new_tag.name = 'Bangalore11'
         new_tag.type = 'public'
         new_tag = my_space.tag_management.tags.post(new_tag)
 
         # Get all devices from Space matching a filter
-        filter_str = "name contains '-BLR-'"
+        filter_str = "name contains 'jtme-'"
         devices_list = my_space.device_management.devices.get(filter_=filter_str)
         for d in devices_list:
-            new_tag.targets.post(tags.Target(attrs_dict={'href': d.href}))
+            new_tag.targets.post(resource.Resource(
+                                                   'tag_management.target',
+                                                   my_space,
+                                                   attrs_dict={'href': d.href}
+                                                   )
+                                 )
 
     finally:
         print "Completed working with ", new_tag

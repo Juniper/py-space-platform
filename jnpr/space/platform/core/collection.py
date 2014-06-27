@@ -84,7 +84,7 @@ class Collection(object):
 
     def _stringify_filter(self, filter_):
         if isinstance(filter_, basestring):
-            return ''.join('?filter=(', filter_, ')')
+            return ''.join(['?filter=(', filter_, ')'])
 
         if isinstance(filter_, dict):
             filter_list = ['?filter=(']

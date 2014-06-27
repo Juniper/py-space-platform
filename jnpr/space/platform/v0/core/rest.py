@@ -13,8 +13,8 @@ class Space:
         self.services = self._init_services()
 
     def _init_services(self):
-        return {'tag_management': self._get_class_def('jnpr.space.platform.tag_management.tags.TagManager')(self),
-                'device_management':self._get_class_def('jnpr.space.platform.device_management.devices.DeviceManager')(self)}
+        return {'tag_management': self._get_class_def('jnpr.space.platform.v0.tag_management.tags.TagManager')(self),
+                'device_management':self._get_class_def('jnpr.space.platform.v0.device_management.devices.DeviceManager')(self)}
 
     def _get_class_def(self, class_name):
         parts = class_name.split('.')
