@@ -6,6 +6,8 @@ Created on 23-Jun-2014
 
 from lxml import etree
 
+from jnpr.space.platform.core import util
+
 class Collection(object):
     """Encapsulates a collection of Space Resources"""
 
@@ -16,7 +18,10 @@ class Collection(object):
         self._meta_object = meta_object
         self._xml_name = meta_object['xml_name']
         self._media_type = meta_object['media_type']
-        self._resource_type = meta_object['resource_type']
+        if 'resource_type' in meta_object:
+            self._resource_type = meta_object['resource_type']
+        else:
+            self._resource_type = None
         if 'url' in meta_object:
             self._href = meta_object['url']
 
@@ -24,7 +29,7 @@ class Collection(object):
         if hasattr(self, '_href') and self._href is not None:
             return self._href
         else:
-            return self._parent.get_href() + "/" + self._name
+            return self._parent.get_href() + "/" + util.make_xml_name(self._name)
 
     def get(self, filter_=None):
         url = self.get_href()
@@ -49,10 +54,15 @@ class Collection(object):
         return resource_list
 
     def _create_resource(self, xml_data):
-        from jnpr.space.platform.core.resource import Resource
-        return Resource(type_=self._resource_type,
+        if self._resource_type:
+            from jnpr.space.platform.core.resource import Resource
+            return Resource(type_name=self._resource_type,
                                  rest_end_point=self._rest_end_point,
                                  xml_data=xml_data)
+        else:
+            from jnpr.space.platform.core import xmlutil
+            s = etree.tostring(xml_data)
+            return xmlutil.xml2obj(s)
 
     def post(self, new_obj):
         x = None

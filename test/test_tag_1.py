@@ -1,6 +1,8 @@
 import logging.config
 import ConfigParser
 
+import pytest
+
 from jnpr.space.platform.core import rest, resource
 
 class TestTag:
@@ -20,14 +22,29 @@ class TestTag:
         self.space = rest.Space(url, user, passwd)
         try:
             tags_list = self.space.tag_management.tags.get(
-                        filter_ = {'name': 'ApiTestTag'})
+                        filter_ = "name starts-with 'ApiTestTag'")
             for t in tags_list:
                 t.delete()
         except:
             pass
 
+    def test_create_resource_error_1(self):
+        with pytest.raises(Exception):
+            resource.Resource(type_name='tag_management-tag',
+                                rest_end_point=self.space)
+
+    def test_create_resource_error_2(self):
+        with pytest.raises(Exception):
+            resource.Resource(type_name='tagg_management.tag',
+                                rest_end_point=self.space)
+
+    def test_create_resource_error_3(self):
+        with pytest.raises(Exception):
+            resource.Resource(type_name='tag_management.tagg',
+                                rest_end_point=self.space)
+
     def test_create_delete_tag(self):
-        new_tag = resource.Resource(type_='tag_management.tag',
+        new_tag = resource.Resource(type_name='tag_management.tag',
                                 rest_end_point=self.space)
         new_tag.name = 'ApiTestTag'
         new_tag.type = 'private'
@@ -42,7 +59,7 @@ class TestTag:
     def test_create_10_tags(self):
         types = ['public', 'private']
         for i in range(10):
-            new_tag = resource.Resource(type_='tag_management.tag',
+            new_tag = resource.Resource(type_name='tag_management.tag',
                                 rest_end_point=self.space)
             new_tag.name = 'ApiTestTag' + str(i)
             new_tag.type = types[i % 2]

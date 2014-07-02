@@ -29,7 +29,7 @@ if __name__ == "__main__":
             new_tag.targets.post(resource.Resource(
                                                    'tag_management.target',
                                                    my_space,
-                                                   attrs_dict={'href': d.href}
+                                                   attributes={'href': d.href}
                                                    )
                                  )
 

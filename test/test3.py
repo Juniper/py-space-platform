@@ -25,9 +25,9 @@ if __name__ == "__main__":
             try:
                 for tgt in t.targets.get():
                     print tgt
-                    tgt_copy = resource.Resource(type_='tag_management.target',
+                    tgt_copy = resource.Resource(type_name='tag_management.target',
                                                  rest_end_point=my_space,
-                                                 attrs_dict={'href': tgt.href}
+                                                 attributes={'href': tgt.href}
                                                  )
 
                     tgt.delete()
@@ -45,7 +45,7 @@ if __name__ == "__main__":
         traceback.print_exc()
         print "Failed to get tags and operate on their targets"
 
-    new_tag = resource.Resource(type_='tag_management.tag',
+    new_tag = resource.Resource(type_name='tag_management.tag',
                                 rest_end_point=my_space)
     new_tag.name = 'NewTag'
     new_tag.type = 'private'

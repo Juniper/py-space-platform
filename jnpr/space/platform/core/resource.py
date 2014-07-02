@@ -7,25 +7,38 @@ Created on 23-Jun-2014
 from pprint import pformat
 from lxml import etree
 
+from jnpr.space.platform.core import util
 
 class Resource(object):
     """Encapsulates a Space Resource"""
 
-    def __init__(self, type_, rest_end_point, xml_data=None, attrs_dict=None):
-        self._type = type_
+    def __init__(self, type_name, rest_end_point,
+                 xml_data=None, attributes=None):
+        self._type_name = type_name
         self._rest_end_point = rest_end_point
         self._xml_data = xml_data
-        self._attrs_dict = attrs_dict
+        self._attributes = attributes
         self._collections = {}
         self._methods = {}
-        self._init_meta_data(rest_end_point, type_)
+        self._init_meta_data(rest_end_point, type_name)
 
-    def _init_meta_data(self, rest_end_point, type_):
-        parts = type_.split('.')
+    def _init_meta_data(self, rest_end_point, type_name):
+        parts = type_name.split('.')
+        if len(parts) != 2:
+            raise Exception("Invalid resource type given: '%s'" % type_name)
+
         service_name = parts[0]
-        service = rest_end_point.__getattr__(service_name)
+        try:
+            service = rest_end_point.__getattr__(service_name)
+        except AttributeError:
+            raise Exception("Unknown service name in '%s'" % type_name)
+
         resource_type = parts[1]
-        m = service.get_meta_resource(resource_type)
+        try:
+            m = service.get_meta_resource(resource_type)
+        except KeyError:
+            raise Exception("Unknown resource type in '%s'" % type_name)
+
         self._xml_name = m['xml_name']
         self._media_type = m['media_type']
         self._collection_name = m['collection_name']
@@ -34,6 +47,7 @@ class Resource(object):
             self._use_uri_for_delete = m['use_uri_for_delete']
         else:
             self._use_uri_for_delete = False
+
         from jnpr.space.platform.core.collection import Collection
         try:
             for key in m['collections']:
@@ -44,23 +58,36 @@ class Resource(object):
         except KeyError:
             pass
 
+        from jnpr.space.platform.core import method
+        try:
+            for key in m['methods']:
+                value = m['methods'][key]
+                mObj = method.get_meta_object(key, value)
+                self._methods[key] = method.Method(self,
+                                            key,
+                                            mObj)
+        except KeyError:
+            pass
+
     def __getattr__(self, attr):
         if attr in self._collections:
             return self._collections[attr]
         elif attr in self._methods:
             return self._methods[attr]
 
+        xml_name = util.make_xml_name(attr)
+
         # Check if it is an element in xml data
-        el = self._xml_data.find(attr)
+        el = self._xml_data.find(xml_name)
         if el is not None:
             return el.text
 
         # Check if it is an attribute in xml data
-        val = self._xml_data.get(attr)
+        val = self._xml_data.get(xml_name)
         if val is not None:
             return val
         else:
-            raise Exception('No field named %s!' % attr)
+            raise AttributeError("No attribute '%s'" % attr)
 
     def get(self):
         response = self._rest_end_point.get(self.get_href())
@@ -72,7 +99,7 @@ class Resource(object):
         start = r.index('?><') + 2
         xml_data = etree.fromstring(r[start:])
 
-        return self.__class__(self._type, self._rest_end_point, xml_data)
+        return self.__class__(self._type_name, self._rest_end_point, xml_data)
 
     def put(self, new_val_obj = None):
         if new_val_obj is not None:
@@ -113,8 +140,8 @@ class Resource(object):
     def form_xml(self):
         e = etree.Element(self._xml_name)
         attributes = {}
-        if self._attrs_dict is not None:
-            attributes = self._attrs_dict
+        if self._attributes is not None:
+            attributes = self._attributes
         else:
             attributes = self.__dict__
 
@@ -122,10 +149,11 @@ class Resource(object):
             if key.startswith('_'):
                 continue
 
-            if key == 'href':
-                e.attrib[key] = str(value)
+            xml_name = util.make_xml_name(key)
+            if xml_name == 'href':
+                e.attrib[xml_name] = str(value)
             else:
-                etree.SubElement(e, key).text = str(value)
+                etree.SubElement(e, xml_name).text = str(value)
 
         return e
 
