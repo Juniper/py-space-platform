@@ -15,19 +15,11 @@ class Collection(object):
         self._parent = parent
         self._rest_end_point = parent._rest_end_point
         self._name = name
-        self._meta_object = meta_object
-        self._xml_name = meta_object['xml_name']
-        self._media_type = meta_object['media_type']
-        if 'resource_type' in meta_object:
-            self._resource_type = meta_object['resource_type']
-        else:
-            self._resource_type = None
-        if 'url' in meta_object:
-            self._href = meta_object['url']
+        self.meta_object = meta_object
 
     def get_href(self):
-        if hasattr(self, '_href') and self._href is not None:
-            return self._href
+        if self.meta_object.url:
+            return self.meta_object.url
         else:
             return self._parent.get_href() + "/" + util.make_xml_name(self._name)
 
@@ -54,9 +46,9 @@ class Collection(object):
         return resource_list
 
     def _create_resource(self, xml_data):
-        if self._resource_type:
+        if self.meta_object.resource_type:
             from jnpr.space.platform.core.resource import Resource
-            return Resource(type_name=self._resource_type,
+            return Resource(type_name=self.meta_object.resource_type,
                                  rest_end_point=self._rest_end_point,
                                  xml_data=xml_data)
         else:
@@ -67,12 +59,12 @@ class Collection(object):
     def post(self, new_obj):
         x = None
         if isinstance(new_obj, list):
-            media_type = self._media_type
+            media_type = self.meta_object.media_type
             x = etree.Element(self._name)
             for o in new_obj:
                 x.append(o.form_xml())
         else:
-            media_type = new_obj._media_type
+            media_type = new_obj.meta_object.media_type
             x = new_obj.form_xml()
 
         response = self._rest_end_point.post(self.get_href(),
@@ -107,3 +99,28 @@ class Collection(object):
                 index += 1
             filter_list.append(')')
             return ''.join(filter_list)
+
+class MetaCollection(object):
+    def __init__(self, key, values):
+        self.key = key
+        self.name = values['name'] \
+            if ('name' in values) else None
+        self.xml_name = values['xml_name'] \
+            if ('xml_name' in values) else None
+        self.media_type = values['media_type'] \
+            if ('media_type' in values) else None
+        self.resource_type = values['resource_type'] \
+            if ('resource_type' in values) else None
+        self.url = values['url'] \
+            if ('url' in values) else None
+
+
+_meta_collections = {}
+
+def get_meta_object(coll_name, values):
+    if coll_name in _meta_collections:
+        return _meta_collections[coll_name]
+
+    c = MetaCollection(coll_name, values)
+    _meta_collections[coll_name] = c
+    return c

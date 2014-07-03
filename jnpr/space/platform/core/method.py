@@ -13,10 +13,10 @@ class Method(object):
         self._parent = parent
         self._rest_end_point = parent._rest_end_point
         self._name = name
-        self._meta_object = mobj
+        self.meta_object = mobj
 
     def get_href(self):
-        return '/'.join([self._parent.get_href(), self._meta_object.name])
+        return '/'.join([self._parent.get_href(), self.meta_object.name])
 
     def post(self, task_monitor=None, schedule=None, *args, **kwargs):
         url = self.get_href()
@@ -26,12 +26,12 @@ class Method(object):
                 url = '&schedule='.join([url, schedule])
 
         headers = {}
-        if self._meta_object.response_type:
-            headers['accept'] = self._meta_object.response_type
+        if self.meta_object.response_type:
+            headers['accept'] = self.meta_object.response_type
 
-        if self._meta_object.request_template:
-            body = self._meta_object.request_template.render(**kwargs)
-            headers['content-type'] = self._meta_object.request_type
+        if self.meta_object.request_template:
+            body = self.meta_object.request_template.render(**kwargs)
+            headers['content-type'] = self.meta_object.request_type
         else:
             body = None
 

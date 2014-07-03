@@ -115,8 +115,6 @@ class TestTag:
         assert len(targets_list) == 1
 
         targets_list[0].delete()
-        targets_list = tags_list[0].targets.get()
-        assert len(targets_list) == 0
 
     def test_assign_tag_on_2_devices(self):
         tags_list = self.space.tag_management.tags.get(
@@ -145,12 +143,7 @@ class TestTag:
         assert len(targets_list) == 2
 
         targets_list[0].delete()
-        targets_list = tags_list[0].targets.get()
-        assert len(targets_list) == 1
-
-        targets_list[0].delete()
-        targets_list = tags_list[0].targets.get()
-        assert len(targets_list) == 0
+        targets_list[1].delete()
 
     def test_delete_10_tags(self):
         tags_list = self.space.tag_management.tags.get(

@@ -35,45 +35,27 @@ class Resource(object):
 
         resource_type = parts[1]
         try:
-            m = service.get_meta_resource(resource_type)
+            values = service.get_meta_resource(resource_type)
+            self.meta_object = get_meta_object(type_name, resource_type, values)
         except KeyError:
             raise Exception("Unknown resource type in '%s'" % type_name)
-
-        self._xml_name = m['xml_name']
-        self._media_type = m['media_type']
-        self._collection_name = m['collection_name']
-        self._service_url = m['service_url']
-        if 'use_uri_for_delete' in m:
-            self._use_uri_for_delete = m['use_uri_for_delete']
-        else:
-            self._use_uri_for_delete = False
-
-        from jnpr.space.platform.core.collection import Collection
-        try:
-            for key in m['collections']:
-                value = m['collections'][key]
-                self._collections[key] = Collection(self,
-                                                    key,
-                                                    value)
-        except KeyError:
-            pass
-
-        from jnpr.space.platform.core import method
-        try:
-            for key in m['methods']:
-                value = m['methods'][key]
-                mObj = method.get_meta_object(key, value)
-                self._methods[key] = method.Method(self,
-                                            key,
-                                            mObj)
-        except KeyError:
-            pass
 
     def __getattr__(self, attr):
         if attr in self._collections:
             return self._collections[attr]
-        elif attr in self._methods:
+
+        if attr in self._methods:
             return self._methods[attr]
+
+        collection = self.meta_object.create_collection(self, attr)
+        if collection is not None :
+            self._collections[attr] = collection
+            return collection
+
+        method = self.meta_object.create_method(self, attr)
+        if method is not None:
+            self._methods[attr] = method
+            return method
 
         xml_name = util.make_xml_name(attr)
 
@@ -109,7 +91,7 @@ class Resource(object):
 
         response = self._rest_end_point.put(
                             self.get_href(),
-                            {'content-type': self._media_type},
+                            {'content-type': self.meta_object.media_type},
                             etree.tostring(x)
                         )
         if response.status_code != 200:
@@ -122,7 +104,7 @@ class Resource(object):
         self._xml_data = root
 
     def delete(self):
-        if self._use_uri_for_delete:
+        if self.meta_object.use_uri_for_delete:
             url = self.uri
         else:
             url = self.get_href()
@@ -135,10 +117,10 @@ class Resource(object):
         if href is not None:
             return href
         else:
-            return self._service_url + "/" + self._collection_name + "/" + str(self.id)
+            return self.meta_object.service_url + "/" + self.meta_object.collection_name + "/" + str(self.id)
 
     def form_xml(self):
-        e = etree.Element(self._xml_name)
+        e = etree.Element(self.meta_object.xml_name)
         attributes = {}
         if self._attributes is not None:
             attributes = self._attributes
@@ -161,3 +143,60 @@ class Resource(object):
         if self._xml_data is not None:
             return etree.tostring(self._xml_data)
         return pformat(self, depth=6)
+
+_meta_resources = {}
+
+def get_meta_object(full_name, type_name, values):
+    if full_name in _meta_resources:
+        return _meta_resources[full_name]
+
+    m = MetaResource(type_name, values)
+    _meta_resources[full_name] = m
+    return m
+
+class MetaResource(object):
+
+    def __init__(self, key, values):
+        self.key = key
+        self.name = values['name'] \
+            if ('name' in values) else None
+        self.xml_name = values['xml_name'] \
+            if ('xml_name' in values) else None
+        self.media_type = values['media_type'] \
+            if ('media_type' in values) else None
+        self.collection_name = values['collection_name'] \
+            if ('collection_name' in values) else None
+        self.service_url = values['service_url'] \
+            if ('service_url' in values) else None
+        self.use_uri_for_delete = values['use_uri_for_delete'] \
+            if ('use_uri_for_delete' in values) else False
+        self.collections = {}
+        self.methods = {}
+
+        try:
+            from jnpr.space.platform.core import collection
+            for key in values['collections']:
+                value = values['collections'][key]
+                mObj = collection.get_meta_object(key, value)
+                self.collections[key] = mObj
+        except KeyError:
+            pass
+
+        try:
+            from jnpr.space.platform.core import method
+            for key in values['methods']:
+                value = values['methods'][key]
+                mObj = method.get_meta_object(key, value)
+                self.methods[key] = mObj
+        except KeyError:
+            pass
+
+    def create_collection(self, service, name):
+        if name in self.collections:
+            from jnpr.space.platform.core import collection
+            return collection.Collection(service, name, self.collections[name])
+
+    def create_method(self, service, name):
+        if name in self.methods:
+            from jnpr.space.platform.core import method
+            return method.Method(service, name, self.methods[name])

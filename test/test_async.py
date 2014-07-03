@@ -22,12 +22,12 @@ class TestAsync:
     def test_create_only(self):
         tm = async.TaskMonitor(self.space, 'testq')
         assert tm is not None
-        assert tm.hornetq_location == 'http://localhost:8080/api/hornet-q/queues/jms.queue.testq'
+        assert tm._hornetq_location == 'http://localhost:8080/api/hornet-q/queues/jms.queue.testq'
 
     def test_create_delete(self):
         tm = async.TaskMonitor(self.space, 'testqq')
         assert tm is not None
-        assert tm.hornetq_location == 'http://localhost:8080/api/hornet-q/queues/jms.queue.testqq'
+        assert tm._hornetq_location == 'http://localhost:8080/api/hornet-q/queues/jms.queue.testqq'
         tm.delete()
 
     def test_pull_msg(self):
