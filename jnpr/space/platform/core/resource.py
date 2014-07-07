@@ -6,18 +6,20 @@ Created on 23-Jun-2014
 
 from pprint import pformat
 from lxml import etree
+from jinja2 import Environment, PackageLoader
 
-from jnpr.space.platform.core import util
+from jnpr.space.platform.core import util, xmlutil
 
 class Resource(object):
     """Encapsulates a Space Resource"""
 
     def __init__(self, type_name, rest_end_point,
-                 xml_data=None, attributes=None):
+                 xml_data=None, attributes=None, parent=None):
         self._type_name = type_name
         self._rest_end_point = rest_end_point
         self._xml_data = xml_data
         self._attributes = attributes
+        self._parent = parent
         self._collections = {}
         self._methods = {}
         self._init_meta_data(rest_end_point, type_name)
@@ -77,11 +79,12 @@ class Resource(object):
             raise Exception(response.text)
 
         r = response.text
+        return xmlutil.xml2obj(r)
         # Skip the <?xml> line to avoid encoding errors in lxml
-        start = r.index('?><') + 2
-        xml_data = etree.fromstring(r[start:])
+        #start = r.index('?><') + 2
+        #xml_data = etree.fromstring(r[start:])
 
-        return self.__class__(self._type_name, self._rest_end_point, xml_data)
+        #return self.__class__(self._type_name, self._rest_end_point, xml_data)
 
     def put(self, new_val_obj = None):
         if new_val_obj is not None:
@@ -112,12 +115,39 @@ class Resource(object):
         if response.status_code != 204:
             raise Exception(response.text)
 
-    def get_href(self):
-        href = self._xml_data.get('href')
-        if href is not None:
-            return href
+    def post(self, task_monitor=None, schedule=None, *args, **kwargs):
+        url = self.get_href()
+        if task_monitor:
+            url = '?queue='.join([url, task_monitor.get_queue_url()])
+            if schedule:
+                url = '&schedule='.join([url, schedule])
+
+        headers = {}
+        if self.meta_object.response_type:
+            headers['accept'] = self.meta_object.response_type
+
+        if self.meta_object.request_template:
+            body = self.meta_object.request_template.render(**kwargs)
+            headers['content-type'] = self.meta_object.request_type
         else:
-            return self.meta_object.service_url + "/" + self.meta_object.collection_name + "/" + str(self.id)
+            body = None
+
+        response = self._rest_end_point.post(url,headers,body)
+        if (response.status_code != 202) and (response.status_code != 200):
+            raise Exception(response.text)
+
+        return xmlutil.xml2obj(xmlutil.cleanup(response.text))
+
+    def get_href(self):
+        if self._xml_data is not None:
+            h = self._xml_data.get('href')
+            if h:
+                return h
+
+        if self._parent:
+            return '/'.join([self._parent.get_href(), str(self.id)])
+
+        return self.meta_object.service_url + "/" + self.meta_object.collection_name + "/" + str(self.id)
 
     def form_xml(self):
         e = etree.Element(self.meta_object.xml_name)
@@ -172,6 +202,16 @@ class MetaResource(object):
             if ('use_uri_for_delete' in values) else False
         self.collections = {}
         self.methods = {}
+
+        self.request_type = values['request_type'] \
+            if ('request_type' in values) else None
+        self.response_type = values['response_type'] \
+            if 'response_type' in values else None
+
+        if 'request_template' in values:
+            env = Environment(loader=PackageLoader('jnpr.space.platform',
+                                                   'templates'))
+            self.request_template = env.get_template(values['request_template'])
 
         try:
             from jnpr.space.platform.core import collection

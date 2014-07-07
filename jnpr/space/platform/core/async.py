@@ -76,7 +76,7 @@ class TaskMonitor:
             if task_id != pu.taskId:
                 continue
 
-            if pu.state == "DONE":
+            if self._task_is_done(pu):
                 return pu
 
         raise Exception("Task %s does not seem to be progressing" % task_id)
@@ -100,10 +100,23 @@ class TaskMonitor:
                 num_consecutive_attempts = 0
 
             if pu.taskId in task_id_list:
-                if pu.state == "DONE":
+                if self._task_is_done(pu):
                     task_results.append(pu)
 
         return task_results
+
+    def _task_is_done(self, pu):
+        if pu.state == "DONE":
+            return True
+
+        if pu.percentage == '100.0' and pu.subTask is not None:
+            for s in pu.subTask:
+                if s.state != "DONE":
+                    return False
+
+            return True
+
+        return False
 
     def delete(self):
         """Cleanup by deleting the hornetq"""

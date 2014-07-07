@@ -21,6 +21,17 @@ resources:
                 name: 'change-requests'
                 xml_name: 'change-requests'
                 media_type: 'application/vnd.net.juniper.space.configuration-management.change-requests-ref+xml;version=1'
+            configurations:
+                name: 'configurations'
+                xml_name: 'configurations'
+                media_type: 'application/vnd.net.juniper.space.device-management.configurations+xml;version=1'
+                named_members:
+                    raw:
+                        xml_name: 'raw-configuration'
+                        resource_type: 'device_management.raw_config'
+                    expanded:
+                        xml_name: 'expanded-configuration'
+                        resource_type: 'device_management.expanded_config'
 
         methods:
             exec_rpc_v1:
@@ -40,6 +51,24 @@ resources:
                 name: 'apply-cli-configlet'
                 request_type: 'application/vnd.net.juniper.space.device-management.apply-cli-configlet+xml;version=2;charset=UTF-8'
                 request_template: 'apply_cli_configlet.tpl'
+
+    raw_config:
+        xml_name: 'raw-configuration'
+        media_type: 'application/vnd.net.juniper.space.device-management.raw-configuration+xml;q=".02";version="3"'
+        collection_name: 'configurations'
+        service_url: '/api/space/device-management'
+        request_type: 'application/vnd.net.juniper.space.device-management.xpath+xml;version=1;charset=UTF-8'
+        request_template: 'config_xpath_post.tpl'
+        response_type: 'application/vnd.net.juniper.space.device-management.raw-configuration+xml;q=".01";version="1"'
+
+    expanded_config:
+        xml_name: 'expanded-configuration'
+        media_type: 'application/vnd.net.juniper.space.device-management.expanded-configuration+xml;q=".02";version="3"'
+        collection_name: 'configurations'
+        service_url: '/api/space/device-management'
+        request_type: 'application/vnd.net.juniper.space.device-management.xpath+xml;version=1;charset=UTF-8'
+        request_template: 'config_xpath_post.tpl'
+        response_type: 'application/vnd.net.juniper.space.device-management.expanded-configuration+xml;q=".01";version="1"'
 
 methods:
 ...

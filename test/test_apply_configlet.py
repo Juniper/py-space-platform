@@ -47,7 +47,7 @@ class TestApplyConfiglet:
             pu = tm.wait_for_task(result.id)
             pprint(pu)
 
-            assert (pu.state == "DONE" and pu.status == "SUCCESS" and
-                    pu.percentage == "100.0")
+            assert ((pu.state == "DONE" and pu.percentage == "100.0") or
+                (pu.percentage == "100.0" and pu.subTask.state == "DONE"))
         finally:
             tm.delete()

@@ -23,6 +23,13 @@ class Collection(object):
         else:
             return self._parent.get_href() + "/" + util.make_xml_name(self._name)
 
+    def __getattr__(self, attr):
+        if attr in self.meta_object.named_members:
+            r = self._create_named_resource(attr,
+                            self.meta_object.named_members[attr], None)
+            r.id = attr
+            return r
+
     def get(self, filter_=None):
         url = self.get_href()
         if filter_ is not None:
@@ -40,10 +47,26 @@ class Collection(object):
         start = r.index('?><') + 2
         root = etree.fromstring(r[start:])
 
-        for child in root:
-            resource_list.append(self._create_resource(child))
+        if self.meta_object.named_members:
+            for key, value in self.meta_object.named_members.iteritems():
+                r = self._create_named_resource(key, value,root)
+                r.id = key
+                resource_list.append(r)
+        else:
+            for child in root:
+                resource_list.append(self._create_resource(child))
 
         return resource_list
+
+    def _create_named_resource(self, key, meta_object, xml_root):
+        type_name = meta_object['resource_type']
+        xml_data = xml_root.find(meta_object['xml_name']) \
+            if xml_root is not None else None
+        from jnpr.space.platform.core.resource import Resource
+        return Resource(type_name=type_name,
+                        rest_end_point=self._rest_end_point,
+                        xml_data=xml_data,
+                        parent=self)
 
     def _create_resource(self, xml_data):
         if self.meta_object.resource_type:
@@ -113,6 +136,8 @@ class MetaCollection(object):
             if ('resource_type' in values) else None
         self.url = values['url'] \
             if ('url' in values) else None
+        self.named_members = values['named_members'] \
+            if ('named_members' in values) else None
 
 
 _meta_collections = {}
