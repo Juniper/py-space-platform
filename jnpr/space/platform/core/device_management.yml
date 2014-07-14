@@ -5,6 +5,14 @@ collections:
         media_type: 'application/vnd.net.juniper.space.device-management.devices+xml;version=1;charset=UTF-8'
         url: '/api/space/device-management/devices'
         resource_type: 'device_management.device'
+        methods:
+            get_syslog_events:
+                name: 'get-syslog-events'
+                request_type: 'application/vnd.net.juniper.space.device-management.get-syslog-events+xml;version=2;charset=UTF-8'
+                request_template: 'get_syslog_events.tpl'
+                response_type: 'application/vnd.net.juniper.space.device-management.get-syslog-events+xml;version=2'
+            stop_syslog_events:
+                name: 'stop-syslog-events'
 
 resources:
     device:
@@ -13,14 +21,26 @@ resources:
         collection_name: 'devices'
         service_url: '/api/space/device-management'
         collections:
-            view_associated_scripts:
-                name: 'view-associated-scripts'
+            associated_scripts:
+                name: 'associated-scripts'
                 xml_name: 'script-device-associatons'
                 media_type: 'application/vnd.net.juniper.space.device-management.view-associated-scripts+xml;version=2'
+            associated_softwares:
+                name: 'associated-softwares'
+                xml_name: 'associated-softwares'
+                media_type: 'application/vnd.net.juniper.space.device-management.associated-softwares+xml;version=7;q=0.01'
+            view_customized_attributes:
+                name: 'view-customized-attributes'
+                xml_name: customized-attributes'
+                media_type: 'application/vnd.net.juniper.space.device-management.view-customized-attributes+xml;version=5'
             change_requests:
                 name: 'change-requests'
                 xml_name: 'change-requests'
                 media_type: 'application/vnd.net.juniper.space.configuration-management.change-requests-ref+xml;version=1'
+            managed_elements:
+                name: 'managed-elements'
+                xml_name: 'managed-elements'
+                media_type: 'application/vnd.net.juniper.space.managed-domain.managed-elements-ref+xml;version=1'
             configurations:
                 name: 'configurations'
                 xml_name: 'configurations'
@@ -71,4 +91,14 @@ resources:
         response_type: 'application/vnd.net.juniper.space.device-management.expanded-configuration+xml;q=".01";version="1"'
 
 methods:
+    discover_devices:
+        name: 'discover-devices'
+        request_type: 'application/vnd.net.juniper.space.device-management.discover-devices+xml;version=2;charset=UTF-8'
+        request_template: 'discover_devices.tpl'
+        response_type: 'application/vnd.net.juniper.space.device-management.discover-devices+xml;version=2'
+    change_device_credentials:
+        name: 'change-device-credentials'
+        request_type: 'application/vnd.net.juniper.space.device-management.change-credentials-request+xml;version=4;charset=UTF-8'
+        request_template: 'change_device_credentials.tpl'
+        response_type: 'application/vnd.net.juniper.space.device-management.change-credentials-request+xml;version=4'
 ...

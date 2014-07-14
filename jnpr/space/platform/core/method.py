@@ -20,6 +20,8 @@ class Method(object):
 
     def post(self, task_monitor=None, schedule=None, *args, **kwargs):
         url = self.get_href()
+        if 'id' in kwargs:
+            url = '/'.join([url, kwargs['id']])
         if task_monitor:
             url = '?queue='.join([url, task_monitor.get_queue_url()])
             if schedule:
@@ -39,9 +41,7 @@ class Method(object):
         if (response.status_code != 202) and (response.status_code != 200):
             raise Exception(response.text)
 
-        xml = cleanup(response.text)
-
-        return xml2obj(xml)
+        return xml2obj(cleanup(response.text)) if response.text else None
 
 class MetaMethod(object):
     def __init__(self, key, values):

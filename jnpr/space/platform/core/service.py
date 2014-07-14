@@ -10,15 +10,18 @@ import yaml
 class Service(object):
     """Encapsulates a Space Service"""
 
-    def __init__(self, rest_end_point, name, meta_object):
+    def __init__(self, rest_end_point, name, values):
         self._rest_end_point = rest_end_point
         self._name = name
-        self.meta_object = MetaService(name)
+        self.meta_object = MetaService(name, values)
         self._collections = {}
         self._methods = {}
 
     def get_meta_resource(self, resource_type):
         return self.meta_object.get_meta_resource(resource_type)
+
+    def get_href(self):
+        return self.meta_object.url
 
     def __getattr__(self, attr):
         if attr in self._collections:
@@ -39,7 +42,8 @@ class Service(object):
 
 class MetaService(object):
 
-    def __init__(self, name):
+    def __init__(self, name, values):
+        self.url = values['url']
         path = os.path.abspath(__file__)
         dir_path = os.path.dirname(path)
         with open(dir_path + '/' + name + '.yml') as f:
@@ -55,7 +59,10 @@ class MetaService(object):
             return collection.Collection(service, name, mObj)
 
     def create_method(self, service, name):
-        pass
+        if name in self._meta_methods:
+            from jnpr.space.platform.core import method
+            mObj = method.get_meta_object(name, self._meta_methods[name])
+            return method.Method(service, name, mObj)
 
     def get_meta_resource(self, name):
         return self._meta_resources[name]

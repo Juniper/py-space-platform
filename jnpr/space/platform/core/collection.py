@@ -16,6 +16,7 @@ class Collection(object):
         self._rest_end_point = parent._rest_end_point
         self._name = name
         self.meta_object = meta_object
+        self._methods = {}
 
     def get_href(self):
         if self.meta_object.url:
@@ -29,6 +30,14 @@ class Collection(object):
                             self.meta_object.named_members[attr], None)
             r.id = attr
             return r
+
+        if attr in self._methods:
+            return self._methods[attr]
+
+        method = self.meta_object.create_method(self, attr)
+        if method is not None:
+            self._methods[attr] = method
+            return method
 
     def get(self, filter_=None):
         url = self.get_href()
@@ -137,7 +146,15 @@ class MetaCollection(object):
         self.url = values['url'] \
             if ('url' in values) else None
         self.named_members = values['named_members'] \
-            if ('named_members' in values) else None
+            if ('named_members' in values) else {}
+        self.methods = values['methods'] \
+            if ('methods' in values) else None
+
+    def create_method(self, service, name):
+        if name in self.methods:
+            from jnpr.space.platform.core import method
+            mObj = method.get_meta_object(name, self.methods[name])
+            return method.Method(service, name, mObj)
 
 
 _meta_collections = {}
