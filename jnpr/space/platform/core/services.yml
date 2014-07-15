@@ -1,5 +1,13 @@
 ---
 services:
+    audit_log_management:
+        service_name: 'audit-log-management'
+        url: '/api/space/audit-log-management'
+
+    job_management:
+        service_name: 'job-management'
+        url: '/api/space/job-management'
+
     tag_management:
         service_name: 'tag-management'
         url: '/api/space/tag-management'

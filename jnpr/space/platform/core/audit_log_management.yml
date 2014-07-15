@@ -1,0 +1,17 @@
+---
+collections:
+    audit_logs:
+        xml_name: 'audit-logs'
+        media_type: 'application/vnd.net.juniper.space.audit-log-management.audit-logs+xml;version=1'
+        url: '/api/space/audit-log-management/audit-logs'
+        resource_type: 'audit_log_management.audit_log'
+
+resources:
+    audit_log:
+        xml_name: 'audit-log'
+        media_type: 'application/vnd.net.juniper.space.audit-log-management.audit-log+xml;version=1'
+        collection_name: 'audit_logs'
+        service_url: '/api/space/audit-log-management'
+
+methods:
+...

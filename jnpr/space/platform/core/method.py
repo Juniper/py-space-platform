@@ -39,9 +39,19 @@ class Method(object):
 
         response = self._rest_end_point.post(url,headers,body)
         if (response.status_code != 202) and (response.status_code != 200):
-            raise Exception(response.text)
+            from jnpr.space.platform.core import rest
+            raise rest.RestException("Method %s returned error" % self._name,
+                                     response)
 
         return xml2obj(cleanup(response.text)) if response.text else None
+
+    def get(self):
+        response = self._rest_end_point.get(self.get_href())
+        if response.status_code != 200:
+            raise Exception(response.text)
+
+        r = response.text
+        return xml2obj(r)
 
 class MetaMethod(object):
     def __init__(self, key, values):

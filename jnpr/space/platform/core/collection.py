@@ -39,10 +39,8 @@ class Collection(object):
             self._methods[attr] = method
             return method
 
-    def get(self, filter_=None):
-        url = self.get_href()
-        if filter_ is not None:
-            url = url + self._stringify_filter(filter_)
+    def get(self, filter_=None, paging=None, sortby=None):
+        url = self._form_get_url(filter_, paging, sortby)
 
         resource_list = []
         response = self._rest_end_point.get(url)
@@ -63,7 +61,14 @@ class Collection(object):
                 resource_list.append(r)
         else:
             for child in root:
-                resource_list.append(self._create_resource(child))
+                try:
+                    r = self._create_resource(child)
+                    resource_list.append(r)
+                except Exception as e:
+                    if e.ignore:
+                        pass
+                    else:
+                        raise e
 
         return resource_list
 
@@ -79,8 +84,8 @@ class Collection(object):
 
     def _create_resource(self, xml_data):
         if self.meta_object.resource_type:
-            from jnpr.space.platform.core.resource import Resource
-            return Resource(type_name=self.meta_object.resource_type,
+            from jnpr.space.platform.core import resource
+            return resource.Resource(type_name=self.meta_object.resource_type,
                                  rest_end_point=self._rest_end_point,
                                  xml_data=xml_data)
         else:
@@ -115,13 +120,38 @@ class Collection(object):
 
         return new_obj
 
+    def _form_get_url(self, filter_, paging, sortby):
+        url = self.get_href()
+
+        f, p, s = None, None, None
+        if filter_ is not None:
+            f = self._stringify_filter(filter_)
+        if paging is not None:
+            p = self._stringify_paging(paging)
+        if sortby is not None:
+            s = self._stringify_sortby(sortby)
+
+        if f is not None:
+            url = '?'.join([url, f])
+            if p is not None:
+                url = '&'.join([url, p])
+            if s is not None:
+                url = '&'.join([url, s])
+        elif p is not None:
+            url = '?'.join([url, p])
+            if s is not None:
+                url = '&'.join([url, s])
+        elif s is not None:
+                url = '?'.join([url, s])
+
+        return url
 
     def _stringify_filter(self, filter_):
         if isinstance(filter_, basestring):
-            return ''.join(['?filter=(', filter_, ')'])
+            return ''.join(['filter=(', filter_, ')'])
 
         if isinstance(filter_, dict):
-            filter_list = ['?filter=(']
+            filter_list = ['filter=(']
             index = 1
             for key, value in filter_.iteritems():
                 if (index < len(filter_)):
@@ -131,6 +161,25 @@ class Collection(object):
                 index += 1
             filter_list.append(')')
             return ''.join(filter_list)
+
+    def _stringify_paging(self, paging):
+        start, limit = None, None
+        if 'start' in paging:
+            start = 'start eq %d' % paging['start']
+        if 'limit' in paging:
+            limit = 'limit eq %d' % paging['limit']
+
+        if start and limit:
+            pg_str = 'paging=(%s, %s)' % (start,limit)
+        elif start:
+            pg_str = 'paging=(%s)' % (start)
+        elif limit:
+            pg_str = 'paging=(%s)' % (limit)
+
+        return pg_str
+
+    def _stringify_sortby(self, field_list):
+        return 'sortby=(%s)' % ','.join(field_list)
 
 class MetaCollection(object):
     def __init__(self, key, values):

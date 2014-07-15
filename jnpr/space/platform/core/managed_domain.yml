@@ -65,7 +65,7 @@ resources:
         collection_name: 'multilayer_subnetworks'
         service_url: '/api/space/managed-domain'
     routing_engine:
-        xml_name: 'routing-engine'
+        xml_name: 'equipment'
         media_type: 'application/vnd.net.juniper.space.managed-domain.routing-engine+xml;version=1'
         collection_name: 'routing_engines'
         service_url: '/api/space/managed-domain'

@@ -86,3 +86,8 @@ class Space:
         self._logger.debug(r)
         self._logger.debug(r.text)
         return r
+
+class RestException(Exception):
+    def __init__(self, message, response):
+        Exception.__init__(self, message)
+        self.response = response

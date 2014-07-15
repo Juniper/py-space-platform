@@ -23,6 +23,11 @@ class Resource(object):
         self._collections = {}
         self._methods = {}
         self._init_meta_data(rest_end_point, type_name)
+        if xml_data is not None:
+            if self.meta_object.xml_name != xml_data.tag:
+                e = Exception('Invalid xml object for this resource!')
+                e.ignore = True
+                raise e
 
     def _init_meta_data(self, rest_end_point, type_name):
         parts = type_name.split('.')
@@ -149,7 +154,13 @@ class Resource(object):
 
         if self._xml_data is not None:
             h = self._xml_data.get('uri')
-            if h:
+            # Working around problems in Space API.
+            # E.g. equipment-holder does not have href, but only uri
+            if h and not h.endswith(self.meta_object.collection_name):
+                # Working around problems in Space API.
+                # E.g. A newly created tag returns uri (but no href) in the
+                # POST response. But the uri does not end with the id
+                # of the tag!
                 return h
 
         return self.meta_object.service_url + "/" + self.meta_object.collection_name + "/" + str(self.id)

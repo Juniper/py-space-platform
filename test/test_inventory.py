@@ -68,6 +68,7 @@ class TestInventory:
                 assert re_details.name.startswith("Routing Engine")
                 assert re_details.installedSerialNumber
 
+    """
     def test_get_mlsn_from_each_managed_element(self):
         me_list = self.space.managed_domain.managed_elements.get()
         assert len(me_list) > 0, "Not enough devices on Space"
@@ -80,6 +81,7 @@ class TestInventory:
                 mlsn_details = mlsn.get()
                 assert mlsn_details.name.startswith("mlsns")
                 assert mlsn_details.managed_elements.managed_element.id
+    """
 
     def test_get_vlans_from_each_managed_element(self):
         me_list = self.space.managed_domain.managed_elements.get()

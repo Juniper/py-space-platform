@@ -72,7 +72,7 @@ class TestTag:
         for t in tags_list:
             print "Got tag <%s, %s>" % (t.name, t.type)
 
-        assert len(tags_list) > 10, "Failed to get all tags on Space?"
+        assert len(tags_list) >= 10, "Failed to get all tags on Space?"
 
     def test_get_public_tags(self):
         tags_list = self.space.tag_management.tags.get(

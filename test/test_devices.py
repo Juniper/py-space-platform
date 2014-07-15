@@ -21,7 +21,8 @@ class TestDevices:
 
     def test_devices_expanded_config_post(self):
         devices_list = self.space.device_management.devices.get(
-                            filter_={'managedStatus': 'In Sync'})
+                            filter_={'managedStatus': 'In Sync'},
+                            sortby=['name', 'platform'])
         assert len(devices_list) > 0, "Not enough devices on Space"
 
         for d in devices_list:
