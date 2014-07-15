@@ -1,0 +1,80 @@
+---
+collections:
+    managed_elements:
+        xml_name: 'managed-elements'
+        media_type: 'application/vnd.net.juniper.space.managed-domain.managed-elements+xml;version=1'
+        url: '/api/space/managed-domain/managed-elements'
+        resource_type: 'managed_domain.managed_element'
+    ptps:
+        xml_name: 'ptps'
+        media_type: 'application/vnd.net.juniper.space.managed-domain.ptps+xml;version=1'
+        url: '/api/space/managed-domain/ptps'
+        resource_type: 'managed_domain.ptp'
+
+resources:
+    managed_element:
+        xml_name: 'managed-element'
+        media_type: 'application/vnd.net.juniper.space.managed-domain.managed-element+xml;version=1;q=.01'
+        collection_name: 'managed_elements'
+        service_url: '/api/space/managed-domain'
+        collections:
+            equipment_holders:
+                name: 'equipment-holders'
+                xml_name: 'equipment-holders'
+                media_type: 'application/vnd.net.juniper.space.managed-domain.equipment-holders+xml;version=1'
+                resource_type: 'managed_domain.equipment_holder'
+            multilayer_subnetworks:
+                name: 'multilayer-subnetworks'
+                xml_name: 'multilayer-subnetworks'
+                media_type: 'application/vnd.net.juniper.space.managed-domain.multilayer-subnetworks+xml;version=1'
+                resource_type: 'managed_domain.multilayer_subnetwork'
+            ptps:
+                name: 'ptps'
+                xml_name: 'ptps'
+                media_type: 'application/vnd.net.juniper.space.managed-domain.ptps-ref+xml;version=1'
+                resource_type: 'managed_domain.ptp'
+            routing_engines:
+                name: 'routing-engines'
+                xml_name: 'routing-engines'
+                media_type: 'application/vnd.net.juniper.space.managed-domain.routing-engines+xml;version=1'
+                resource_type: 'managed_domain.routing_engine'
+            routing_instances:
+                name: 'routing-instances'
+                xml_name: 'routing-instances'
+                media_type: 'application/vnd.net.juniper.space.managed-domain.routing-instances+xml;version=1'
+            routing_options:
+                name: 'routing-options'
+                xml_name: 'routing-options'
+                media_type: 'application/vnd.net.juniper.space.managed-domain.routing-options+xml;version=1'
+            software_identities:
+                name: 'software-identities'
+                xml_name: 'software-identities'
+                media_type: 'application/vnd.net.juniper.space.managed-domain.software-identities+xml;version=1'
+            vlans:
+                name: 'vlans'
+                xml_name: 'vlans'
+                media_type: 'application/vnd.net.juniper.space.managed-domain.vlans+xml;version=1'
+    equipment_holder:
+        xml_name: 'equipment-holder'
+        media_type: 'application/vnd.net.juniper.space.managed-domain.equipment-holder+xml;version=3;q=.03'
+        collection_name: 'equipment_holders'
+        service_url: '/api/space/managed-domain'
+    multilayer_subnetwork:
+        xml_name: 'multilayer-subnetwork'
+        media_type: 'application/vnd.net.juniper.space.managed-domain.multilayer-subnetwork+xml;version=1'
+        collection_name: 'multilayer_subnetworks'
+        service_url: '/api/space/managed-domain'
+    routing_engine:
+        xml_name: 'routing-engine'
+        media_type: 'application/vnd.net.juniper.space.managed-domain.routing-engine+xml;version=1'
+        collection_name: 'routing_engines'
+        service_url: '/api/space/managed-domain'
+    ptp:
+        xml_name: 'ptp'
+        media_type: 'application/vnd.net.juniper.space.managed-domain.ptp+xml;version=3'
+        collection_name: 'ptps'
+        service_url: '/api/space/managed-domain'
+
+methods:
+
+...

@@ -147,6 +147,11 @@ class Resource(object):
         if self._parent:
             return '/'.join([self._parent.get_href(), str(self.id)])
 
+        if self._xml_data is not None:
+            h = self._xml_data.get('uri')
+            if h:
+                return h
+
         return self.meta_object.service_url + "/" + self.meta_object.collection_name + "/" + str(self.id)
 
     def form_xml(self):

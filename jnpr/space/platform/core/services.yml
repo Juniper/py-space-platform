@@ -7,4 +7,8 @@ services:
     device_management:
         service_name: 'device-management'
         url: '/api/space/device-management'
+
+    managed_domain:
+        service_name: 'managed-domain'
+        url: '/api/space/managed-domain'
 ...
