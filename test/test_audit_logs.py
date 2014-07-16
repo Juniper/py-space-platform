@@ -1,7 +1,7 @@
 import logging.config
 import ConfigParser
 
-from jnpr.space.platform.core import rest
+from jnpr.space import rest
 
 class TestAuditLogs:
 

@@ -46,7 +46,7 @@ class MetaService(object):
         self.url = values['url']
         path = os.path.abspath(__file__)
         dir_path = os.path.dirname(path)
-        with open(dir_path + '/' + name + '.yml') as f:
+        with open(dir_path + '/descriptions/' + name + '.yml') as f:
             y = yaml.load(f)
             self._meta_collections = y['collections']
             self._meta_methods = y['methods']
@@ -54,13 +54,13 @@ class MetaService(object):
 
     def create_collection(self, service, name):
         if name in self._meta_collections:
-            from jnpr.space.platform.core import collection
+            from jnpr.space import collection
             mObj = collection.get_meta_object(name, self._meta_collections[name])
             return collection.Collection(service, name, mObj)
 
     def create_method(self, service, name):
         if name in self._meta_methods:
-            from jnpr.space.platform.core import method
+            from jnpr.space import method
             mObj = method.get_meta_object(name, self._meta_methods[name])
             return method.Method(service, name, mObj)
 

@@ -1,7 +1,8 @@
 import logging.config
 import ConfigParser
 
-from jnpr.space.platform.core import rest, resource
+from jnpr.space import rest
+from jnpr.space import resource
 
 class TestInventory:
 

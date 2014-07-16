@@ -1,7 +1,8 @@
 import logging.config
 import ConfigParser
 
-from jnpr.space.platform.core import rest, async
+from jnpr.space import rest
+from jnpr.space import async
 
 class TestDiscoverDevices:
 

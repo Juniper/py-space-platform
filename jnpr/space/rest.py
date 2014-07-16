@@ -24,7 +24,7 @@ class Space:
     def _init_services(self):
         path = os.path.abspath(__file__)
         dir_path = os.path.dirname(path)
-        with open(dir_path + '/services.yml') as f:
+        with open(dir_path + '/descriptions/services.yml') as f:
             return yaml.load(f)['services']
 
     def __getattr__(self, attr):
@@ -32,7 +32,7 @@ class Space:
             return self._services[attr]
 
         if attr in self._meta_services:
-            from jnpr.space.platform.core import service
+            from jnpr.space import service
             value = self._meta_services[attr]
             self._services[attr] = service.Service(self, attr, value)
             return self._services[attr]
