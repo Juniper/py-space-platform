@@ -33,7 +33,7 @@ class TestDiscoverDevices:
             assert result.id > 0, "Device Discovery execution Failed"
 
             pu = tm.wait_for_task(result.id)
-            assert (pu.state == "DONE")
+            assert (pu.state)
             pprint(pu)
         finally:
             tm.delete()
@@ -53,7 +53,7 @@ class TestDiscoverDevices:
             assert result.id > 0, "Device Discovery execution Failed"
 
             pu = tm.wait_for_task(result.id)
-            assert (pu.state == "DONE")
+            assert (pu.state)
             pprint(pu)
         finally:
             tm.delete()
@@ -75,7 +75,7 @@ class TestDiscoverDevices:
             assert result.id > 0, "Device Discovery execution Failed"
 
             pu = tm.wait_for_task(result.id)
-            assert (pu.state == "DONE")
+            assert (pu.state)
             pprint(pu)
         finally:
             tm.delete()
@@ -97,7 +97,7 @@ class TestDiscoverDevices:
             assert result.id > 0, "Device Discovery execution Failed"
 
             pu = tm.wait_for_task(result.id)
-            assert (pu.state == "DONE")
+            assert (pu.state)
             pprint(pu)
         finally:
             tm.delete()
@@ -121,7 +121,7 @@ class TestDiscoverDevices:
             assert result.id > 0, "Device Discovery execution Failed"
 
             pu = tm.wait_for_task(result.id)
-            assert (pu.state == "DONE")
+            assert (pu.state)
             pprint(pu)
         finally:
             tm.delete()

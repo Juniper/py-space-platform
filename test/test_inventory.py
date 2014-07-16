@@ -1,7 +1,7 @@
 import logging.config
 import ConfigParser
 
-from jnpr.space.platform.core import rest
+from jnpr.space.platform.core import rest, resource
 
 class TestInventory:
 
@@ -28,6 +28,7 @@ class TestInventory:
         assert len(me_list) > 0, "Not enough devices on Space"
 
         for m in me_list:
+            assert isinstance(m, resource.Resource)
             me_details = m.get()
             assert me_details.device.deviceFamily.startswith('junos')
 
@@ -36,6 +37,7 @@ class TestInventory:
         assert len(me_list) > 0, "Not enough devices on Space"
 
         for me in me_list:
+            assert isinstance(me, resource.Resource)
             ptp_ref_list = me.ptps.get()
             assert len(ptp_ref_list) > 0
             for ptp in ptp_ref_list:
@@ -47,6 +49,7 @@ class TestInventory:
         assert len(me_list) > 0, "Not enough devices on Space"
 
         for me in me_list:
+            assert isinstance(me, resource.Resource)
             eh_list = me.equipment_holders.get()
             assert len(eh_list) > 0
             for eh in eh_list:

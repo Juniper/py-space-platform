@@ -6,7 +6,7 @@ Created on 23-Jun-2014
 
 from lxml import etree
 
-from jnpr.space.platform.core import util
+from jnpr.space.platform.core import util, rest
 
 class Collection(object):
     """Encapsulates a collection of Space Resources"""
@@ -47,7 +47,7 @@ class Collection(object):
         if response.status_code != 200:
             if response.status_code == 204:
                 return []
-            raise Exception(response.text)
+            raise rest.RestException("GET failed on %s" % url, response)
 
         r = response.text
         # Skip the <?xml> line to avoid encoding errors in lxml
@@ -108,7 +108,8 @@ class Collection(object):
                                              {'content-type': media_type},
                                              etree.tostring(x))
         if (response.status_code != 202) and (response.status_code != 200):
-            raise Exception(response.text)
+            raise rest.RestException("POST failed on %s" % self.get_href(),
+                                     response)
 
         if not isinstance(new_obj, list):
             r = response.text

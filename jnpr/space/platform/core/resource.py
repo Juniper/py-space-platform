@@ -8,7 +8,7 @@ from pprint import pformat
 from lxml import etree
 from jinja2 import Environment, PackageLoader
 
-from jnpr.space.platform.core import util, xmlutil
+from jnpr.space.platform.core import util, xmlutil, rest
 
 class Resource(object):
     """Encapsulates a Space Resource"""
@@ -81,7 +81,8 @@ class Resource(object):
     def get(self):
         response = self._rest_end_point.get(self.get_href())
         if response.status_code != 200:
-            raise Exception(response.text)
+            raise rest.RestException("GET failed on %s" % self.get_href(),
+                                     response)
 
         r = response.text
         return xmlutil.xml2obj(r)
@@ -103,7 +104,8 @@ class Resource(object):
                             etree.tostring(x)
                         )
         if response.status_code != 200:
-            raise Exception(response.text)
+            raise rest.RestException("PUT failed on %s" % self.get_href(),
+                                     response)
 
         r = response.text
         # Skip the <?xml> line to avoid encoding errors in lxml
@@ -118,7 +120,7 @@ class Resource(object):
             url = self.get_href()
         response = self._rest_end_point.delete(url)
         if response.status_code != 204:
-            raise Exception(response.text)
+            raise rest.RestException("DELETE failed on %s" % url, response)
 
     def post(self, task_monitor=None, schedule=None, *args, **kwargs):
         url = self.get_href()
@@ -139,7 +141,7 @@ class Resource(object):
 
         response = self._rest_end_point.post(url,headers,body)
         if (response.status_code != 202) and (response.status_code != 200):
-            raise Exception(response.text)
+            raise rest.RestException("POST failed on %s" % url, response)
 
         return xmlutil.xml2obj(xmlutil.cleanup(response.text))
 
@@ -233,7 +235,7 @@ class MetaResource(object):
             from jnpr.space.platform.core import collection
             for key in values['collections']:
                 value = values['collections'][key]
-                mObj = collection.get_meta_object(key, value)
+                mObj = collection.get_meta_object(self.key + ':' + key, value)
                 self.collections[key] = mObj
         except KeyError:
             pass

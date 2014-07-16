@@ -6,6 +6,7 @@ Created on 01-Jul-2014
 
 from jinja2 import Environment, PackageLoader
 from xmlutil import cleanup, xml2obj
+from jnpr.space.platform.core import rest
 
 class Method(object):
 
@@ -39,16 +40,15 @@ class Method(object):
 
         response = self._rest_end_point.post(url,headers,body)
         if (response.status_code != 202) and (response.status_code != 200):
-            from jnpr.space.platform.core import rest
-            raise rest.RestException("Method %s returned error" % self._name,
-                                     response)
+            raise rest.RestException("POST failed on %s " % url, response)
 
         return xml2obj(cleanup(response.text)) if response.text else None
 
     def get(self):
         response = self._rest_end_point.get(self.get_href())
         if response.status_code != 200:
-            raise Exception(response.text)
+            raise rest.RestException("GET failed on %s " % self.get_href(),
+                                    response)
 
         r = response.text
         return xml2obj(r)

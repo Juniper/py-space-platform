@@ -72,6 +72,8 @@ class TaskMonitor:
                 num_consecutive_attempts += 1
                 time.sleep(self.wait_time)
                 continue
+            else:
+                num_consecutive_attempts = 0
 
             if task_id != pu.taskId:
                 continue
