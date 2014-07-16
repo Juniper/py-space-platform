@@ -1,3 +1,3 @@
 # test #
 
-Package with unit and integration test cases based on py.test.
+Package with unit and integration test cases based on **py.test**.
