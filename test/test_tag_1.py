@@ -3,7 +3,7 @@ import ConfigParser
 
 import pytest
 
-from jnpr.space import rest
+from jnpr.space import rest, factory
 from jnpr.space import resource
 
 class TestTag:
@@ -45,8 +45,8 @@ class TestTag:
                                 rest_end_point=self.space)
 
     def test_create_delete_tag(self):
-        new_tag = resource.Resource(type_name='tag_management.tag',
-                                rest_end_point=self.space)
+        new_tag = factory.make_resource(type_name='tag_management.tag',
+                                        rest_end_point=self.space)
         new_tag.name = 'ApiTestTag'
         new_tag.type = 'private'
         new_tag = self.space.tag_management.tags.post(new_tag)
