@@ -1,8 +1,8 @@
 import logging.config
 import ConfigParser
 
-from jnpr.space import xmlutil
-from jnpr.space import rest
+from juniper.space import xmlutil
+from juniper.space import rest
 
 class TestDevices:
 

@@ -1,6 +1,6 @@
 import time
 
-from jnpr.space import xmlutil
+from juniper.space import xmlutil
 
 class TaskMonitor:
     """Encapsulates the logic required to monitor the progress of tasks"""

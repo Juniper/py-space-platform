@@ -3,8 +3,8 @@ Created on 20-Jun-2014
 
 @author: rjoyce
 '''
-from jnpr.space import rest
-from jnpr.space import resource
+from juniper.space import rest
+from juniper.space import resource
 
 import logging.config
 

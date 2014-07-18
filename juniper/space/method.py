@@ -6,7 +6,7 @@ Created on 01-Jul-2014
 
 from jinja2 import Environment, PackageLoader
 from xmlutil import cleanup, xml2obj
-from jnpr.space import rest
+from juniper.space import rest
 
 class Method(object):
 
@@ -63,7 +63,7 @@ class MetaMethod(object):
             if 'response_type' in values else None
 
         if 'request_template' in values:
-            env = Environment(loader=PackageLoader('jnpr.space',
+            env = Environment(loader=PackageLoader('juniper.space',
                                                    'templates'))
             self.request_template = env.get_template(values['request_template'])
         else:

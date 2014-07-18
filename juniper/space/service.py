@@ -54,13 +54,13 @@ class MetaService(object):
 
     def create_collection(self, service, name):
         if name in self._meta_collections:
-            from jnpr.space import collection
+            from juniper.space import collection
             mObj = collection.get_meta_object(name, self._meta_collections[name])
             return collection.Collection(service, name, mObj)
 
     def create_method(self, service, name):
         if name in self._meta_methods:
-            from jnpr.space import method
+            from juniper.space import method
             mObj = method.get_meta_object(name, self._meta_methods[name])
             return method.Method(service, name, mObj)
 

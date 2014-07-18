@@ -1,8 +1,8 @@
 import logging.config
 import traceback
 
-from jnpr.space import rest as rest
-from jnpr.space import resource as resource
+from juniper.space import rest as rest
+from juniper.space import resource as resource
 
 if __name__ == "__main__":
     # Initialize logging

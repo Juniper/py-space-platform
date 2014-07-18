@@ -3,8 +3,8 @@ import ConfigParser
 import pytest
 import time
 
-from jnpr.space import rest
-from jnpr.space import async
+from juniper.space import rest
+from juniper.space import async
 
 _task_id = 0
 

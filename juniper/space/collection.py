@@ -6,8 +6,8 @@ Created on 23-Jun-2014
 
 from lxml import etree
 
-from jnpr.space import util
-from jnpr.space import rest
+from juniper.space import util
+from juniper.space import rest
 
 class Collection(object):
     """Encapsulates a collection of Space Resources"""
@@ -77,7 +77,7 @@ class Collection(object):
         type_name = meta_object['resource_type']
         xml_data = xml_root.find(meta_object['xml_name']) \
             if xml_root is not None else None
-        from jnpr.space.resource import Resource
+        from juniper.space.resource import Resource
         return Resource(type_name=type_name,
                         rest_end_point=self._rest_end_point,
                         xml_data=xml_data,
@@ -85,12 +85,12 @@ class Collection(object):
 
     def _create_resource(self, xml_data):
         if self.meta_object.resource_type:
-            from jnpr.space import resource
+            from juniper.space import resource
             return resource.Resource(type_name=self.meta_object.resource_type,
                                  rest_end_point=self._rest_end_point,
                                  xml_data=xml_data)
         else:
-            from jnpr.space import xmlutil
+            from juniper.space import xmlutil
             s = etree.tostring(xml_data)
             return xmlutil.xml2obj(s)
 
@@ -203,7 +203,7 @@ class MetaCollection(object):
 
     def create_method(self, service, name):
         if name in self.methods:
-            from jnpr.space import method
+            from juniper.space import method
             mObj = method.get_meta_object(name, self.methods[name])
             return method.Method(service, name, mObj)
 
