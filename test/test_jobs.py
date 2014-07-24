@@ -1,7 +1,7 @@
 import logging.config
 import ConfigParser
 
-from juniper.space import rest
+from jnpr.space import rest
 
 class TestJobs:
 

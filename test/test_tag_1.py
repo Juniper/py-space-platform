@@ -3,8 +3,8 @@ import ConfigParser
 
 import pytest
 
-from juniper.space import rest, factory
-from juniper.space import resource
+from jnpr.space import rest, factory
+from jnpr.space import resource
 
 class TestTag:
 

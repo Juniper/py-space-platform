@@ -32,7 +32,7 @@ class Space:
             return self._services[attr]
 
         if attr in self._meta_services:
-            from juniper.space import service
+            from jnpr.space import service
             value = self._meta_services[attr]
             self._services[attr] = service.Service(self, attr, value)
             return self._services[attr]

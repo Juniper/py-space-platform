@@ -1,8 +1,8 @@
 import logging.config
 import ConfigParser
 
-from juniper.space import rest
-from juniper.space import async
+from jnpr.space import rest
+from jnpr.space import async
 
 class TestAsync:
 

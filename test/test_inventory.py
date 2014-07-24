@@ -1,8 +1,8 @@
 import logging.config
 import ConfigParser
 
-from juniper.space import rest
-from juniper.space import resource
+from jnpr.space import rest
+from jnpr.space import resource
 
 class TestInventory:
 

@@ -97,7 +97,7 @@ def xml2obj(src):
 
 if __name__ == '__main__':
     print 'Hello'
-    sample = """<?xml version="1.0" encoding="UTF-8" standalone="yes"?><netconf><status>Success</status><rpcCommands><rpcCommand>&lt;get-system-information/&gt;</rpcCommand></rpcCommands><netConfReplies><netConfReply><status>Success</status><replyMsgData>&lt;system-information  xmlns:junos=&quot;http://xml.juniper.net/junos/13.1X49/junos&quot;&gt;
+    sample = """<?xml version="1.0" encoding="UTF-8" standalone="yes"?><netconf><status>Success</status><rpcCommands><rpcCommand>&lt;get-system-information/&gt;</rpcCommand></rpcCommands><netConfReplies><netConfReply><status>Success</status><replyMsgData>&lt;system-information  xmlns:junos=&quot;http://xml.jnpr.net/junos/13.1X49/junos&quot;&gt;
 &lt;hardware-model&gt;mx240&lt;/hardware-model&gt;
 &lt;os-name&gt;junos&lt;/os-name&gt;
 &lt;os-version&gt;13.1X49-D34.4&lt;/os-version&gt;

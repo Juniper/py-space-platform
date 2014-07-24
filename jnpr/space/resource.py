@@ -8,7 +8,7 @@ from pprint import pformat
 from lxml import etree
 from jinja2 import Environment, PackageLoader
 
-from juniper.space import xmlutil, util, rest
+from jnpr.space import xmlutil, util, rest
 
 class Resource(object):
     """Encapsulates a Space Resource"""
@@ -227,12 +227,12 @@ class MetaResource(object):
             if 'response_type' in values else None
 
         if 'request_template' in values:
-            env = Environment(loader=PackageLoader('juniper.space',
+            env = Environment(loader=PackageLoader('jnpr.space',
                                                    'templates'))
             self.request_template = env.get_template(values['request_template'])
 
         try:
-            from juniper.space import collection
+            from jnpr.space import collection
             for key in values['collections']:
                 value = values['collections'][key]
                 mObj = collection.get_meta_object(self.key + ':' + key, value)
@@ -241,7 +241,7 @@ class MetaResource(object):
             pass
 
         try:
-            from juniper.space import method
+            from jnpr.space import method
             for key in values['methods']:
                 value = values['methods'][key]
                 mObj = method.get_meta_object(key, value)
@@ -251,11 +251,11 @@ class MetaResource(object):
 
     def create_collection(self, service, name):
         if name in self.collections:
-            from juniper.space import collection
+            from jnpr.space import collection
             return collection.Collection(service, name, self.collections[name])
 
     def create_method(self, service, name):
         if name in self.methods:
-            from juniper.space import method
+            from jnpr.space import method
             mObj = method.get_meta_object(name, self.methods[name])
             return method.Method(service, name, mObj)
