@@ -16,6 +16,10 @@ services:
         service_name: 'device-management'
         url: '/api/space/device-management'
 
+    configuration_management:
+        service_name: 'configuration-management'
+        url: '/api/space/configuration-management'
+
     managed_domain:
         service_name: 'managed-domain'
         url: '/api/space/managed-domain'

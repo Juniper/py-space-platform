@@ -102,7 +102,7 @@ class Collection(object):
             for o in new_obj:
                 x.append(o.form_xml())
         else:
-            media_type = new_obj.meta_object.media_type
+            media_type = new_obj.get_meta_object().media_type
             x = new_obj.form_xml()
 
         response = self._rest_end_point.post(self.get_href(),

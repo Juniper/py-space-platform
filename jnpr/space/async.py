@@ -111,7 +111,7 @@ class TaskMonitor:
         if pu.state == "DONE":
             return True
 
-        if pu.percentage == '100.0' and pu.subTask is not None:
+        if pu.subTask is not None:
             for s in pu.subTask:
                 if s.state != "DONE":
                     return False

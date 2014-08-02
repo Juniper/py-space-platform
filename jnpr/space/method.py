@@ -17,7 +17,11 @@ class Method(object):
         self.meta_object = mobj
 
     def get_href(self):
-        return '/'.join([self._parent.get_href(), self.meta_object.name])
+        if self.meta_object.name != '-':
+            return '/'.join([self._parent.get_href(), self.meta_object.name])
+        else:
+            return self._parent.get_href()
+
 
     def post(self, task_monitor=None, schedule=None, *args, **kwargs):
         url = self.get_href()

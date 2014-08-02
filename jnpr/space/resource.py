@@ -24,7 +24,7 @@ class Resource(object):
         self._methods = {}
         self._init_meta_data(rest_end_point, type_name)
         if xml_data is not None:
-            if self.meta_object.xml_name != xml_data.tag:
+            if self._meta_object.xml_name != xml_data.tag:
                 e = Exception('Invalid xml object for this resource!')
                 e.ignore = True
                 raise e
@@ -43,7 +43,7 @@ class Resource(object):
         resource_type = parts[1]
         try:
             values = service.get_meta_resource(resource_type)
-            self.meta_object = get_meta_object(type_name, resource_type, values)
+            self._meta_object = get_meta_object(type_name, resource_type, values)
         except KeyError:
             raise Exception("Unknown resource type in '%s'" % type_name)
 
@@ -54,12 +54,12 @@ class Resource(object):
         if attr in self._methods:
             return self._methods[attr]
 
-        collection = self.meta_object.create_collection(self, attr)
+        collection = self._meta_object.create_collection(self, attr)
         if collection is not None :
             self._collections[attr] = collection
             return collection
 
-        method = self.meta_object.create_method(self, attr)
+        method = self._meta_object.create_method(self, attr)
         if method is not None:
             self._methods[attr] = method
             return method
@@ -77,6 +77,9 @@ class Resource(object):
             return val
         else:
             raise AttributeError("No attribute '%s'" % attr)
+
+    def get_meta_object(self):
+        return self._meta_object
 
     def get(self):
         response = self._rest_end_point.get(self.get_href())
@@ -100,7 +103,7 @@ class Resource(object):
 
         response = self._rest_end_point.put(
                             self.get_href(),
-                            {'content-type': self.meta_object.media_type},
+                            {'content-type': self._meta_object.media_type},
                             etree.tostring(x)
                         )
         if response.status_code != 200:
@@ -114,12 +117,12 @@ class Resource(object):
         self._xml_data = root
 
     def delete(self):
-        if self.meta_object.use_uri_for_delete:
+        if self._meta_object.use_uri_for_delete:
             url = self.uri
         else:
             url = self.get_href()
         response = self._rest_end_point.delete(url)
-        if response.status_code != 204:
+        if response.status_code != 204 and response.status_code != 200:
             raise rest.RestException("DELETE failed on %s" % url, response)
 
     def post(self, task_monitor=None, schedule=None, *args, **kwargs):
@@ -130,12 +133,12 @@ class Resource(object):
                 url = '&schedule='.join([url, schedule])
 
         headers = {}
-        if self.meta_object.response_type:
-            headers['accept'] = self.meta_object.response_type
+        if self._meta_object.response_type:
+            headers['accept'] = self._meta_object.response_type
 
-        if self.meta_object.request_template:
-            body = self.meta_object.request_template.render(**kwargs)
-            headers['content-type'] = self.meta_object.request_type
+        if self._meta_object.request_template:
+            body = self._meta_object.request_template.render(**kwargs)
+            headers['content-type'] = self._meta_object.request_type
         else:
             body = None
 
@@ -158,17 +161,17 @@ class Resource(object):
             h = self._xml_data.get('uri')
             # Working around problems in Space API.
             # E.g. equipment-holder does not have href, but only uri
-            if h and not h.endswith(self.meta_object.collection_name):
+            if h and not h.endswith(self._meta_object.collection_name):
                 # Working around problems in Space API.
                 # E.g. A newly created tag returns uri (but no href) in the
                 # POST response. But the uri does not end with the id
                 # of the tag!
                 return h
 
-        return self.meta_object.service_url + "/" + self.meta_object.collection_name + "/" + str(self.id)
+        return self._meta_object.service_url + "/" + self._meta_object.collection_name + "/" + str(self.id)
 
     def form_xml(self):
-        e = etree.Element(self.meta_object.xml_name)
+        e = etree.Element(self._meta_object.xml_name)
         attributes = {}
         if self._attributes is not None:
             attributes = self._attributes
@@ -182,6 +185,12 @@ class Resource(object):
             xml_name = util.make_xml_name(key)
             if xml_name == 'href':
                 e.attrib[xml_name] = str(value)
+            elif isinstance(value, Resource):
+                e.append(value.form_xml())
+            elif isinstance(value, list):
+                l = etree.SubElement(e, xml_name)
+                for each in value:
+                    l.append(each.form_xml());
             else:
                 etree.SubElement(e, xml_name).text = str(value)
 
