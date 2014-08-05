@@ -1,0 +1,58 @@
+---
+collections:
+    config_templates:
+        xml_name: 'config-templates'
+        media_type: 'application/vnd.net.juniper.space.config-template-management.config-templates+xml;version=1'
+        url: '/api/space/config-template-management/config-templates'
+        resource_type: 'config_template_management.config_template'
+
+    config_template_definitions:
+        xml_name: 'config-template-definitions'
+        media_type: 'application/vnd.net.juniper.space.config-template-management.config-template-definitions+xml;version=1'
+        url: '/api/space/config-template-management/config-template-definitions'
+        resource_type: 'config_template_management.config_template_definition'
+
+resources:
+    config_template:
+        xml_name: 'config-template'
+        media_type: 'application/vnd.net.juniper.space.config-template-management.config-template+xml;version=1'
+        collection_name: 'config_templates'
+        service_url: '/api/space/config-template-management'
+        methods:
+            configuration:
+                name: 'configuration'
+                media_type: 'application/vnd.net.juniper.space.config-template-management.configuration-all+xml;version=2'
+                request_type: 'application/vnd.net.juniper.space.config-template-management.configuration-cli-request+xml;version=2;charset=UTF-8'
+                request_template: 'config_template_configuration.tpl'
+                response_type: 'application/vnd.net.juniper.space.config-template-management.configuration-update-result+xml;version=2'
+            device_associations:
+                name: 'device-associations'
+            exec_audit:
+                name: 'exec-audit'
+                response_type: 'application/vnd.net.juniper.space.job-management.task+xml;version=1'
+            exec_deploy:
+                name: 'exec-deploy'
+                request_type: 'application/vnd.net.juniper.space.config-template-management.exec-deploy-request+xml;version=2;charset=UTF-8'
+                request_template: 'exec_deploy_config_template.tpl'
+                response_type: 'application/vnd.net.juniper.space.job-management.task+xml;version=1'
+            exec_publish:
+                name: 'exec-publish'
+                request_type: 'application/vnd.net.juniper.space.config-template-management.exec-publish-request+xml;version=2;charset=UTF-8'
+                request_template: 'exec_publish_config_template.tpl'
+            exec_undeploy:
+                name: 'exec-undeploy'
+                request_type: 'application/vnd.net.juniper.space.config-template-management.exec-undeploy-request+xml;version=1;charset=UTF-8'
+                request_template: 'exec_undeploy_config_template.tpl'
+                response_type: 'application/vnd.net.juniper.space.job-management.task+xml;version=1'
+
+    config_template_definition:
+        xml_name: 'config-template-definition'
+        media_type: 'application/vnd.net.juniper.space.config-template-management.config-template-definition+xml;version=1'
+        collection_name: 'config_template_definitions'
+        service_url: '/api/space/config-template-management'
+        methods:
+            configuration:
+                name: 'configuration'
+
+methods:
+...

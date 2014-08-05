@@ -20,6 +20,10 @@ services:
         service_name: 'configuration-management'
         url: '/api/space/configuration-management'
 
+    config_template_management:
+        service_name: 'config-template-management'
+        url: '/api/space/config-template-management'
+
     managed_domain:
         service_name: 'managed-domain'
         url: '/api/space/managed-domain'

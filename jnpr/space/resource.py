@@ -191,6 +191,13 @@ class Resource(object):
                 l = etree.SubElement(e, xml_name)
                 for each in value:
                     l.append(each.form_xml());
+            elif isinstance(value, dict):
+                l = etree.SubElement(e, xml_name)
+                for k, v in value.iteritems():
+                    if k == 'href':
+                        l.attrib[k] = str(v)
+                    else:
+                        etree.SubElement(l, util.make_xml_name(k)).text = str(v)
             else:
                 etree.SubElement(e, xml_name).text = str(value)
 

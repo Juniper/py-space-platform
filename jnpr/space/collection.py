@@ -94,19 +94,31 @@ class Collection(object):
             s = etree.tostring(xml_data)
             return xmlutil.xml2obj(s)
 
-    def post(self, new_obj):
+    def post(self, new_obj, xml_name=None, content_type=None, accept=None):
+        if content_type:
+            media_type = content_type
+        elif isinstance(new_obj, list):
+            media_type = self.meta_object.media_type
+        else:
+            media_type = new_obj.get_meta_object().media_type
+
+        headers = {'content-type': media_type}
+        if accept:
+            headers['accept'] = accept
+
         x = None
         if isinstance(new_obj, list):
-            media_type = self.meta_object.media_type
             x = etree.Element(self._name)
             for o in new_obj:
                 x.append(o.form_xml())
         else:
-            media_type = new_obj.get_meta_object().media_type
             x = new_obj.form_xml()
 
+        if xml_name:
+            x.tag = xml_name
+
         response = self._rest_end_point.post(self.get_href(),
-                                             {'content-type': media_type},
+                                             headers,
                                              etree.tostring(x))
         if (response.status_code != 202) and (response.status_code != 200):
             raise rest.RestException("POST failed on %s" % self.get_href(),
