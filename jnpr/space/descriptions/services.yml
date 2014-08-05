@@ -24,6 +24,10 @@ services:
         service_name: 'config-template-management'
         url: '/api/space/config-template-management'
 
+    script_management:
+        service_name: 'script-management'
+        url: '/api/space/script-management'
+
     managed_domain:
         service_name: 'managed-domain'
         url: '/api/space/managed-domain'

@@ -1,0 +1,68 @@
+---
+collections:
+    scripts:
+        xml_name: 'scripts'
+        media_type: 'application/vnd.net.juniper.space.script-management.scripts+xml;version=2'
+        url: '/api/space/script-management/scripts'
+        resource_type: 'script_management.script'
+        methods:
+            exec_deploy:
+                name: 'exec-deploy'
+                request_type: 'application/vnd.net.juniper.space.script-management.exec-deploy+xml;version=2;charset=UTF-8'
+                request_template: 'exec_deploy_scripts.tpl'
+                response_type: 'application/vnd.net.juniper.space.script-management.exec-deploy+xml;version=2'
+            exec_disable:
+                name: 'exec-disable'
+                request_type: 'application/vnd.net.juniper.space.script-management.exec-disable+xml;version=2;charset=UTF-8'
+                request_template: 'exec_disable_scripts.tpl'
+                response_type: 'application/vnd.net.juniper.space.script-management.exec-disable+xml;version=2'
+            exec_enable:
+                name: 'exec-enable'
+                request_type: 'application/vnd.net.juniper.space.script-management.exec-enable+xml;version=2;charset=UTF-8'
+                request_template: 'exec_enable_scripts.tpl'
+                response_type: 'application/vnd.net.juniper.space.script-management.exec-enable+xml;version=2'
+            exec_remove:
+                name: 'exec-remove'
+                request_type: 'application/vnd.net.juniper.space.script-management.exec-remove+xml;version=2;charset=UTF-8'
+                request_template: 'exec_remove_scripts.tpl'
+                response_type: 'application/vnd.net.juniper.space.script-management.exec-remove+xml;version=2'
+            exec_scripts:
+                name: 'exec-scripts'
+                request_type: 'application/vnd.net.juniper.space.script-management.exec-scripts+xml;version=2;charset=UTF-8'
+                request_template: 'exec_scripts.tpl'
+                response_type: 'application/vnd.net.juniper.space.script-management.exec-scripts+xml;version=2'
+            exec_verify:
+                name: 'exec-verify'
+                request_type: 'application/vnd.net.juniper.space.script-management.exec-verify+xml;version=2;charset=UTF-8'
+                request_template: 'exec_verify_scripts.tpl'
+                response_type: 'application/vnd.net.juniper.space.script-management.exec-verify+xml;version=2'
+            scripts_by_context:
+                name: 'scripts-by-context'
+                request_type: 'application/vnd.net.juniper.space.script-management.filter-by-context+xml;version=2;charset=UTF-8'
+                request_template: 'scripts_by_context.tpl'
+                response_type: 'application/vnd.net.juniper.space.script-management.scripts+xml;version=2'
+
+resources:
+    script:
+        xml_name: 'script'
+        media_type: 'application/vnd.net.juniper.space.script-management.script+xml;version=1;charset=UTF-8'
+        collection_name: 'scripts'
+        service_url: '/api/space/script-management'
+        collections:
+            parameters:
+                xml_name: 'parameters'
+                media_type: 'application/vnd.net.juniper.space.script-management.script-parameters+xml;version=2'
+            view_associated_devices:
+                xml_name: 'view-associated-devices'
+                media_type: 'application/vnd.net.juniper.space.script-management.view-associated-devices+xml;version=2'
+            results:
+                xml_name: 'results'
+                media_type: 'application/vnd.net.juniper.space.script-management.scripts-results+xml;version=1'
+        methods:
+            contents:
+                name: 'contents'
+                media_type: 'application/vnd.net.juniper.space.script-management.script+xml;version=1'
+
+
+methods:
+...

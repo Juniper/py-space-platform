@@ -122,7 +122,8 @@ class Resource(object):
         else:
             url = self.get_href()
         response = self._rest_end_point.delete(url)
-        if response.status_code != 204 and response.status_code != 200:
+        if response.status_code != 204 and response.status_code != 200 and \
+           response.status_code != 202:
             raise rest.RestException("DELETE failed on %s" % url, response)
 
     def post(self, task_monitor=None, schedule=None, *args, **kwargs):
