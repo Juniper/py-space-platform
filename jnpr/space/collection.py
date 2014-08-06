@@ -114,6 +114,8 @@ class Collection(object):
         else:
             x = new_obj.form_xml()
 
+        saved_root_tag = x.tag
+
         if xml_name:
             x.tag = xml_name
 
@@ -129,8 +131,10 @@ class Collection(object):
             # Skip the <?xml> line to avoid encoding errors in lxml
             start = r.index('?><') + 2
             root = etree.fromstring(r[start:])
-            new_obj._xml_data = root
-            new_obj._rest_end_point = self._rest_end_point
+            #new_obj._xml_data = root
+            #new_obj._rest_end_point = self._rest_end_point
+            root.tag = saved_root_tag
+            new_obj = self._create_resource(root)
 
         return new_obj
 

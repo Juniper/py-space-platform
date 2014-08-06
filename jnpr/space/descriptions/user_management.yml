@@ -1,0 +1,117 @@
+---
+collections:
+    active_user_sessions:
+        xml_name: 'active-user-sessions'
+        media_type: 'application/vnd.net.juniper.space.user-management.active-user-sessions+xml;version=1'
+        url: '/api/space/user-management/active-user-sessions'
+        resource_type: 'user_management.active_user_session'
+
+    tasks:
+        xml_name: 'tasks'
+        media_type: 'application/vnd.net.juniper.space.user-management.tasks+xml;version=1'
+        url: '/api/space/user-management/tasks'
+        resource_type: 'user_management.task'
+
+    capabilities:
+        xml_name: 'capabilities'
+        media_type: 'application/vnd.net.juniper.space.user-management.capabilities+xml;version=1'
+        url: '/api/space/user-management/capabilities'
+        resource_type: 'user_management.capability'
+
+    roles:
+        xml_name: 'roles'
+        media_type: 'application/vnd.net.juniper.space.user-management.roles+xml;version=2'
+        url: '/api/space/user-management/roles'
+        resource_type: 'user_management.role'
+
+    profiles:
+        xml_name: 'profiles'
+        media_type: 'application/vnd.net.juniper.space.user-management.profiles+xml;version=1'
+        url: '/api/space/user-management/profiles'
+        resource_type: 'user_management.profile'
+
+    users:
+        xml_name: 'users'
+        media_type: 'application/vnd.net.juniper.space.user-management.users+xml;version=1'
+        url: '/api/space/user-management/users'
+        resource_type: 'user_management.user'
+
+resources:
+    active_user_session:
+        xml_name: 'active-user-session'
+        media_type: 'application/vnd.net.juniper.space.user-management.active-user-session+xml;version=1'
+        collection_name: 'active_user_sessions'
+        service_url: '/api/space/user-management'
+
+    task:
+        xml_name: 'task'
+        media_type: 'application/vnd.net.juniper.space.user-management.task+xml;version=1'
+        collection_name: 'tasks'
+        service_url: '/api/space/user-management'
+
+    capability:
+        xml_name: 'capability'
+        media_type: 'application/vnd.net.juniper.space.user-management.capability+xml;version=1'
+        collection_name: 'capabilities'
+        service_url: '/api/space/user-management'
+        collections:
+            roles:
+                xml_name: 'roles'
+                media_type: 'application/vnd.net.juniper.space.user-management.roles-ref+xml;version=1'
+                resource_type: 'user_management.role'
+            tasks:
+                xml_name: 'tasks'
+                media_type: 'application/vnd.net.juniper.space.user-management.tasks-ref+xml;version=1'
+                resource_type: 'user_management.task'
+
+    role:
+        xml_name: 'role'
+        media_type: 'application/vnd.net.juniper.space.user-management.role+xml;version=1'
+        collection_name: 'roles'
+        service_url: '/api/space/user-management'
+        collections:
+            capabilities:
+                xml_name: 'capabilities'
+                media_type: 'application/vnd.net.juniper.space.user-management.capabilities-ref+xml;version=1'
+                resource_type: 'user_management.capability'
+
+    profile:
+        xml_name: 'profile'
+        media_type: 'application/vnd.net.juniper.space.user-management.profile+xml;version=1;charset=UTF-8'
+        collection_name: 'profiles'
+        service_url: '/api/space/user-management'
+        collections:
+            roles:
+                xml_name: 'roles'
+                media_type: 'application/vnd.net.juniper.space.user-management.roles-ref+xml;version=1'
+                resource_type: 'user_management.role'
+
+    user:
+        xml_name: 'user'
+        media_type: 'application/vnd.net.juniper.space.user-management.user+xml;version=1;charset=UTF-8'
+        collection_name: 'users'
+        service_url: '/api/space/user-management'
+        collections:
+            roles:
+                xml_name: 'roles'
+                media_type: 'application/vnd.net.juniper.space.user-management.roles-ref+xml;version=1;charset=UTF-8'
+                resource_type: 'user_management.role'
+            active_user_sessions:
+                xml_name: 'active-user-sessions'
+                media_type: 'application/vnd.net.juniper.space.user-management.active-user-sessions-ref+xml;version=1'
+                resource_type: 'user_management.active_user_session'
+
+        methods:
+            change_password:
+                name: 'change-password'
+                request_type: 'application/vnd.net.juniper.space.user-management.change-password+xml;version=1;charset=UTF-8'
+                request_template: 'change_password.tpl'
+                response_type: 'application/vnd.net.juniper.space.user-management.change-password+xml;version=1;charset=UTF-8'
+            change_password_to_temp:
+                name: 'change-password'
+                request_type: 'application/vnd.net.juniper.space.user-management.change-password-to-temp+xml;version=3;charset=UTF-8'
+                request_template: 'change_password_to_temp.tpl'
+                response_type: 'application/vnd.net.juniper.space.user-management.password+xml;version=3;q=0.03'
+
+methods:
+...
