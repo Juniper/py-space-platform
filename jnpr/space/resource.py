@@ -215,13 +215,14 @@ def get_meta_object(full_name, type_name, values):
     if full_name in _meta_resources:
         return _meta_resources[full_name]
 
-    m = MetaResource(type_name, values)
+    m = MetaResource(full_name.split('.')[0], type_name, values)
     _meta_resources[full_name] = m
     return m
 
 class MetaResource(object):
 
-    def __init__(self, key, values):
+    def __init__(self, service_name, key, values):
+        self.service_name = service_name
         self.key = key
         self.name = values['name'] \
             if ('name' in values) else None
@@ -261,7 +262,7 @@ class MetaResource(object):
             from jnpr.space import method
             for key in values['methods']:
                 value = values['methods'][key]
-                mObj = method.get_meta_object(key, value)
+                mObj = method.get_meta_object(service_name, key, value)
                 self.methods[key] = mObj
         except KeyError:
             pass
@@ -271,8 +272,8 @@ class MetaResource(object):
             from jnpr.space import collection
             return collection.Collection(service, name, self.collections[name])
 
-    def create_method(self, service, name):
+    def create_method(self, resrc, name):
         if name in self.methods:
             from jnpr.space import method
-            mObj = method.get_meta_object(name, self.methods[name])
-            return method.Method(service, name, mObj)
+            mObj = method.get_meta_object(self.service_name, name, self.methods[name])
+            return method.Method(resrc, name, mObj)

@@ -61,7 +61,7 @@ class MetaService(object):
     def create_method(self, service, name):
         if name in self._meta_methods:
             from jnpr.space import method
-            mObj = method.get_meta_object(name, self._meta_methods[name])
+            mObj = method.get_meta_object(service._name, name, self._meta_methods[name])
             return method.Method(service, name, mObj)
 
     def get_meta_resource(self, name):

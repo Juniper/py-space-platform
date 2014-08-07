@@ -220,7 +220,7 @@ class MetaCollection(object):
     def create_method(self, service, name):
         if name in self.methods:
             from jnpr.space import method
-            mObj = method.get_meta_object(name, self.methods[name])
+            mObj = method.get_meta_object(service._name, name, self.methods[name])
             return method.Method(service, name, mObj)
 
 

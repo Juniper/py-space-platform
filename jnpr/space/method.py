@@ -76,10 +76,11 @@ class MetaMethod(object):
 
 _meta_methods = {}
 
-def get_meta_object(method_name, values):
-    if method_name in _meta_methods:
-        return _meta_methods[method_name]
+def get_meta_object(service_name, method_name, values):
+    fullname = '.'.join([service_name, method_name])
+    if fullname in _meta_methods:
+        return _meta_methods[fullname]
 
     m = MetaMethod(method_name, values)
-    _meta_methods[method_name] = m
+    _meta_methods[fullname] = m
     return m
