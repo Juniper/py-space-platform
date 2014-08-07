@@ -50,10 +50,13 @@ class Collection(object):
                 return []
             raise rest.RestException("GET failed on %s" % url, response)
 
-        r = response.text
+        # Fixing issue #17
+        #r = response.text
         # Skip the <?xml> line to avoid encoding errors in lxml
-        start = r.index('?><') + 2
-        root = etree.fromstring(r[start:])
+        #start = r.index('?><') + 2
+        #root = etree.fromstring(r[start:])
+
+        root = etree.fromstring(response.content)
 
         if self.meta_object.named_members:
             for key, value in self.meta_object.named_members.iteritems():
@@ -127,10 +130,12 @@ class Collection(object):
                                      response)
 
         if not isinstance(new_obj, list):
-            r = response.text
+            # Fixing issue #17
+            #r = response.text
             # Skip the <?xml> line to avoid encoding errors in lxml
-            start = r.index('?><') + 2
-            root = etree.fromstring(r[start:])
+            #start = r.index('?><') + 2
+            #root = etree.fromstring(r[start:])
+            root = etree.fromstring(response.content)
             #new_obj._xml_data = root
             #new_obj._rest_end_point = self._rest_end_point
             root.tag = saved_root_tag

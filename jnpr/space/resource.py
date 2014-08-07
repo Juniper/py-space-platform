@@ -89,11 +89,6 @@ class Resource(object):
 
         r = response.text
         return xmlutil.xml2obj(r)
-        # Skip the <?xml> line to avoid encoding errors in lxml
-        #start = r.index('?><') + 2
-        #xml_data = etree.fromstring(r[start:])
-
-        #return self.__class__(self._type_name, self._rest_end_point, xml_data)
 
     def put(self, new_val_obj = None):
         if new_val_obj is not None:
@@ -110,10 +105,12 @@ class Resource(object):
             raise rest.RestException("PUT failed on %s" % self.get_href(),
                                      response)
 
-        r = response.text
+        # Fixing issue #17
+        #r = response.text
         # Skip the <?xml> line to avoid encoding errors in lxml
-        start = r.index('?><') + 2
-        root = etree.fromstring(r[start:])
+        #start = r.index('?><') + 2
+        #root = etree.fromstring(r[start:])
+        root = etree.fromstring(response.content)
         self._xml_data = root
 
     def delete(self):
