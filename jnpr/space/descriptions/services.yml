@@ -32,6 +32,10 @@ services:
         service_name: 'user-management'
         url: '/api/space/user-management'
 
+    domain_management:
+        service_name: 'domain-management'
+        url: '/api/space/domain-management'
+
     managed_domain:
         service_name: 'managed-domain'
         url: '/api/space/managed-domain'

@@ -1,0 +1,40 @@
+---
+collections:
+    domains:
+        xml_name: 'domain'
+        single_object_collection: True
+        media_type: 'application/vnd.net.juniper.space.domain-management.domain+xml;version=1'
+        url: '/api/space/domain-management/domains'
+        resource_type: 'domain_management.domain'
+
+resources:
+    domain:
+        xml_name: 'domain'
+        media_type: 'application/vnd.net.juniper.space.domain-management.domain+xml;version=1'
+        collection_name: 'domains'
+        service_url: '/api/space/domain-management'
+        collections:
+            users:
+                xml_name: 'users'
+                media_type: 'application/vnd.net.juniper.space.domain-management.user-refs+xml;version=1'
+                resource_type: 'domain_management.user_ref'
+            devices:
+                xml_name: 'devices'
+                resource_type: 'domain_management.device_ref'
+
+    user_ref:
+        xml_name: 'user'
+        media_type: 'application/vnd.net.juniper.space.domain-management.user-ref+xml;version=1;charset=UTF-8'
+        collection_name: 'users'
+        service_url: '/api/space/domain-management'
+        use_uri_for_delete: true
+
+    device_ref:
+        xml_name: 'device'
+        media_type: 'application/vnd.net.juniper.space.domain-management.device-ref+xml;version=1;charset=UTF-8'
+        collection_name: 'devices'
+        service_url: '/api/space/domain-management'
+        use_uri_for_delete: true
+
+methods:
+...

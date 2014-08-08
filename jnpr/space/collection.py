@@ -58,7 +58,9 @@ class Collection(object):
 
         root = etree.fromstring(response.content)
 
-        if self.meta_object.named_members:
+        if self.meta_object.single_object_collection:
+            resource_list.append(self._create_resource(root))
+        elif self.meta_object.named_members:
             for key, value in self.meta_object.named_members.iteritems():
                 r = self._create_named_resource(key, value,root)
                 r.id = key
@@ -91,7 +93,7 @@ class Collection(object):
             from jnpr.space import resource
             return resource.Resource(type_name=self.meta_object.resource_type,
                                  rest_end_point=self._rest_end_point,
-                                 xml_data=xml_data)
+                                 xml_data=xml_data, parent=self)
         else:
             from jnpr.space import xmlutil
             s = etree.tostring(xml_data)
@@ -125,7 +127,11 @@ class Collection(object):
         response = self._rest_end_point.post(self.get_href(),
                                              headers,
                                              etree.tostring(x))
-        if (response.status_code != 202) and (response.status_code != 200):
+
+        if response.status_code == 204: # Special case of post with null response
+            return new_obj
+
+        if response.status_code not in [200, 202]:
             raise rest.RestException("POST failed on %s" % self.get_href(),
                                      response)
 
@@ -209,6 +215,8 @@ class MetaCollection(object):
         self.key = key
         self.name = values['name'] \
             if ('name' in values) else None
+        self.single_object_collection = values['single_object_collection'] \
+            if ('single_object_collection' in values) else False
         self.xml_name = values['xml_name'] \
             if ('xml_name' in values) else None
         self.media_type = values['media_type'] \
@@ -220,7 +228,7 @@ class MetaCollection(object):
         self.named_members = values['named_members'] \
             if ('named_members' in values) else {}
         self.methods = values['methods'] \
-            if ('methods' in values) else None
+            if ('methods' in values) else {}
 
     def create_method(self, service, name):
         if name in self.methods:

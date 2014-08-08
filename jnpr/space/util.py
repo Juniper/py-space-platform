@@ -14,3 +14,6 @@ def get_class_def(class_name):
 
 def make_xml_name(attr_name):
     return attr_name.replace('_', '-')
+
+def unmake_xml_name(attr_name):
+    return attr_name.replace('-', '_')

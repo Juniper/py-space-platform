@@ -28,6 +28,7 @@ class Resource(object):
                 e = Exception('Invalid xml object for this resource!')
                 e.ignore = True
                 raise e
+            self._xml_data = xmlutil.xml2obj(etree.tostring(xml_data))
 
     def _init_meta_data(self, rest_end_point, type_name):
         parts = type_name.split('.')
@@ -64,6 +65,10 @@ class Resource(object):
             self._methods[attr] = method
             return method
 
+        return self._xml_data.__getattr__(attr)
+
+        """
+        Fix for issue #19
         xml_name = util.make_xml_name(attr)
 
         # Check if it is an element in xml data
@@ -77,6 +82,7 @@ class Resource(object):
             return val
         else:
             raise AttributeError("No attribute '%s'" % attr)
+        """
 
     def get_meta_object(self):
         return self._meta_object
@@ -110,12 +116,16 @@ class Resource(object):
         # Skip the <?xml> line to avoid encoding errors in lxml
         #start = r.index('?><') + 2
         #root = etree.fromstring(r[start:])
-        root = etree.fromstring(response.content)
-        self._xml_data = root
+        #root = etree.fromstring(response.content)
+
+        # Fixing issue #19 self._xml_data = root
+        self._xml_data = xmlutil.xml2obj(response.text)
 
     def delete(self):
         if self._meta_object.use_uri_for_delete:
             url = self.uri
+            if url is None:
+                url = '/'.join([self._parent.get_href(), self.id])
         else:
             url = self.get_href()
         response = self._rest_end_point.delete(url)
@@ -148,15 +158,21 @@ class Resource(object):
 
     def get_href(self):
         if self._xml_data is not None:
-            h = self._xml_data.get('href')
+            h = self._xml_data.href
+            # Fixing issue #19 h = self._xml_data.get('href')
             if h:
                 return h
+
+            u = self._xml_data.uri
+            if u and not u.endswith(self._meta_object.collection_name):
+                return u
 
         if self._parent:
             return '/'.join([self._parent.get_href(), str(self.id)])
 
+        """
         if self._xml_data is not None:
-            h = self._xml_data.get('uri')
+            h = self._xml_data.uri # Fixing issue #19 h = self._xml_data.get('uri')
             # Working around problems in Space API.
             # E.g. equipment-holder does not have href, but only uri
             if h and not h.endswith(self._meta_object.collection_name):
@@ -165,7 +181,7 @@ class Resource(object):
                 # POST response. But the uri does not end with the id
                 # of the tag!
                 return h
-
+        """
         return self._meta_object.service_url + "/" + self._meta_object.collection_name + "/" + str(self.id)
 
     def form_xml(self):
@@ -202,8 +218,6 @@ class Resource(object):
         return e
 
     def __str__(self):
-        if self._xml_data is not None:
-            return etree.tostring(self._xml_data)
         return pformat(self, depth=6)
 
 _meta_resources = {}

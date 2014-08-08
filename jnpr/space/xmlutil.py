@@ -113,3 +113,8 @@ if __name__ == '__main__':
     from pprint import pprint
     pprint(r)
     pprint (r.netConfReplies.netConfReply.replyMsgData)
+
+    print "New"
+
+    for i in r._attrs:
+        pprint(i)

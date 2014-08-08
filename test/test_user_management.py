@@ -19,6 +19,54 @@ class TestUserManagement:
         # Create a Space REST end point
         self.space = rest.Space(url, user, passwd)
 
+    def test_create_profile(self):
+        rls = self.space.user_management.roles.get()
+        assert len(rls) > 0
+
+        r = factory.make_resource(type_name='user_management.role',
+                                        rest_end_point=self.space)
+        r.href = rls[0].href
+
+        p = factory.make_resource(type_name='user_management.profile',
+                                        rest_end_point=self.space)
+        p.name = 'test_from_space_ez'
+        p.description = 'Test from space-ez'
+        p.roles = [r]
+
+        p = self.space.user_management.profiles.post(p)
+        assert p.roleType
+
+        rls = p.roles.get()
+        assert rls[0].href == r.href
+
+    def test_get_profiles(self):
+        prs = self.space.user_management.profiles.get()
+        assert len(prs) > 0, "No profiles on Space!"
+
+    def test_get_profile_details(self):
+        prs = self.space.user_management.profiles.get()
+        assert len(prs) > 0, "No profiles on Space!"
+
+        for r in prs[0:2]:
+            details = r.get()
+            assert details
+
+    def test_get_profile_roles(self):
+        prs = self.space.user_management.profiles.get()
+        assert len(prs) > 0, "No profiles on Space!"
+
+        for r in prs:
+            rls = r.roles.get()
+            assert rls
+            for r in rls:
+                details = r.get()
+                assert details.name
+
+    def test_delete_profile(self):
+        ps = self.space.user_management.profiles.get(filter_={'name':'test_from_space_ez'})
+        assert len(ps) == 1
+        ps[0].delete()
+
     def test_create_user(self):
         rls = self.space.user_management.roles.get()
         assert len(rls) > 0
@@ -169,51 +217,3 @@ class TestUserManagement:
             for cap in caps:
                 details = cap.get()
                 assert details.name
-
-    def test_create_profile(self):
-        rls = self.space.user_management.roles.get()
-        assert len(rls) > 0
-
-        r = factory.make_resource(type_name='user_management.role',
-                                        rest_end_point=self.space)
-        r.href = rls[0].href
-
-        p = factory.make_resource(type_name='user_management.profile',
-                                        rest_end_point=self.space)
-        p.name = 'test_from_space_ez'
-        p.description = 'Test from space-ez'
-        p.roles = [r]
-
-        p = self.space.user_management.profiles.post(p)
-        assert p.roleType
-
-        rls = p.roles.get()
-        assert rls[0].href == r.href
-
-    def test_get_profiles(self):
-        prs = self.space.user_management.profiles.get()
-        assert len(prs) > 0, "No profiles on Space!"
-
-    def test_get_profile_details(self):
-        prs = self.space.user_management.profiles.get()
-        assert len(prs) > 0, "No profiles on Space!"
-
-        for r in prs[0:2]:
-            details = r.get()
-            assert details
-
-    def test_get_profile_roles(self):
-        prs = self.space.user_management.profiles.get()
-        assert len(prs) > 0, "No profiles on Space!"
-
-        for r in prs:
-            rls = r.roles.get()
-            assert rls
-            for r in rls:
-                details = r.get()
-                assert details.name
-
-    def test_delete_profile(self):
-        ps = self.space.user_management.profiles.get(filter_={'name':'test_from_space_ez'})
-        assert len(ps) == 1
-        ps[0].delete()
