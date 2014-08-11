@@ -1,3 +1,5 @@
 requests
 lxml
+PyYAML
+pytest
 jinja2
