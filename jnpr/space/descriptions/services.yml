@@ -28,6 +28,10 @@ services:
         service_name: 'script-management'
         url: '/api/space/script-management'
 
+    software_management:
+        service_name: 'software-management'
+        url: '/api/space/software-management'
+
     user_management:
         service_name: 'user-management'
         url: '/api/space/user-management'

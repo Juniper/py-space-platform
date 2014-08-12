@@ -1,0 +1,42 @@
+---
+collections:
+    packages:
+        xml_name: 'packages'
+        media_type: 'application/vnd.net.juniper.space.software-management.packages+xml;version=1'
+        url: '/api/space/software-management/packages'
+        resource_type: 'software_management.package'
+
+resources:
+    package:
+        xml_name: 'package'
+        media_type: 'application/vnd.net.juniper.space.software-management.package+xml;version=1'
+        collection_name: 'packages'
+        service_url: '/api/space/software-management'
+        collections:
+            associated_devices:
+                xml_name: 'associated-devices'
+                media_type: 'application/vnd.net.juniper.space.software-management.associated-devices+xml;version=2'
+        methods:
+            exec_deploy:
+                name: 'exec-deploy'
+                request_type: 'application/vnd.net.juniper.space.software-management.exec-deploy+xml;version=1;charset=UTF-8 '
+                request_template: 'exec_deploy_package.tpl'
+                response_type: 'application/vnd.net.juniper.space.software-management.exec-deploy+xml;version=1'
+            exec_stage:
+                name: 'exec-stage'
+                request_type: 'application/vnd.net.juniper.space.software-management.exec-stage+xml;version=1;charset=UTF-8'
+                request_template: 'exec_stage_package.tpl'
+                response_type: 'application/vnd.net.juniper.space.software-management.exec-stage+xml;version=1'
+            exec_verify:
+                name: 'exec-verify'
+                request_type: 'application/vnd.net.juniper.space.software-management.exec-verify+xml;version=1;charset=UTF-8 '
+                request_template: 'exec_verify_package.tpl'
+                response_type: 'application/vnd.net.juniper.space.software-management.exec-verify+xml;version=1'
+            exec_remove:
+                name: 'exec-remove'
+                request_type: 'application/vnd.net.juniper.space.software-management.exec-remove+xml;version=1;charset=UTF-8 '
+                request_template: 'exec_remove_package.tpl'
+                response_type: 'application/vnd.net.juniper.space.software-management.exec-remove+xml;version=1'
+
+methods:
+...
