@@ -61,7 +61,7 @@ class TestConfigTemplates:
         for ct in cts:
             if ct.config_type == 'QUICK_TEMPLATE':
                 config = ct.configuration.get()
-                assert config.xml
+                assert config.xml or config.cli
 
     def test_deploy_test_template(self):
         cts = self.space.config_template_management.config_templates.get(filter_={'name': 'Space_EZ_Test_Quick_Template_1'})

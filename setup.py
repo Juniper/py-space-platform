@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(name='space-ez',
-      version='0.0.1-alpha',
+      version='0.0.2',
       author='Roshan Joyce',
       author_email='rjoyce@juniper.net',
       packages=find_packages(),

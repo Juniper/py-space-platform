@@ -2,7 +2,6 @@
 collections:
     domains:
         xml_name: 'domain'
-        single_object_collection: True
         media_type: 'application/vnd.net.juniper.space.domain-management.domain+xml;version=1'
         url: '/api/space/domain-management/domains'
         resource_type: 'domain_management.domain'

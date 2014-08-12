@@ -58,9 +58,7 @@ class Collection(object):
 
         root = etree.fromstring(response.content)
 
-        if self.meta_object.single_object_collection:
-            resource_list.append(self._create_resource(root))
-        elif self.meta_object.named_members:
+        if self.meta_object.named_members:
             for key, value in self.meta_object.named_members.iteritems():
                 r = self._create_named_resource(key, value,root)
                 r.id = key
@@ -215,8 +213,6 @@ class MetaCollection(object):
         self.key = key
         self.name = values['name'] \
             if ('name' in values) else None
-        self.single_object_collection = values['single_object_collection'] \
-            if ('single_object_collection' in values) else False
         self.xml_name = values['xml_name'] \
             if ('xml_name' in values) else None
         self.media_type = values['media_type'] \

@@ -63,7 +63,7 @@ class TestChangeRequests:
                                    </snmp>
                                  </configuration>''')
 
-        assert len(crs.change_request) > 0, "Did not get a result"
+        assert crs
 
     def test_multiple_change_requests_async(self):
         tm = async.TaskMonitor(self.space, 'test_cr_q')
