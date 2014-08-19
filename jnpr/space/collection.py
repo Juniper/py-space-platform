@@ -1,18 +1,32 @@
-'''
-Created on 23-Jun-2014
-
-@author: rjoyce
-'''
-
 from lxml import etree
 
 from jnpr.space import util
 from jnpr.space import rest
 
 class Collection(object):
-    """Encapsulates a collection of Space Resources"""
+    """
+    Represents a **collection** that is exposed by Junos Space REST API.
+    Some examples of collections are:
+
+    * The devices collection (``/api/space/device-management/devices``)
+    * The users collection (``/api/space/user-management/users``)
+    * The tags collection (``/api/space/tag-management/tags``)
+
+    """
 
     def __init__(self, parent, name, meta_object):
+        """Initializes a Collection object.
+
+        :param parent: The parent object of this collection. This defaults to
+            ``None``.
+        :type parent: jnpr.space.service.Service or jnpr.space.resource.Resource
+
+        :param str name: Name of this collection.
+
+        :param meta_object: Meta object for this collection.
+        :type meta_object: jnpr.space.collection.MetaCollection.
+
+        """
         self._parent = parent
         self._rest_end_point = parent._rest_end_point
         self._name = name
@@ -20,12 +34,29 @@ class Collection(object):
         self._methods = {}
 
     def get_href(self):
+        """
+        Gets the href for this collection. If the meta object has a ``url``
+        set, it is returned. Otherwise, it concatenates the href of the parent
+        object and the name of this collection to form the href and returns it.
+
+        :returns: The href of this collection.
+
+        """
         if self.meta_object.url:
             return self.meta_object.url
         else:
             return self._parent.get_href() + "/" + util.make_xml_name(self._name)
 
     def __getattr__(self, attr):
+        """
+        This method is overridden in the class so that named members and
+        methods contained by this collection can be accessed as *normal* Python
+        attributes of this object.
+
+        :param str attr: Name of the attribute being accessed.
+
+        :returns: Contained Resource (named member) or Method.
+        """
         if attr in self.meta_object.named_members:
             r = self._create_named_resource(attr,
                             self.meta_object.named_members[attr], None)
@@ -41,6 +72,34 @@ class Collection(object):
             return method
 
     def get(self, filter_=None, paging=None, sortby=None):
+        """Gets the contained resources of this collection from Space.
+
+        :param filter_: A filter expression to apply on the collection. This
+            can be given as a dict with name:value pairs to filter with. For
+            example, ``{'name':'user1'}``. Or this can be given as a string
+            which forms a valid filter expression for this collection as per
+            Junos Space API documentation.
+            This parameter defaults to ``None``.
+        :type filter_: str or dict
+
+        :param paging: A paging expression to apply on the collection. This
+            must be given as a dict with entries giving values for ``start``
+            and ``limit`` paging parameters. For example, ``{'start':10,
+            'limit':100}``.
+            This parameter defaults to ``None``.
+        :type paging: dict
+
+        :param sortby: A list of field names to sort the results by.
+            This parameter defaults to ``None``.
+        :type sortby: list of str
+
+        :returns: A list of ``jnpr.space.resource.Resource`` objects.
+
+        :raises: ``jnpr.space.rest.RestException`` if the GET method results in an
+            error response. The exception's ``response`` attribute will have the
+            full response from Space.
+
+        """
         url = self._form_get_url(filter_, paging, sortby)
 
         resource_list = []
@@ -77,6 +136,9 @@ class Collection(object):
         return resource_list
 
     def _create_named_resource(self, key, meta_object, xml_root):
+        """
+        Helper method to create a named resource under this collection.
+        """
         type_name = meta_object['resource_type']
         xml_data = xml_root.find(meta_object['xml_name']) \
             if xml_root is not None else None
@@ -87,6 +149,11 @@ class Collection(object):
                         parent=self)
 
     def _create_resource(self, xml_data):
+        """
+        Helper method to create a resource under this collection. This is used
+        to populate entries in the list returned by the get() method of this
+        collection.
+        """
         if self.meta_object.resource_type:
             from jnpr.space import resource
             return resource.Resource(type_name=self.meta_object.resource_type,
@@ -98,6 +165,40 @@ class Collection(object):
             return xmlutil.xml2obj(s)
 
     def post(self, new_obj, xml_name=None, content_type=None, accept=None):
+        """
+        Sends a POST request to the Space server to create a new Resource in
+        this collection.
+
+        :param new_obj: The new Resource that needs to be created as a member
+            of this collection.
+        :type new_obj: A single ``jnpr.space.resource.Resource`` instance
+            or a list of them.
+
+        :param str xml_name: Can be used to override the name of the top-level
+            XML element in the generated request body. This is useful in some
+            cases such as creating a quick config template.
+            This parameter defaults to ``None``.
+
+        :param str content_type: Can be used to override the *content-type*
+            header of the POST request. This is useful in some
+            cases such as creating a quick config template.
+            This parameter defaults to ``None``.
+
+        :param str accept: Can be used to override the *accept*
+            header of the POST request. This is useful in some
+            cases such as creating a quick config template.
+            This parameter defaults to ``None``.
+
+        :returns: If the new_obj parameter is a list, then the same list is
+            returned. Otherwise, this method creates a new Resource object
+            based on the state of the newly created resource, as extracted from
+            the POST response body.
+
+        :raises: ``jnpr.space.rest.RestException`` if the POST method results in
+            an error response. The exception's ``response`` attribute will have
+            the full response from Space.
+
+        """
         if content_type:
             media_type = content_type
         elif isinstance(new_obj, list):
@@ -148,6 +249,10 @@ class Collection(object):
         return new_obj
 
     def _form_get_url(self, filter_, paging, sortby):
+        """
+        Helper method to form the URL for a GET on this collection including
+        filtering, paging, and sortby clauses.
+        """
         url = self.get_href()
 
         f, p, s = None, None, None
@@ -174,6 +279,10 @@ class Collection(object):
         return url
 
     def _stringify_filter(self, filter_):
+        """
+        Helper method to stringify the given filter_ parameter and form a
+        proper filter clause for the GET URL.
+        """
         if isinstance(filter_, basestring):
             return ''.join(['filter=(', filter_, ')'])
 
@@ -190,6 +299,10 @@ class Collection(object):
             return ''.join(filter_list)
 
     def _stringify_paging(self, paging):
+        """
+        Helper method to stringify the given paging parameters and form a
+        proper paging clause for the GET URL.
+        """
         start, limit = None, None
         if 'start' in paging:
             start = 'start eq %d' % paging['start']
@@ -206,10 +319,26 @@ class Collection(object):
         return pg_str
 
     def _stringify_sortby(self, field_list):
+        """
+        Helper method to stringify the given sortby parameters and form a
+        proper sortby clause for the GET URL.
+        """
         return 'sortby=(%s)' % ','.join(field_list)
 
 class MetaCollection(object):
+    """ Encapsulates the meta data for a collection type.
+    """
+
     def __init__(self, key, values):
+        """Initializes a MetaCollection object.
+
+        :param str key: Name of the collection.
+
+        :param dict values:  Attribute value settings which form the meta data
+            for this collection. This is read from the descriptions yml file for
+            the corresponding service.
+
+        """
         self.key = key
         self.name = values['name'] \
             if ('name' in values) else None
@@ -227,15 +356,38 @@ class MetaCollection(object):
             if ('methods' in values) else {}
 
     def create_method(self, service, name):
+        """Creates a method object corresponding to the given service and
+        name.
+
+        :param str service: Name of the parent service.
+        :param str name: Name of the method.
+
+        :returns: A ``jnpr.space.method.Method`` object.
+
+        """
         if name in self.methods:
             from jnpr.space import method
             mObj = method.get_meta_object(service._name, name, self.methods[name])
             return method.Method(service, name, mObj)
 
-
+"""
+A dictionary that acts as a cache for meta objects representing collections.
+Keys are collection names. Values are instances of
+jnpr.space.collection.MetaCollection.
+"""
 _meta_collections = {}
 
 def get_meta_object(coll_name, values):
+    """Looks up the meta object for a collection based on its name.
+
+    :param str coll_name: Name of the collection.
+    :param dict values:  Attribute value settings which form the meta data
+            for this collection. This is read from the descriptions yml file for
+            the corresponding service.
+
+    :returns: A ``jnpr.space.resource.MetaCollection`` object.
+
+    """
     if coll_name in _meta_collections:
         return _meta_collections[coll_name]
 

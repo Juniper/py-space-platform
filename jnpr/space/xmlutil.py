@@ -1,21 +1,50 @@
-'''
-Recipe copied from:
-    http://code.activestate.com/recipes/534109-xml-to-python-data-structure/
+"""
+A module with utility functions for XML handling.
 
-@author: Wai Yip Tung
-
-'''
+"""
 import re
 import xml.sax.handler
 
+def make_xml_name(attr_name):
+    """ Convert an attribute name to its XML equivalent by replacing
+    all '_' with '-'. CamelCase names are retained as such.
+
+    :param str attr_name: Name of the attribute
+
+    :returns: Attribute name in XML format.
+    """
+    return attr_name.replace('_', '-')
+
+def unmake_xml_name(attr_name):
+    """ Convert an XML attribute name to its pythonic equivalent by replacing
+    all '-' with '_'. CamelCase names are retained as such.
+
+    :param str attr_name: Name of the attribute
+
+    :returns: Attribute name in pythonic format.
+    """
+    return attr_name.replace('-', '_')
+
 def cleanup(src):
+    """
+    Some responses from Space contains escaped form for XML special characters.
+    E.g. '&lt;' for '<', etc. This method removes these escaped notations.
+
+    :param str src: Source string
+
+    :returns: String with escaped notations replaced.
+    """
     xml = src.replace('&lt;', '<').replace('&gt;', '>')
     xml = xml.replace('&quot;', '"')
     return xml
 
 def xml2obj(src):
     """
-    A simple function to converts XML data into native Python object.
+    A simple function to convert XML data into native Python object.
+    Code copied from recipe at:
+    http://code.activestate.com/recipes/534109-xml-to-python-data-structure/
+
+    @author: Wai Yip Tung
     """
 
     non_id_char = re.compile('[^_0-9a-zA-Z]')

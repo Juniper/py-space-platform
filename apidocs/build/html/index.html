@@ -1,0 +1,1164 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>SpaceEZ APIs &mdash; SpaceEZ v0.0.2 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     'v0.0.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="SpaceEZ v0.0.2 documentation" href="#" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="#">SpaceEZ v0.0.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="spaceez-apis">
+<h1>SpaceEZ APIs<a class="headerlink" href="#spaceez-apis" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="class-index">
+<h2>Class Index<a class="headerlink" href="#class-index" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#jnpr.space.rest.Space" title="jnpr.space.rest.Space"><tt class="xref py py-obj docutils literal"><span class="pre">jnpr.space.rest.Space</span></tt></a>(url,&nbsp;user,&nbsp;passwd)</td>
+<td>Encapsulates a Junos Space cluster and provides access to all RESTful web-service APIs provided by Space.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#jnpr.space.resource.Resource" title="jnpr.space.resource.Resource"><tt class="xref py py-obj docutils literal"><span class="pre">jnpr.space.resource.Resource</span></tt></a>(type_name,&nbsp;...)</td>
+<td>Represents a <strong>resource</strong> that is exposed by Junos Space REST API.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#jnpr.space.collection.Collection" title="jnpr.space.collection.Collection"><tt class="xref py py-obj docutils literal"><span class="pre">jnpr.space.collection.Collection</span></tt></a>(parent,&nbsp;...)</td>
+<td>Represents a <strong>collection</strong> that is exposed by Junos Space REST API.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#jnpr.space.method.Method" title="jnpr.space.method.Method"><tt class="xref py py-obj docutils literal"><span class="pre">jnpr.space.method.Method</span></tt></a>(parent,&nbsp;name,&nbsp;mobj)</td>
+<td>Represents a <strong>method</strong> that is exposed by Junos Space REST API.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#jnpr.space.service.Service" title="jnpr.space.service.Service"><tt class="xref py py-obj docutils literal"><span class="pre">jnpr.space.service.Service</span></tt></a>(rest_end_point,&nbsp;...)</td>
+<td>Represents a <strong>service</strong> that is exposed by Junos Space REST API.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#jnpr.space.async.TaskMonitor" title="jnpr.space.async.TaskMonitor"><tt class="xref py py-obj docutils literal"><span class="pre">jnpr.space.async.TaskMonitor</span></tt></a>(rest_end_point,&nbsp;...)</td>
+<td>Encapsulates the logic required to monitor the progress of tasks</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="module-index">
+<h2>Module Index<a class="headerlink" href="#module-index" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#module-jnpr.space.factory" title="jnpr.space.factory"><tt class="xref py py-obj docutils literal"><span class="pre">jnpr.space.factory</span></tt></a></td>
+<td>A module with functions using which new resource objects can be created.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#module-jnpr.space.xmlutil" title="jnpr.space.xmlutil"><tt class="xref py py-obj docutils literal"><span class="pre">jnpr.space.xmlutil</span></tt></a></td>
+<td>A module with utility functions for XML handling.</td>
+</tr>
+</tbody>
+</table>
+<div class="toctree-wrapper compound">
+<ul class="simple">
+</ul>
+</div>
+</div>
+<div class="section" id="module-jnpr.space.rest">
+<span id="rest"></span><h2>Rest<a class="headerlink" href="#module-jnpr.space.rest" title="Permalink to this headline">¶</a></h2>
+<dl class="exception">
+<dt id="jnpr.space.rest.RestException">
+<em class="property">exception </em><tt class="descclassname">jnpr.space.rest.</tt><tt class="descname">RestException</tt><big>(</big><em>message</em>, <em>response</em><big>)</big><a class="headerlink" href="#jnpr.space.rest.RestException" title="Permalink to this definition">¶</a></dt>
+<dd><p>An exception that is raised when a REST API invocation returns a response
+indicating an error. The exception contains the complete response inside.</p>
+<dl class="docutils">
+<dt>Attributes:</dt>
+<dd>response: The response object (<a class="reference external" href="http://docs.python-requests.org/en/latest/api/#requests.Response/">requests.Response</a>)                   which resulted in this exception.</dd>
+</dl>
+<dl class="attribute">
+<dt id="jnpr.space.rest.RestException.__weakref__">
+<tt class="descname">__weakref__</tt><a class="headerlink" href="#jnpr.space.rest.RestException.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="jnpr.space.rest.Space">
+<em class="property">class </em><tt class="descclassname">jnpr.space.rest.</tt><tt class="descname">Space</tt><big>(</big><em>url</em>, <em>user</em>, <em>passwd</em><big>)</big><a class="headerlink" href="#jnpr.space.rest.Space" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encapsulates a Junos Space cluster and provides access to all RESTful
+web-service APIs provided by Space. An instance of this class is also
+referred to as a <em>&#8216;rest end point&#8217;</em> in this documentation.</p>
+<dl class="method">
+<dt id="jnpr.space.rest.Space.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>url</em>, <em>user</em>, <em>passwd</em><big>)</big><a class="headerlink" href="#jnpr.space.rest.Space.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an instance of this class to represent a Junos Space cluster.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>url</strong> (<em>str</em>) &#8211; URL of the Junos Space cluster using its VIP address.
+E.g. <a class="reference external" href="https:/">https:/</a>/&lt;VIP&gt;</li>
+<li><strong>user</strong> (<em>str</em>) &#8211; A valid userid for invoking APIs on this Space cluster.</li>
+<li><strong>passwd</strong> (<em>str</em>) &#8211; Password for the userid.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">An instance of this class encapsulating the Junos Space
+cluster whose <strong>url</strong> was given as a parameter. It can be
+used to access all APIs provided by Space.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="jnpr.space.rest.Space.delete">
+<tt class="descname">delete</tt><big>(</big><em>delete_url</em><big>)</big><a class="headerlink" href="#jnpr.space.rest.Space.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs an HTTP DELETE on the given url. Acts as a wrapper over
+requests.delete() function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>url</strong> (<em>str</em>) &#8211; URL for performing DELETE</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The response object (<a class="reference external" href="http://docs.python-requests.org/en/latest/api/#requests.Response/">requests.Response</a>)
+returned by the POST request.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="jnpr.space.rest.Space.get">
+<tt class="descname">get</tt><big>(</big><em>url</em>, <em>headers={}</em><big>)</big><a class="headerlink" href="#jnpr.space.rest.Space.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs an HTTP GET on the given url. Acts as a wrapper over
+requests.get() function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>url</strong> (<em>str</em>) &#8211; URL for performing GET</li>
+<li><strong>headers</strong> (<em>dict</em>) &#8211; A dict with the headers that need to be sent with
+the GET request. Defaults to <tt class="docutils literal"><span class="pre">{}</span></tt>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><p>The response object (<a class="reference external" href="http://docs.python-requests.org/en/latest/api/#requests.Response/">requests.Response</a>)
+returned by the GET request.</p>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="jnpr.space.rest.Space.head">
+<tt class="descname">head</tt><big>(</big><em>url</em>, <em>headers={}</em><big>)</big><a class="headerlink" href="#jnpr.space.rest.Space.head" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs an HTTP HEAD on the given url. Acts as a wrapper over
+requests.head() function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>url</strong> (<em>str</em>) &#8211; URL for performing HEAD</li>
+<li><strong>headers</strong> (<em>dict</em>) &#8211; A dict with the headers that need to be sent with
+the HEAD request. Defaults to <tt class="docutils literal"><span class="pre">{}</span></tt>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><p>The response object (<a class="reference external" href="http://docs.python-requests.org/en/latest/api/#requests.Response/">requests.Response</a>)
+returned by the HEAD request.</p>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="jnpr.space.rest.Space.post">
+<tt class="descname">post</tt><big>(</big><em>url</em>, <em>headers</em>, <em>body</em><big>)</big><a class="headerlink" href="#jnpr.space.rest.Space.post" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs an HTTP POST on the given url. Acts as a wrapper over
+requests.post() function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>url</strong> (<em>str</em>) &#8211; URL for performing POST</li>
+<li><strong>headers</strong> (<em>dict</em>) &#8211; A dict with the headers that need to be sent with
+the POST request. This is a mandatory parameter.</li>
+<li><strong>body</strong> (<em>str</em>) &#8211; A string that forms the body of the POST request.
+This is a mandatory parameter.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><p>The response object (<a class="reference external" href="http://docs.python-requests.org/en/latest/api/#requests.Response/">requests.Response</a>)
+returned by the POST request.</p>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="jnpr.space.rest.Space.put">
+<tt class="descname">put</tt><big>(</big><em>put_url</em>, <em>headers</em>, <em>body</em><big>)</big><a class="headerlink" href="#jnpr.space.rest.Space.put" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs an HTTP PUT on the given url. Acts as a wrapper over
+requests.put() function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>url</strong> (<em>str</em>) &#8211; URL for performing PUT</li>
+<li><strong>headers</strong> (<em>dict</em>) &#8211; A dict with the headers that need to be sent with
+the PUT request. This is a mandatory parameter.</li>
+<li><strong>body</strong> (<em>str</em>) &#8211; A string that forms the body of the PUT request.
+This is a mandatory parameter.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><p>The response object (<a class="reference external" href="http://docs.python-requests.org/en/latest/api/#requests.Response/">requests.Response</a>)
+returned by the PUT request.</p>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-jnpr.space.resource">
+<span id="resource"></span><h2>Resource<a class="headerlink" href="#module-jnpr.space.resource" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="jnpr.space.resource.MetaResource">
+<em class="property">class </em><tt class="descclassname">jnpr.space.resource.</tt><tt class="descname">MetaResource</tt><big>(</big><em>service_name</em>, <em>key</em>, <em>values</em><big>)</big><a class="headerlink" href="#jnpr.space.resource.MetaResource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encapsulates the meta data for a resource type.</p>
+<dl class="method">
+<dt id="jnpr.space.resource.MetaResource.create_collection">
+<tt class="descname">create_collection</tt><big>(</big><em>service</em>, <em>name</em><big>)</big><a class="headerlink" href="#jnpr.space.resource.MetaResource.create_collection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a collection object corresponding to the given service and
+name.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>service</strong> (<em>str</em>) &#8211; Name of the parent service.</li>
+<li><strong>name</strong> (<em>str</em>) &#8211; Name of the collection.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A <tt class="docutils literal"><span class="pre">jnpr.space.collection.Collection</span></tt> object.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="jnpr.space.resource.MetaResource.create_method">
+<tt class="descname">create_method</tt><big>(</big><em>resrc</em>, <em>name</em><big>)</big><a class="headerlink" href="#jnpr.space.resource.MetaResource.create_method" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a method object corresponding to the given service and
+name.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>service</strong> (<em>str</em>) &#8211; Name of the parent service.</li>
+<li><strong>name</strong> (<em>str</em>) &#8211; Name of the method.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A <tt class="docutils literal"><span class="pre">jnpr.space.method.Method</span></tt> object.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="jnpr.space.resource.Resource">
+<em class="property">class </em><tt class="descclassname">jnpr.space.resource.</tt><tt class="descname">Resource</tt><big>(</big><em>type_name</em>, <em>rest_end_point</em>, <em>xml_data=None</em>, <em>attributes=None</em>, <em>parent=None</em><big>)</big><a class="headerlink" href="#jnpr.space.resource.Resource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a <strong>resource</strong> that is exposed by Junos Space REST API.
+Some examples of resources are:</p>
+<ul class="simple">
+<li>A device (<tt class="docutils literal"><span class="pre">/api/space/device-management/devices/{id}</span></tt>)</li>
+<li>Configuration of a device       (<tt class="docutils literal"><span class="pre">/api/space/device-management/devices/{id}/configurations/raw</span></tt>)</li>
+<li>A user (<tt class="docutils literal"><span class="pre">/api/space/user-management/users/{id}</span></tt>)</li>
+<li>A tag (<tt class="docutils literal"><span class="pre">/api/space/tag-management/tags/{id}</span></tt>)</li>
+</ul>
+<dl class="method">
+<dt id="jnpr.space.resource.Resource.delete">
+<tt class="descname">delete</tt><big>(</big><big>)</big><a class="headerlink" href="#jnpr.space.resource.Resource.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes this resource on Space by sending a DELETE request with the
+url of this resource.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><tt class="docutils literal"><span class="pre">None</span></tt></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><tt class="docutils literal"><span class="pre">jnpr.space.rest.RestException</span></tt> if the DELETE method results
+in an error response. The exception&#8217;s <tt class="docutils literal"><span class="pre">response</span></tt> attribute will
+have the full response from Space.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="jnpr.space.resource.Resource.form_xml">
+<tt class="descname">form_xml</tt><big>(</big><big>)</big><a class="headerlink" href="#jnpr.space.resource.Resource.form_xml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forms an XML representation of the state of this resource based on
+its attribute values.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An <tt class="docutils literal"><span class="pre">lxml.etree.Element</span></tt> object representing the state of
+this resource.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="jnpr.space.resource.Resource.get">
+<tt class="descname">get</tt><big>(</big><big>)</big><a class="headerlink" href="#jnpr.space.resource.Resource.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the current state of this resource from Space.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The current state of this resource fetched from Space and
+represented as a Python object. You can access the fields of the
+resource&#8217;s state directly as attributes of this object.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><tt class="docutils literal"><span class="pre">jnpr.space.rest.RestException</span></tt> if the GET method results in an
+error response. The exception&#8217;s <tt class="docutils literal"><span class="pre">response</span></tt> attribute will have the
+full response from Space.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="jnpr.space.resource.Resource.get_href">
+<tt class="descname">get_href</tt><big>(</big><big>)</big><a class="headerlink" href="#jnpr.space.resource.Resource.get_href" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the href for this resource. If <tt class="docutils literal"><span class="pre">href</span></tt> is available as an attr
+inside _xml_data, it is returned. Otherwise, this method checks if
+_xml_data has a valid <tt class="docutils literal"><span class="pre">uri</span></tt> attr and if so, returns that. Otherwise,
+it checks if the _parent reference is set and if yes, it will concat
+the parent&#8217;s href with the <tt class="docutils literal"><span class="pre">id</span></tt> attr from _xml_data. If all this
+fail, then it concatentates <tt class="docutils literal"><span class="pre">service_url</span></tt> and <tt class="docutils literal"><span class="pre">collection_name</span></tt>
+from its meta object and appends the <tt class="docutils literal"><span class="pre">id</span></tt> attr from _xml_data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The href of this resource.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="jnpr.space.resource.Resource.get_meta_object">
+<tt class="descname">get_meta_object</tt><big>(</big><big>)</big><a class="headerlink" href="#jnpr.space.resource.Resource.get_meta_object" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the meta object which holds meta data for this resource.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><tt class="docutils literal"><span class="pre">jnpr.space.resource.MetaResource</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="jnpr.space.resource.Resource.post">
+<tt class="descname">post</tt><big>(</big><em>task_monitor=None</em>, <em>schedule=None</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#jnpr.space.resource.Resource.post" title="Permalink to this definition">¶</a></dt>
+<dd><p>Some resources support the POST method. For example, the configuration
+of a device supports the POST method which can be used to fetch
+selected portions of the configuration based on xpath expressions.
+On such resources, this method can be used to send the POST request.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>task_monitor</strong> (<a class="reference internal" href="#jnpr.space.async.TaskMonitor" title="jnpr.space.async.TaskMonitor"><em>jnpr.space.async.TaskMonitor</em></a>) &#8211; A TaskMonitor object that can be used to monitor
+the progress of the POST request, in case of asynchronous
+invocations. You need to check Junos Space API documentation to
+see if the POST invocation on this resource has asynchronous
+semantics and supply the task_monitor parameter only if it is
+asynchronous. Otherwise, this will default to <tt class="docutils literal"><span class="pre">None</span></tt> and the
+method will behave with synchronous semantics.</li>
+<li><strong>schedule</strong> (<em>str</em>) &#8211; A string specifying a cron expression for
+scheduling the execution of the request on the Space server side.
+This is applicable only if the POST invocation on this resource
+has asynchronous semantics and you want to schedule the execution.
+Otherwise, this will default to <tt class="docutils literal"><span class="pre">None</span></tt>.</li>
+<li><strong>kwargs</strong> (<em>A variable list of name=value arguments.</em>) &#8211; Keyword args of the form name=value which will be used
+to substitute variables in a pre-defined template (if applicable)
+to form the request body.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A Python object constructed from the response body that Space
+returned for the POST method invocation. In the case of asynchronous
+invocation, this will represent a Task object and will contain the
+unique id of the Task executing the POST request in Space.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><tt class="docutils literal"><span class="pre">jnpr.space.rest.RestException</span></tt> if the POST method results in
+an error response. The exception&#8217;s <tt class="docutils literal"><span class="pre">response</span></tt> attribute will have
+the full response from Space.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="jnpr.space.resource.Resource.put">
+<tt class="descname">put</tt><big>(</big><em>new_val_obj=None</em><big>)</big><a class="headerlink" href="#jnpr.space.resource.Resource.put" title="Permalink to this definition">¶</a></dt>
+<dd><p>Modifies the state of this resource on Space by sending a PUT request
+with the new state. The attributes of <em>new_val_obj</em> are
+formatted to form the XML request body for the PUT request. If the
+parameter <em>new_val_obj</em> is <tt class="docutils literal"><span class="pre">None</span></tt>, then the attributes of this object
+itself are formatted to form the XML request body. Once the PUT request
+successfully completes, it re-initializes the state of this Resource
+object based on the XML response from Space.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>new_val_obj</strong> (<a class="reference internal" href="#jnpr.space.resource.Resource" title="jnpr.space.resource.Resource"><em>jnpr.space.resource.Resource</em></a>) &#8211; A Resource object with the newly desired state for
+the resource. This defaults to <tt class="docutils literal"><span class="pre">None</span></tt>.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><tt class="docutils literal"><span class="pre">None</span></tt></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><tt class="docutils literal"><span class="pre">jnpr.space.rest.RestException</span></tt> if the PUT method results in
+an error response. The exception&#8217;s <tt class="docutils literal"><span class="pre">response</span></tt> attribute will have
+the full response from Space.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="jnpr.space.resource.get_meta_object">
+<tt class="descclassname">jnpr.space.resource.</tt><tt class="descname">get_meta_object</tt><big>(</big><em>full_name</em>, <em>type_name</em>, <em>values</em><big>)</big><a class="headerlink" href="#jnpr.space.resource.get_meta_object" title="Permalink to this definition">¶</a></dt>
+<dd><p>Looks up the meta object for a resource based on its fully qualified
+type name of the form <tt class="docutils literal"><span class="pre">&lt;service-name&gt;.&lt;type_name&gt;</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>full_name</strong> (<em>str</em>) &#8211; Fully qualified type name of the resource.</li>
+<li><strong>type_name</strong> (<em>str</em>) &#8211; Type name of the resource.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A <tt class="docutils literal"><span class="pre">jnpr.space.resource.MetaResource</span></tt> object.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-jnpr.space.collection">
+<span id="collection"></span><h2>Collection<a class="headerlink" href="#module-jnpr.space.collection" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="jnpr.space.collection.Collection">
+<em class="property">class </em><tt class="descclassname">jnpr.space.collection.</tt><tt class="descname">Collection</tt><big>(</big><em>parent</em>, <em>name</em>, <em>meta_object</em><big>)</big><a class="headerlink" href="#jnpr.space.collection.Collection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a <strong>collection</strong> that is exposed by Junos Space REST API.
+Some examples of collections are:</p>
+<ul class="simple">
+<li>The devices collection (<tt class="docutils literal"><span class="pre">/api/space/device-management/devices</span></tt>)</li>
+<li>The users collection (<tt class="docutils literal"><span class="pre">/api/space/user-management/users</span></tt>)</li>
+<li>The tags collection (<tt class="docutils literal"><span class="pre">/api/space/tag-management/tags</span></tt>)</li>
+</ul>
+<dl class="method">
+<dt id="jnpr.space.collection.Collection.get">
+<tt class="descname">get</tt><big>(</big><em>filter_=None</em>, <em>paging=None</em>, <em>sortby=None</em><big>)</big><a class="headerlink" href="#jnpr.space.collection.Collection.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the contained resources of this collection from Space.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>filter</strong> (<em>str or dict</em>) &#8211; A filter expression to apply on the collection. This
+can be given as a dict with name:value pairs to filter with. For
+example, <tt class="docutils literal"><span class="pre">{'name':'user1'}</span></tt>. Or this can be given as a string
+which forms a valid filter expression for this collection as per
+Junos Space API documentation.
+This parameter defaults to <tt class="docutils literal"><span class="pre">None</span></tt>.</li>
+<li><strong>paging</strong> (<em>dict</em>) &#8211; A paging expression to apply on the collection. This
+must be given as a dict with entries giving values for <tt class="docutils literal"><span class="pre">start</span></tt>
+and <tt class="docutils literal"><span class="pre">limit</span></tt> paging parameters. For example, <tt class="docutils literal"><span class="pre">{'start':10,</span>
+<span class="pre">'limit':100}</span></tt>.
+This parameter defaults to <tt class="docutils literal"><span class="pre">None</span></tt>.</li>
+<li><strong>sortby</strong> (<em>list of str</em>) &#8211; A list of field names to sort the results by.
+This parameter defaults to <tt class="docutils literal"><span class="pre">None</span></tt>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A list of <tt class="docutils literal"><span class="pre">jnpr.space.resource.Resource</span></tt> objects.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><tt class="docutils literal"><span class="pre">jnpr.space.rest.RestException</span></tt> if the GET method results in an
+error response. The exception&#8217;s <tt class="docutils literal"><span class="pre">response</span></tt> attribute will have the
+full response from Space.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="jnpr.space.collection.Collection.get_href">
+<tt class="descname">get_href</tt><big>(</big><big>)</big><a class="headerlink" href="#jnpr.space.collection.Collection.get_href" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the href for this collection. If the meta object has a <tt class="docutils literal"><span class="pre">url</span></tt>
+set, it is returned. Otherwise, it concatenates the href of the parent
+object and the name of this collection to form the href and returns it.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The href of this collection.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="jnpr.space.collection.Collection.post">
+<tt class="descname">post</tt><big>(</big><em>new_obj</em>, <em>xml_name=None</em>, <em>content_type=None</em>, <em>accept=None</em><big>)</big><a class="headerlink" href="#jnpr.space.collection.Collection.post" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sends a POST request to the Space server to create a new Resource in
+this collection.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>new_obj</strong> (A single <tt class="docutils literal"><span class="pre">jnpr.space.resource.Resource</span></tt> instance
+or a list of them.) &#8211; The new Resource that needs to be created as a member
+of this collection.</li>
+<li><strong>xml_name</strong> (<em>str</em>) &#8211; Can be used to override the name of the top-level
+XML element in the generated request body. This is useful in some
+cases such as creating a quick config template.
+This parameter defaults to <tt class="docutils literal"><span class="pre">None</span></tt>.</li>
+<li><strong>content_type</strong> (<em>str</em>) &#8211; Can be used to override the <em>content-type</em>
+header of the POST request. This is useful in some
+cases such as creating a quick config template.
+This parameter defaults to <tt class="docutils literal"><span class="pre">None</span></tt>.</li>
+<li><strong>accept</strong> (<em>str</em>) &#8211; Can be used to override the <em>accept</em>
+header of the POST request. This is useful in some
+cases such as creating a quick config template.
+This parameter defaults to <tt class="docutils literal"><span class="pre">None</span></tt>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">If the new_obj parameter is a list, then the same list is
+returned. Otherwise, this method creates a new Resource object
+based on the state of the newly created resource, as extracted from
+the POST response body.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><tt class="docutils literal"><span class="pre">jnpr.space.rest.RestException</span></tt> if the POST method results in
+an error response. The exception&#8217;s <tt class="docutils literal"><span class="pre">response</span></tt> attribute will have
+the full response from Space.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="jnpr.space.collection.MetaCollection">
+<em class="property">class </em><tt class="descclassname">jnpr.space.collection.</tt><tt class="descname">MetaCollection</tt><big>(</big><em>key</em>, <em>values</em><big>)</big><a class="headerlink" href="#jnpr.space.collection.MetaCollection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encapsulates the meta data for a collection type.</p>
+<dl class="method">
+<dt id="jnpr.space.collection.MetaCollection.create_method">
+<tt class="descname">create_method</tt><big>(</big><em>service</em>, <em>name</em><big>)</big><a class="headerlink" href="#jnpr.space.collection.MetaCollection.create_method" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a method object corresponding to the given service and
+name.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>service</strong> (<em>str</em>) &#8211; Name of the parent service.</li>
+<li><strong>name</strong> (<em>str</em>) &#8211; Name of the method.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A <tt class="docutils literal"><span class="pre">jnpr.space.method.Method</span></tt> object.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="jnpr.space.collection.get_meta_object">
+<tt class="descclassname">jnpr.space.collection.</tt><tt class="descname">get_meta_object</tt><big>(</big><em>coll_name</em>, <em>values</em><big>)</big><a class="headerlink" href="#jnpr.space.collection.get_meta_object" title="Permalink to this definition">¶</a></dt>
+<dd><p>Looks up the meta object for a collection based on its name.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>coll_name</strong> (<em>str</em>) &#8211; Name of the collection.</li>
+<li><strong>values</strong> (<em>dict</em>) &#8211; Attribute value settings which form the meta data
+for this collection. This is read from the descriptions yml file for
+the corresponding service.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A <tt class="docutils literal"><span class="pre">jnpr.space.resource.MetaCollection</span></tt> object.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-jnpr.space.method">
+<span id="method"></span><h2>Method<a class="headerlink" href="#module-jnpr.space.method" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="jnpr.space.method.MetaMethod">
+<em class="property">class </em><tt class="descclassname">jnpr.space.method.</tt><tt class="descname">MetaMethod</tt><big>(</big><em>key</em>, <em>values</em><big>)</big><a class="headerlink" href="#jnpr.space.method.MetaMethod" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encapsulates the meta data for a method.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="jnpr.space.method.Method">
+<em class="property">class </em><tt class="descclassname">jnpr.space.method.</tt><tt class="descname">Method</tt><big>(</big><em>parent</em>, <em>name</em>, <em>mobj</em><big>)</big><a class="headerlink" href="#jnpr.space.method.Method" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a <strong>method</strong> that is exposed by Junos Space REST API.
+Some examples of methods are:</p>
+<ul class="simple">
+<li>exec-rpc on a device
+(<tt class="docutils literal"><span class="pre">/api/space/device-management/devices/{id}/exec-rpc</span></tt>)</li>
+<li>change-password on a user account
+(<tt class="docutils literal"><span class="pre">/api/space/user-management/users/{id}/change-password</span></tt>)</li>
+</ul>
+<dl class="method">
+<dt id="jnpr.space.method.Method.get">
+<tt class="descname">get</tt><big>(</big><big>)</big><a class="headerlink" href="#jnpr.space.method.Method.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs a GET corresponding to the Method object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A Python object constructed from the response body that Space
+returned for the GET request.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><tt class="docutils literal"><span class="pre">jnpr.space.rest.RestException</span></tt> if the GET results in an
+error response. The exception&#8217;s <tt class="docutils literal"><span class="pre">response</span></tt> attribute will have the
+full response from Space.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="jnpr.space.method.Method.get_href">
+<tt class="descname">get_href</tt><big>(</big><big>)</big><a class="headerlink" href="#jnpr.space.method.Method.get_href" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the href for this method. If the meta object has its name set as
+&#8216;-&#8216;, this returns the href of the parent. Otherwise, it concatenates
+the href of the parent object and the name of this method to form the
+href and returns it.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The href of this method.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="jnpr.space.method.Method.post">
+<tt class="descname">post</tt><big>(</big><em>task_monitor=None</em>, <em>schedule=None</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#jnpr.space.method.Method.post" title="Permalink to this definition">¶</a></dt>
+<dd><p>This sends a POST request corresponding to this Method object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>task_monitor</strong> (<a class="reference internal" href="#jnpr.space.async.TaskMonitor" title="jnpr.space.async.TaskMonitor"><em>jnpr.space.async.TaskMonitor</em></a>) &#8211; A TaskMonitor object that can be used to monitor
+the progress of the POST request, in case of asynchronous
+invocations. You need to check Junos Space API documentation to
+see if the POST invocation on this resource has asynchronous
+semantics and supply the task_monitor parameter only if it is
+asynchronous. Otherwise, this will default to <tt class="docutils literal"><span class="pre">None</span></tt> and the
+method will behave with synchronous semantics.</li>
+<li><strong>schedule</strong> (<em>str</em>) &#8211; A string specifying a cron expression for
+scheduling the execution of the request on the Space server side.
+This is applicable only if the POST invocation on this resource
+has asynchronous semantics and you want to schedule the execution.
+Otherwise, this will default to <tt class="docutils literal"><span class="pre">None</span></tt>.</li>
+<li><strong>kwargs</strong> (<em>A variable list of name=value arguments.</em>) &#8211; Keyword args of the form name=value which will be used
+to substitute variables in a pre-defined template to form the
+request body. The template name is specified inside the meta data
+for this Method object.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A Python object constructed from the response body that Space
+returned for the POST method invocation. In the case of asynchronous
+invocation, this will represent a Task object and will contain the
+unique id of the Task executing the POST request in Space.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><tt class="docutils literal"><span class="pre">jnpr.space.rest.RestException</span></tt> if the POST method results in
+an error response. The exception&#8217;s <tt class="docutils literal"><span class="pre">response</span></tt> attribute will have
+the full response from Space.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="jnpr.space.method.get_meta_object">
+<tt class="descclassname">jnpr.space.method.</tt><tt class="descname">get_meta_object</tt><big>(</big><em>service_name</em>, <em>method_name</em>, <em>values</em><big>)</big><a class="headerlink" href="#jnpr.space.method.get_meta_object" title="Permalink to this definition">¶</a></dt>
+<dd><p>Looks up the meta object for a method based on its fully qualified
+type name of the form <tt class="docutils literal"><span class="pre">&lt;service-name&gt;.&lt;method_name&gt;</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>service_name</strong> (<em>str</em>) &#8211; Name of the service.</li>
+<li><strong>method_name</strong> (<em>str</em>) &#8211; Name of the service.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A <tt class="docutils literal"><span class="pre">jnpr.space.method.MetaMethod</span></tt> object.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-jnpr.space.service">
+<span id="service"></span><h2>Service<a class="headerlink" href="#module-jnpr.space.service" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="jnpr.space.service.MetaService">
+<em class="property">class </em><tt class="descclassname">jnpr.space.service.</tt><tt class="descname">MetaService</tt><big>(</big><em>name</em>, <em>values</em><big>)</big><a class="headerlink" href="#jnpr.space.service.MetaService" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encapsulates the meta data for a service.</p>
+<dl class="method">
+<dt id="jnpr.space.service.MetaService.create_collection">
+<tt class="descname">create_collection</tt><big>(</big><em>service</em>, <em>name</em><big>)</big><a class="headerlink" href="#jnpr.space.service.MetaService.create_collection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a collection object corresponding to the given service and
+name.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>service</strong> (<em>str</em>) &#8211; Name of the parent service.</li>
+<li><strong>name</strong> (<em>str</em>) &#8211; Name of the collection.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A <tt class="docutils literal"><span class="pre">jnpr.space.collection.Collection</span></tt> object.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="jnpr.space.service.MetaService.create_method">
+<tt class="descname">create_method</tt><big>(</big><em>service</em>, <em>name</em><big>)</big><a class="headerlink" href="#jnpr.space.service.MetaService.create_method" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a method object corresponding to the given service and
+name.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>service</strong> (<em>str</em>) &#8211; Name of the parent service.</li>
+<li><strong>name</strong> (<em>str</em>) &#8211; Name of the method.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A <tt class="docutils literal"><span class="pre">jnpr.space.method.Method</span></tt> object.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="jnpr.space.service.MetaService.get_meta_resource">
+<tt class="descname">get_meta_resource</tt><big>(</big><em>name</em><big>)</big><a class="headerlink" href="#jnpr.space.service.MetaService.get_meta_resource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the MetaResource object with the given name.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<em>str</em>) &#8211; Name of the resource.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A <tt class="docutils literal"><span class="pre">jnpr.space.resource.Resource</span></tt> object.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="jnpr.space.service.Service">
+<em class="property">class </em><tt class="descclassname">jnpr.space.service.</tt><tt class="descname">Service</tt><big>(</big><em>rest_end_point</em>, <em>name</em>, <em>values</em><big>)</big><a class="headerlink" href="#jnpr.space.service.Service" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a <strong>service</strong> that is exposed by Junos Space REST API.
+Some examples of services are:</p>
+<ul class="simple">
+<li>Device Management
+(<tt class="docutils literal"><span class="pre">/api/space/device-management</span></tt>)</li>
+<li>User Management
+(<tt class="docutils literal"><span class="pre">/api/space/user-management</span></tt>)</li>
+</ul>
+<dl class="method">
+<dt id="jnpr.space.service.Service.get_href">
+<tt class="descname">get_href</tt><big>(</big><big>)</big><a class="headerlink" href="#jnpr.space.service.Service.get_href" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the href of this service.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jnpr.space.service.Service.get_meta_resource">
+<tt class="descname">get_meta_resource</tt><big>(</big><em>resource_type</em><big>)</big><a class="headerlink" href="#jnpr.space.service.Service.get_meta_resource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the MetaResource object with the given name.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<em>str</em>) &#8211; Name of the resource.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A <tt class="docutils literal"><span class="pre">jnpr.space.resource.Resource</span></tt> object.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-jnpr.space.async">
+<span id="async"></span><h2>Async<a class="headerlink" href="#module-jnpr.space.async" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="jnpr.space.async.TaskMonitor">
+<em class="property">class </em><tt class="descclassname">jnpr.space.async.</tt><tt class="descname">TaskMonitor</tt><big>(</big><em>rest_end_point</em>, <em>qname</em>, <em>wait_time=10</em>, <em>max_retries=18</em><big>)</big><a class="headerlink" href="#jnpr.space.async.TaskMonitor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encapsulates the logic required to monitor the progress of tasks</p>
+<dl class="method">
+<dt id="jnpr.space.async.TaskMonitor.delete">
+<tt class="descname">delete</tt><big>(</big><big>)</big><a class="headerlink" href="#jnpr.space.async.TaskMonitor.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cleanup by deleting the hornetq</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jnpr.space.async.TaskMonitor.get_queue_url">
+<tt class="descname">get_queue_url</tt><big>(</big><big>)</big><a class="headerlink" href="#jnpr.space.async.TaskMonitor.get_queue_url" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="jnpr.space.async.TaskMonitor.pull_message">
+<tt class="descname">pull_message</tt><big>(</big><big>)</big><a class="headerlink" href="#jnpr.space.async.TaskMonitor.pull_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Try to pull the next message from the queue</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jnpr.space.async.TaskMonitor.wait_for_task">
+<tt class="descname">wait_for_task</tt><big>(</big><em>task_id</em><big>)</big><a class="headerlink" href="#jnpr.space.async.TaskMonitor.wait_for_task" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get progress updates till the given task completes</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jnpr.space.async.TaskMonitor.wait_for_tasks">
+<tt class="descname">wait_for_tasks</tt><big>(</big><em>task_id_list</em><big>)</big><a class="headerlink" href="#jnpr.space.async.TaskMonitor.wait_for_tasks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wait till all tasks in the given list completes</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-jnpr.space.factory">
+<span id="factory"></span><h2>Factory<a class="headerlink" href="#module-jnpr.space.factory" title="Permalink to this headline">¶</a></h2>
+<p>A module with functions using which new resource objects can be created.
+Resources are instances of jnpr.space.resource.Resource.</p>
+<dl class="function">
+<dt id="jnpr.space.factory.fetch_resource">
+<tt class="descclassname">jnpr.space.factory.</tt><tt class="descname">fetch_resource</tt><big>(</big><em>rest_end_point</em>, <em>href</em><big>)</big><a class="headerlink" href="#jnpr.space.factory.fetch_resource" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the method you should use to create a Resource instance if you
+have the href for it. It gets the current state of the resource with the
+given <em>href</em>. Once the current state is fetched from the Space server, this
+method creates a new instance of <tt class="docutils literal"><span class="pre">jnpr.space.resource.Resource</span></tt> with this
+state and returns it.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>rest_end_point</strong> (<a class="reference internal" href="#jnpr.space.rest.Space" title="jnpr.space.rest.Space"><em>jnpr.space.rest.Space</em></a>) &#8211; A <em>Space</em> object encapsulating the Junos
+Space cluster which contains this resource.</li>
+<li><strong>href</strong> (<em>str</em>) &#8211; The href of the resource that needs to be fetched.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A new instance of jnpr.space.resource.Resource</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><tt class="docutils literal"><span class="pre">jnpr.space.rest.RestException</span></tt> if the GET request results in an
+error response. The exception&#8217;s <tt class="docutils literal"><span class="pre">response</span></tt> attribute will have the
+full response from Space.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="jnpr.space.factory.make_resource">
+<tt class="descclassname">jnpr.space.factory.</tt><tt class="descname">make_resource</tt><big>(</big><em>type_name</em>, <em>rest_end_point</em>, <em>xml_data=None</em>, <em>attributes=None</em>, <em>parent=None</em><big>)</big><a class="headerlink" href="#jnpr.space.factory.make_resource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a new instance of jnpr.space.resource.Resource based on the
+given parameters. This method creates it in-memory locally and <em>not</em> on
+the Space server. The post() method must be invoked on the Resource object
+to get it created on the Space server.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>type_name</strong> (<em>str</em>) &#8211; <p>Fully qualified type name for the Resource to be
+created. It is of the format <tt class="docutils literal"><span class="pre">&lt;service_name&gt;.&lt;resource_type&gt;</span></tt>.
+Some examples are:</p>
+<blockquote>
+<div><ul>
+<li><tt class="docutils literal"><span class="pre">device_management.device</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">user_management.user</span></tt></li>
+</ul>
+</div></blockquote>
+</li>
+<li><strong>rest_end_point</strong> (<a class="reference internal" href="#jnpr.space.rest.Space" title="jnpr.space.rest.Space"><em>jnpr.space.rest.Space</em></a>) &#8211; A <em>Space</em> object encapsulating the Junos
+Space cluster which is to contain this resource.</li>
+<li><strong>xml_data</strong> (<em>lxml.etree.Element</em>) &#8211; The state of the resource as an
+XML object. This defaults to <tt class="docutils literal"><span class="pre">None</span></tt>.</li>
+<li><strong>attributes</strong> (<em>dict</em>) &#8211; The state of the resource as a dict where the
+keys are attribute names and values are attribute values.
+This defaults to <tt class="docutils literal"><span class="pre">None</span></tt>.</li>
+<li><strong>parent</strong> (<a class="reference internal" href="#jnpr.space.collection.Collection" title="jnpr.space.collection.Collection"><em>jnpr.space.collection.Collection</em></a>) &#8211; The parent object of this resource. This defaults to
+<tt class="docutils literal"><span class="pre">None</span></tt>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A new instance of jnpr.space.resource.Resource</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-jnpr.space.xmlutil">
+<span id="xml-util"></span><h2>XML Util<a class="headerlink" href="#module-jnpr.space.xmlutil" title="Permalink to this headline">¶</a></h2>
+<p>A module with utility functions for XML handling.</p>
+<dl class="function">
+<dt id="jnpr.space.xmlutil.cleanup">
+<tt class="descclassname">jnpr.space.xmlutil.</tt><tt class="descname">cleanup</tt><big>(</big><em>src</em><big>)</big><a class="headerlink" href="#jnpr.space.xmlutil.cleanup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Some responses from Space contains escaped form for XML special characters.
+E.g. &#8216;&amp;lt;&#8217; for &#8216;&lt;&#8217;, etc. This method removes these escaped notations.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>src</strong> (<em>str</em>) &#8211; Source string</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">String with escaped notations replaced.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="jnpr.space.xmlutil.make_xml_name">
+<tt class="descclassname">jnpr.space.xmlutil.</tt><tt class="descname">make_xml_name</tt><big>(</big><em>attr_name</em><big>)</big><a class="headerlink" href="#jnpr.space.xmlutil.make_xml_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert an attribute name to its XML equivalent by replacing
+all &#8216;_&#8217; with &#8216;-&#8216;. CamelCase names are retained as such.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>attr_name</strong> (<em>str</em>) &#8211; Name of the attribute</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Attribute name in XML format.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="jnpr.space.xmlutil.unmake_xml_name">
+<tt class="descclassname">jnpr.space.xmlutil.</tt><tt class="descname">unmake_xml_name</tt><big>(</big><em>attr_name</em><big>)</big><a class="headerlink" href="#jnpr.space.xmlutil.unmake_xml_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert an XML attribute name to its pythonic equivalent by replacing
+all &#8216;-&#8216; with &#8216;_&#8217;. CamelCase names are retained as such.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>attr_name</strong> (<em>str</em>) &#8211; Name of the attribute</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Attribute name in pythonic format.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="jnpr.space.xmlutil.xml2obj">
+<tt class="descclassname">jnpr.space.xmlutil.</tt><tt class="descname">xml2obj</tt><big>(</big><em>src</em><big>)</big><a class="headerlink" href="#jnpr.space.xmlutil.xml2obj" title="Permalink to this definition">¶</a></dt>
+<dd><p>A simple function to convert XML data into native Python object.
+Code copied from recipe at:
+<a class="reference external" href="http://code.activestate.com/recipes/534109-xml-to-python-data-structure/">http://code.activestate.com/recipes/534109-xml-to-python-data-structure/</a></p>
+<p>&#64;author: Wai Yip Tung</p>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><em>Index</em></a></li>
+<li><a class="reference internal" href="py-modindex.html"><em>Module Index</em></a></li>
+<li><a class="reference internal" href="search.html"><em>Search Page</em></a></li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">SpaceEZ APIs</a><ul>
+<li><a class="reference internal" href="#class-index">Class Index</a></li>
+<li><a class="reference internal" href="#module-index">Module Index</a></li>
+<li><a class="reference internal" href="#module-jnpr.space.rest">Rest</a></li>
+<li><a class="reference internal" href="#module-jnpr.space.resource">Resource</a></li>
+<li><a class="reference internal" href="#module-jnpr.space.collection">Collection</a></li>
+<li><a class="reference internal" href="#module-jnpr.space.method">Method</a></li>
+<li><a class="reference internal" href="#module-jnpr.space.service">Service</a></li>
+<li><a class="reference internal" href="#module-jnpr.space.async">Async</a></li>
+<li><a class="reference internal" href="#module-jnpr.space.factory">Factory</a></li>
+<li><a class="reference internal" href="#module-jnpr.space.xmlutil">XML Util</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/index.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="#">SpaceEZ v0.0.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Juniper Networks Inc..
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
