@@ -121,6 +121,39 @@ indicating an error. The exception contains the complete response inside.</p>
 <dd><p>Encapsulates a Junos Space cluster and provides access to all RESTful
 web-service APIs provided by Space. An instance of this class is also
 referred to as a <em>&#8216;rest end point&#8217;</em> in this documentation.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">In most cases, you don&#8217;t directly invoke methods of this class. The
+typical usage pattern is to create an instance of this class and then
+access contained services and collections and invoke methods on them.</p>
+</div>
+<p>For example, the snippet below creates a Space instance and then performs
+a GET on the <tt class="docutils literal"><span class="pre">devices</span></tt> collection contained by the <tt class="docutils literal"><span class="pre">device-management</span></tt>
+web service:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">rest</span><span class="o">.</span><span class="n">Space</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s">&#39;https://1.1.1.1&#39;</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="s">&#39;super&#39;</span><span class="p">,</span> <span class="n">passwd</span><span class="o">=</span><span class="s">&#39;password&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">devs</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">device_management</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="jnpr.space.rest.Space.__getattr__">
+<tt class="descname">__getattr__</tt><big>(</big><em>attr</em><big>)</big><a class="headerlink" href="#jnpr.space.rest.Space.__getattr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method is overridden in the class so that web-services
+contained by this instance can be accessed as <em>normal</em> Python
+attributes of this object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>attr</strong> (<em>str</em>) &#8211; Name of the web-service being accessed.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><tt class="docutils literal"><span class="pre">jnpr.space.service.Service</span></tt> being accessed.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body">AttributeError if there is no service with the given name.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="method">
 <dt id="jnpr.space.rest.Space.__init__">
 <tt class="descname">__init__</tt><big>(</big><em>url</em>, <em>user</em>, <em>passwd</em><big>)</big><a class="headerlink" href="#jnpr.space.rest.Space.__init__" title="Permalink to this definition">¶</a></dt>

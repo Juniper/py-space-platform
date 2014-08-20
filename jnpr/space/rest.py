@@ -8,6 +8,18 @@ class Space:
     """Encapsulates a Junos Space cluster and provides access to all RESTful
     web-service APIs provided by Space. An instance of this class is also
     referred to as a *'rest end point'* in this documentation.
+
+    .. note::
+        In most cases, you don't directly invoke methods of this class. The
+        typical usage pattern is to create an instance of this class and then
+        access contained services and collections and invoke methods on them.
+
+    For example, the snippet below creates a Space instance and then performs
+    a GET on the ``devices`` collection contained by the ``device-management``
+    web service:
+
+        >>> s = rest.Space(url='https://1.1.1.1', user='super', passwd='password')
+        >>> devs = s.device_management.devices.get()
     """
 
     def __init__(self, url, user, passwd):
@@ -44,6 +56,17 @@ class Space:
             return yaml.load(f)['services']
 
     def __getattr__(self, attr):
+        """
+        This method is overridden in the class so that web-services
+        contained by this instance can be accessed as *normal* Python
+        attributes of this object.
+
+        :param str attr: Name of the web-service being accessed.
+
+        :returns: ``jnpr.space.service.Service`` being accessed.
+        :raises: AttributeError if there is no service with the given name.
+
+        """
         if attr in self._services:
             return self._services[attr]
 
