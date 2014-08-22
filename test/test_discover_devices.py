@@ -26,6 +26,7 @@ class TestDiscoverDevices:
             result = self.space.device_management.discover_devices.post(
                         task_monitor=tm,
                         hostName='test-host-name',
+                        manageDiscoveredSystemsFlag=True,
                         userName='regress', password='MaRtInI')
 
             from pprint import pprint
@@ -46,6 +47,7 @@ class TestDiscoverDevices:
                         task_monitor=tm,
                         ipAddress='1.1.1.1',
                         usePing=True,
+                        manageDiscoveredSystemsFlag=True,
                         userName='regress', password='MaRtInI')
 
             from pprint import pprint
@@ -67,6 +69,7 @@ class TestDiscoverDevices:
                         ipAddress='2.1.1.1',
                         usePing=True,
                         useSnmp=True,
+                        manageDiscoveredSystemsFlag=True,
                         snmpV1Setting={'communityName': 'public'},
                         userName='regress', password='MaRtInI')
 
@@ -86,11 +89,12 @@ class TestDiscoverDevices:
         try:
             result = self.space.device_management.discover_devices.post(
                         task_monitor=tm,
-                        ipAddress='3.1.1.1',
+                        ipAddress='10.155.67.5',
                         usePing=True,
                         useSnmp=True,
+                        manageDiscoveredSystemsFlag=True,
                         snmpV2CSetting={'communityName': 'public'},
-                        userName='regress', password='MaRtInI')
+                        userName='root', password='junk123')
 
             from pprint import pprint
             pprint(result)
@@ -111,6 +115,7 @@ class TestDiscoverDevices:
                         lowerIp='5.1.1.1', upperIp='5.1.1.2',
                         usePing=True,
                         useSnmp=True,
+                        manageDiscoveredSystemsFlag=True,
                         snmpV3Setting={'userName': 'user1',
                                        'authenticationPassword': 'pwd1',
                                        'authenticationType': 'MD5'},
