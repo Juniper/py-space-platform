@@ -42,7 +42,9 @@ class Space:
         self.space_passwd = passwd
         self._logger = logging.getLogger('root')
         self._meta_services = self._init_services()
+        self._meta_applications = self._init_applications()
         self._services = {}
+        self._applications = {}
 
     def __str__(self):
         return ' '.join(['Space <',
@@ -55,16 +57,24 @@ class Space:
         with open(dir_path + '/descriptions/services.yml') as f:
             return yaml.load(f)['services']
 
+    def _init_applications(self):
+        path = os.path.abspath(__file__)
+        dir_path = os.path.dirname(path)
+        with open(dir_path + '/descriptions/applications.yml') as f:
+            return yaml.load(f)['applications']
+
     def __getattr__(self, attr):
         """
-        This method is overridden in the class so that web-services
+        This method is overridden in the class so that applications & services
         contained by this instance can be accessed as *normal* Python
         attributes of this object.
 
-        :param str attr: Name of the web-service being accessed.
+        :param str attr: Name of the app or web-service being accessed.
 
-        :returns: ``jnpr.space.service.Service`` being accessed.
-        :raises: AttributeError if there is no service with the given name.
+        :returns: ``jnpr.space.service.Service`` or
+            ``jnpr.space.application.Application`` being accessed.
+        :raises: AttributeError if there is no application or service
+            with the given name.
 
         """
         if attr in self._services:
@@ -75,6 +85,16 @@ class Space:
             value = self._meta_services[attr]
             self._services[attr] = service.Service(self, attr, value)
             return self._services[attr]
+
+        if attr in self._applications:
+            return self._applications[attr]
+
+        if attr in self._meta_applications:
+            from jnpr.space import application
+            value = self._meta_applications[attr]
+            self._applications[attr] = application.Application(self,
+                                                               attr, value)
+            return self._applications[attr]
 
         raise AttributeError("No attribute '%s'" % attr)
 

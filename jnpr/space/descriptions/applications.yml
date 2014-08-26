@@ -1,0 +1,11 @@
+---
+applications:
+    servicenow:
+        application_name: 'Service Now'
+        url: '/api/juniper/servicenow'
+
+    serviceinsight:
+        application_name: 'Service Insight'
+        url: '/api/juniper/serviceinsight'
+
+...

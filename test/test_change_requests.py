@@ -56,11 +56,11 @@ class TestChangeRequests:
         crs = self.space.configuration_management.change_requests.v2_multiple.post(
                     name = 'Test-from-space-ez',
                     description = 'Test case for space-ez via PyTest',
-                    devices = devices[len(devices)-2:],
+                    devices = devices[len(devices)-1:],
                     xmlData = '''<configuration>
-                                   <snmp>
+                                   <snmpp>
                                      <contact>space-ez Test Case</contact>
-                                   </snmp>
+                                   </snmpp>
                                  </configuration>''')
 
         assert crs

@@ -14,7 +14,7 @@ class Service(object):
 
     """
 
-    def __init__(self, rest_end_point, name, values):
+    def __init__(self, rest_end_point, name, values, application=None):
         """Initializes a Service object.
 
         :param rest_end_point: A *Space* object encapsulating the Junos
@@ -27,10 +27,15 @@ class Service(object):
             for this service. This is read from the descriptions yml file for
             this service.
 
+        :param application: Application object that exposes this service.
+            This defaults to ``None``.
+        :type application: jnpr.space.application.Application
+
         """
         self._rest_end_point = rest_end_point
+        self._parent = application
         self._name = name
-        self.meta_object = MetaService(name, values)
+        self.meta_object = MetaService(name, values, application)
         self._collections = {}
         self._methods = {}
 
@@ -84,7 +89,7 @@ class MetaService(object):
     Encapsulates the meta data for a service.
     """
 
-    def __init__(self, name, values):
+    def __init__(self, name, values, application=None):
         """Initializes a MetaService object.
 
         :param str key: Name of the service.
@@ -93,11 +98,21 @@ class MetaService(object):
             for this service. This is read from the descriptions yml file for
             this service.
 
+        :param application: Application object that exposes this service.
+            This defaults to ``None``.
+        :type application: jnpr.space.application.Application
+
         """
         self.url = values['url']
         path = os.path.abspath(__file__)
         dir_path = os.path.dirname(path)
-        with open(dir_path + '/descriptions/' + name + '.yml') as f:
+        file_name = dir_path + '/descriptions/'
+        if application:
+            file_name = file_name + 'apps/' + application._name + '/' + name + '.yml'
+        else:
+            file_name = file_name + name + '.yml'
+
+        with open(file_name) as f:
             y = yaml.load(f)
             self._meta_collections = y['collections']
             self._meta_methods = y['methods']
