@@ -22,11 +22,13 @@ class Resource(object):
         """Initializes a Resource object.
 
         :param str type_name: Fully qualified type name for the Resource to be
-            created. It is of the format ``<service_name>.<resource_type>``.
+            created. It is of the format ``<service_name>.<resource_type>`` or
+            ``<app-name>.<service_name>.<resource_type>``
             Some examples are:
 
             * ``device_management.device``
             * ``user_management.user``
+            * ``servicenow.device_management.device``
 
         :param rest_end_point: A *Space* object encapsulating the Junos
             Space cluster which contains this resource.
@@ -64,19 +66,33 @@ class Resource(object):
         Helper method to initialize meta data for this resource.
         """
         parts = type_name.split('.')
-        if len(parts) != 2:
+        if len(parts) == 3:
+            app_name = parts[0]
+            service_name = parts[1]
+            resource_type = parts[2]
+            try:
+                app = rest_end_point.__getattr__(app_name)
+            except AttributeError:
+                raise Exception("Unknown service name in '%s'" % type_name)
+
+            try:
+                service = app.__getattr__(service_name)
+            except AttributeError:
+                raise Exception("Unknown service name in '%s'" % type_name)
+        elif len(parts) == 2:
+            app = None
+            service_name = parts[0]
+            resource_type = parts[1]
+            try:
+                service = rest_end_point.__getattr__(service_name)
+            except AttributeError:
+                raise Exception("Unknown service name in '%s'" % type_name)
+        else:
             raise Exception("Invalid resource type given: '%s'" % type_name)
 
-        service_name = parts[0]
-        try:
-            service = rest_end_point.__getattr__(service_name)
-        except AttributeError:
-            raise Exception("Unknown service name in '%s'" % type_name)
-
-        resource_type = parts[1]
         try:
             values = service.get_meta_resource(resource_type)
-            self._meta_object = get_meta_object(type_name, resource_type, values)
+            self._meta_object = get_meta_object(type_name, values)
         except KeyError:
             raise Exception("Unknown resource type in '%s'" % type_name)
 
@@ -373,12 +389,12 @@ jnpr.space.resource.MetaResource.
 """
 _meta_resources = {}
 
-def get_meta_object(full_name, type_name, values):
+def get_meta_object(full_name, values):
     """Looks up the meta object for a resource based on its fully qualified
-    type name of the form ``<service-name>.<type_name>``.
+    type name of the form ``<service-name>.<type_name>`` or
+    ``<app-name>.<service-name>.<type_name>``
 
     :param str full_name: Fully qualified type name of the resource.
-    :param str type_name: Type name of the resource.
 
     :returns: A ``jnpr.space.resource.MetaResource`` object.
 
@@ -386,7 +402,19 @@ def get_meta_object(full_name, type_name, values):
     if full_name in _meta_resources:
         return _meta_resources[full_name]
 
-    m = MetaResource(full_name.split('.')[0], type_name, values)
+    parts = full_name.split('.')
+    if len(parts) == 3:
+        app_name = parts[0]
+        service_name = parts[1]
+        resource_type = parts[2]
+    elif len(parts) == 2:
+        app_name = None
+        service_name = parts[0]
+        resource_type = parts[1]
+    else:
+        raise Exception("Invalid resource type given: '%s'" % full_name)
+
+    m = MetaResource(app_name, service_name, resource_type, values)
     _meta_resources[full_name] = m
     return m
 
@@ -394,8 +422,14 @@ class MetaResource(object):
     """ Encapsulates the meta data for a resource type.
     """
 
-    def __init__(self, service_name, key, values):
+    def __init__(self, app_name, service_name, key, values):
         """Initializes a MetaResource object.
+
+        :param str app_name: Name of the app to which this resource
+            belongs. Some examples are:
+
+            * ``servicenow``
+            * ``serviceinsight``
 
         :param str service_name: Name of the service to which this resource
             belongs. Some examples are:
@@ -413,6 +447,7 @@ class MetaResource(object):
             the corresponding service.
 
         """
+        self.app_name = app_name
         self.service_name = service_name
         self.key = key
         self.name = values['name'] \
@@ -444,7 +479,10 @@ class MetaResource(object):
             from jnpr.space import collection
             for key in values['collections']:
                 value = values['collections'][key]
-                mObj = collection.get_meta_object(self.key + ':' + key, value)
+                mObj = collection.get_meta_object(self.app_name,
+                                                  self.service_name,
+                                                  self.key + ':' + key,
+                                                  value)
                 self.collections[key] = mObj
         except KeyError:
             pass
@@ -453,16 +491,20 @@ class MetaResource(object):
             from jnpr.space import method
             for key in values['methods']:
                 value = values['methods'][key]
-                mObj = method.get_meta_object(service_name, key, value)
+                mObj = method.get_meta_object(self.app_name,
+                                              self.service_name,
+                                              key,
+                                              value)
                 self.methods[key] = mObj
         except KeyError:
             pass
 
-    def create_collection(self, service, name):
-        """Creates a collection object corresponding to the given service and
-        name.
+    def create_collection(self, resrc, name):
+        """Creates a collection object.
 
-        :param str service: Name of the parent service.
+        :param resrc: Parent resource.
+        :type resrc: jnpr.space.resource.Resource
+
         :param str name: Name of the collection.
 
         :returns: A ``jnpr.space.collection.Collection`` object.
@@ -470,13 +512,14 @@ class MetaResource(object):
         """
         if name in self.collections:
             from jnpr.space import collection
-            return collection.Collection(service, name, self.collections[name])
+            return collection.Collection(resrc, name, self.collections[name])
 
     def create_method(self, resrc, name):
-        """Creates a method object corresponding to the given service and
-        name.
+        """Creates a method object.
 
-        :param str service: Name of the parent service.
+        :param resrc: Parent resource.
+        :type resrc: jnpr.space.resource.Resource
+
         :param str name: Name of the method.
 
         :returns: A ``jnpr.space.method.Method`` object.
@@ -484,5 +527,8 @@ class MetaResource(object):
         """
         if name in self.methods:
             from jnpr.space import method
-            mObj = method.get_meta_object(self.service_name, name, self.methods[name])
+            mObj = method.get_meta_object(self.app_name,
+                                          self.service_name,
+                                          name,
+                                          self.methods[name])
             return method.Method(resrc, name, mObj)

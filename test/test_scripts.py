@@ -1,4 +1,3 @@
-import logging.config
 import ConfigParser
 
 from jnpr.space import rest, factory, async
@@ -6,9 +5,6 @@ from jnpr.space import rest, factory, async
 class TestScripts:
 
     def setup_class(self):
-        # Initialize logging
-        logging.config.fileConfig('./logging.conf')
-
         # Extract Space URL, userid, password from config file
         config = ConfigParser.RawConfigParser()
         config.read("./test.conf")
@@ -180,7 +176,6 @@ class TestScripts:
         for s in scrpts[0:1]:
             c = s.contents.get()
             assert c.scriptContents
-            logging.getLogger('root').debug(c.scriptContents)
 
     def test_get_script_params(self):
         scrpts = self.space.script_management.scripts.get()

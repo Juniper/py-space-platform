@@ -14,6 +14,7 @@ Class Index
    jnpr.space.collection.Collection
    jnpr.space.method.Method
    jnpr.space.service.Service
+   jnpr.space.application.Application
    jnpr.space.async.TaskMonitor
 
 Module Index
@@ -51,6 +52,12 @@ Method
 Service
 -------
 .. automodule:: jnpr.space.service
+   :members:
+   :undoc-members:
+
+Application
+-----------
+.. automodule:: jnpr.space.application
    :members:
    :undoc-members:
 

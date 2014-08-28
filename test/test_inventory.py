@@ -1,4 +1,3 @@
-import logging.config
 import ConfigParser
 
 from jnpr.space import rest
@@ -7,9 +6,6 @@ from jnpr.space import resource
 class TestInventory:
 
     def setup_class(self):
-        # Initialize logging
-        logging.config.fileConfig('./logging.conf')
-
         # Extract Space URL, userid, password from config file
         config = ConfigParser.RawConfigParser()
         config.read("./test.conf")

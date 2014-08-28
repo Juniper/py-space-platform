@@ -1,4 +1,3 @@
-import logging.config
 import ConfigParser
 
 from jnpr.space import rest
@@ -7,9 +6,6 @@ from jnpr.space import async
 class TestRpc:
 
     def setup_class(self):
-        # Initialize logging
-        logging.config.fileConfig('./logging.conf')
-
         # Extract Space URL, userid, password from config file
         config = ConfigParser.RawConfigParser()
         config.read("./test.conf")
@@ -22,7 +18,7 @@ class TestRpc:
 
     def test_rpc_sync(self):
         devices_list = self.space.device_management.devices.get(
-                                    filter_={'connectionStatus': 'up'})
+                                    filter_={'managedStatus':'In Sync'})
         assert len(devices_list) > 0, "No devices connected!"
 
         d = devices_list[0]
@@ -37,7 +33,7 @@ class TestRpc:
 
     def test_rpc_async(self):
         devices_list = self.space.device_management.devices.get(
-                                    filter_={'connectionStatus': 'up'})
+                                    filter_={'managedStatus':'In Sync'})
         assert len(devices_list) > 0, "No devices connected!"
 
         d = devices_list[0]
@@ -65,7 +61,7 @@ class TestRpc:
 
     def test_multiple_rpc_async(self):
         devices_list = self.space.device_management.devices.get(
-                                    filter_={'connectionStatus': 'up'})
+                                    filter_={'managedStatus':'In Sync'})
         assert len(devices_list) > 0, "No devices connected!"
 
         tm = async.TaskMonitor(self.space, 'test_rpc_q')
@@ -97,7 +93,7 @@ class TestRpc:
 
     def test_resync(self):
         devices_list = self.space.device_management.devices.get(
-                                    filter_={'connectionStatus': 'up'})
+                                    filter_={'managedStatus':'In Sync'})
         assert len(devices_list) > 0, "No devices connected!"
 
         d = devices_list[0]

@@ -163,17 +163,23 @@ jnpr.space.collection.MetaMethod.
 """
 _meta_methods = {}
 
-def get_meta_object(service_name, method_name, values):
+def get_meta_object(app_name, service_name, method_name, values):
     """Looks up the meta object for a method based on its fully qualified
-    type name of the form ``<service-name>.<method_name>``.
+    type name of the form ``<service-name>.<method_name>`` or
+    ``<app-name>.<service-name>.<method-name>``.
 
+    :param str app_name: Name of the application.
     :param str service_name: Name of the service.
     :param str method_name: Name of the service.
 
     :returns: A ``jnpr.space.method.MetaMethod`` object.
 
     """
-    fullname = '.'.join([service_name, method_name])
+    if app_name:
+        fullname = '.'.join([app_name, service_name, method_name])
+    else:
+        fullname = '.'.join([service_name, method_name])
+
     if fullname in _meta_methods:
         return _meta_methods[fullname]
 

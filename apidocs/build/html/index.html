@@ -69,7 +69,10 @@
 <tr class="row-odd"><td><a class="reference internal" href="#jnpr.space.service.Service" title="jnpr.space.service.Service"><tt class="xref py py-obj docutils literal"><span class="pre">jnpr.space.service.Service</span></tt></a>(rest_end_point,&nbsp;...)</td>
 <td>Represents a <strong>service</strong> that is exposed by Junos Space REST API.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#jnpr.space.async.TaskMonitor" title="jnpr.space.async.TaskMonitor"><tt class="xref py py-obj docutils literal"><span class="pre">jnpr.space.async.TaskMonitor</span></tt></a>(rest_end_point,&nbsp;...)</td>
+<tr class="row-even"><td><a class="reference internal" href="#jnpr.space.application.Application" title="jnpr.space.application.Application"><tt class="xref py py-obj docutils literal"><span class="pre">jnpr.space.application.Application</span></tt></a>(...)</td>
+<td>Represents an <strong>application</strong> that is hosted on Junos Space platform.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#jnpr.space.async.TaskMonitor" title="jnpr.space.async.TaskMonitor"><tt class="xref py py-obj docutils literal"><span class="pre">jnpr.space.async.TaskMonitor</span></tt></a>(rest_end_point,&nbsp;...)</td>
 <td>Encapsulates the logic required to monitor the progress of tasks</td>
 </tr>
 </tbody>
@@ -137,18 +140,20 @@ web service:</p>
 <dl class="method">
 <dt id="jnpr.space.rest.Space.__getattr__">
 <tt class="descname">__getattr__</tt><big>(</big><em>attr</em><big>)</big><a class="headerlink" href="#jnpr.space.rest.Space.__getattr__" title="Permalink to this definition">¶</a></dt>
-<dd><p>This method is overridden in the class so that web-services
+<dd><p>This method is overridden in the class so that applications &amp; services
 contained by this instance can be accessed as <em>normal</em> Python
 attributes of this object.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>attr</strong> (<em>str</em>) &#8211; Name of the web-service being accessed.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>attr</strong> (<em>str</em>) &#8211; Name of the app or web-service being accessed.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><tt class="docutils literal"><span class="pre">jnpr.space.service.Service</span></tt> being accessed.</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><tt class="docutils literal"><span class="pre">jnpr.space.service.Service</span></tt> or
+<tt class="docutils literal"><span class="pre">jnpr.space.application.Application</span></tt> being accessed.</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body">AttributeError if there is no service with the given name.</td>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body">AttributeError if there is no application or service
+with the given name.</td>
 </tr>
 </tbody>
 </table>
@@ -308,19 +313,18 @@ returned by the PUT request.</p>
 <span id="resource"></span><h2>Resource<a class="headerlink" href="#module-jnpr.space.resource" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="jnpr.space.resource.MetaResource">
-<em class="property">class </em><tt class="descclassname">jnpr.space.resource.</tt><tt class="descname">MetaResource</tt><big>(</big><em>service_name</em>, <em>key</em>, <em>values</em><big>)</big><a class="headerlink" href="#jnpr.space.resource.MetaResource" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">jnpr.space.resource.</tt><tt class="descname">MetaResource</tt><big>(</big><em>app_name</em>, <em>service_name</em>, <em>key</em>, <em>values</em><big>)</big><a class="headerlink" href="#jnpr.space.resource.MetaResource" title="Permalink to this definition">¶</a></dt>
 <dd><p>Encapsulates the meta data for a resource type.</p>
 <dl class="method">
 <dt id="jnpr.space.resource.MetaResource.create_collection">
-<tt class="descname">create_collection</tt><big>(</big><em>service</em>, <em>name</em><big>)</big><a class="headerlink" href="#jnpr.space.resource.MetaResource.create_collection" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a collection object corresponding to the given service and
-name.</p>
+<tt class="descname">create_collection</tt><big>(</big><em>resrc</em>, <em>name</em><big>)</big><a class="headerlink" href="#jnpr.space.resource.MetaResource.create_collection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a collection object.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>service</strong> (<em>str</em>) &#8211; Name of the parent service.</li>
+<li><strong>resrc</strong> (<a class="reference internal" href="#jnpr.space.resource.Resource" title="jnpr.space.resource.Resource"><em>jnpr.space.resource.Resource</em></a>) &#8211; Parent resource.</li>
 <li><strong>name</strong> (<em>str</em>) &#8211; Name of the collection.</li>
 </ul>
 </td>
@@ -335,14 +339,13 @@ name.</p>
 <dl class="method">
 <dt id="jnpr.space.resource.MetaResource.create_method">
 <tt class="descname">create_method</tt><big>(</big><em>resrc</em>, <em>name</em><big>)</big><a class="headerlink" href="#jnpr.space.resource.MetaResource.create_method" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a method object corresponding to the given service and
-name.</p>
+<dd><p>Creates a method object.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>service</strong> (<em>str</em>) &#8211; Name of the parent service.</li>
+<li><strong>resrc</strong> (<a class="reference internal" href="#jnpr.space.resource.Resource" title="jnpr.space.resource.Resource"><em>jnpr.space.resource.Resource</em></a>) &#8211; Parent resource.</li>
 <li><strong>name</strong> (<em>str</em>) &#8211; Name of the method.</li>
 </ul>
 </td>
@@ -532,21 +535,17 @@ the full response from Space.</td>
 
 <dl class="function">
 <dt id="jnpr.space.resource.get_meta_object">
-<tt class="descclassname">jnpr.space.resource.</tt><tt class="descname">get_meta_object</tt><big>(</big><em>full_name</em>, <em>type_name</em>, <em>values</em><big>)</big><a class="headerlink" href="#jnpr.space.resource.get_meta_object" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">jnpr.space.resource.</tt><tt class="descname">get_meta_object</tt><big>(</big><em>full_name</em>, <em>values</em><big>)</big><a class="headerlink" href="#jnpr.space.resource.get_meta_object" title="Permalink to this definition">¶</a></dt>
 <dd><p>Looks up the meta object for a resource based on its fully qualified
-type name of the form <tt class="docutils literal"><span class="pre">&lt;service-name&gt;.&lt;type_name&gt;</span></tt>.</p>
+type name of the form <tt class="docutils literal"><span class="pre">&lt;service-name&gt;.&lt;type_name&gt;</span></tt> or
+<tt class="docutils literal"><span class="pre">&lt;app-name&gt;.&lt;service-name&gt;.&lt;type_name&gt;</span></tt></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>full_name</strong> (<em>str</em>) &#8211; Fully qualified type name of the resource.</li>
-<li><strong>type_name</strong> (<em>str</em>) &#8211; Type name of the resource.</li>
-</ul>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>full_name</strong> (<em>str</em>) &#8211; Fully qualified type name of the resource.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A <tt class="docutils literal"><span class="pre">jnpr.space.resource.MetaResource</span></tt> object.</p>
-</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A <tt class="docutils literal"><span class="pre">jnpr.space.resource.MetaResource</span></tt> object.</td>
 </tr>
 </tbody>
 </table>
@@ -665,7 +664,7 @@ the full response from Space.</p>
 
 <dl class="class">
 <dt id="jnpr.space.collection.MetaCollection">
-<em class="property">class </em><tt class="descclassname">jnpr.space.collection.</tt><tt class="descname">MetaCollection</tt><big>(</big><em>key</em>, <em>values</em><big>)</big><a class="headerlink" href="#jnpr.space.collection.MetaCollection" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">jnpr.space.collection.</tt><tt class="descname">MetaCollection</tt><big>(</big><em>app_name</em>, <em>service_name</em>, <em>key</em>, <em>values</em><big>)</big><a class="headerlink" href="#jnpr.space.collection.MetaCollection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Encapsulates the meta data for a collection type.</p>
 <dl class="method">
 <dt id="jnpr.space.collection.MetaCollection.create_method">
@@ -677,7 +676,7 @@ name.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>service</strong> (<em>str</em>) &#8211; Name of the parent service.</li>
+<li><strong>service</strong> (<a class="reference internal" href="#jnpr.space.service.Service" title="jnpr.space.service.Service"><em>jnpr.space.service.Service</em></a>) &#8211; Parent service.</li>
 <li><strong>name</strong> (<em>str</em>) &#8211; Name of the method.</li>
 </ul>
 </td>
@@ -693,21 +692,22 @@ name.</p>
 
 <dl class="function">
 <dt id="jnpr.space.collection.get_meta_object">
-<tt class="descclassname">jnpr.space.collection.</tt><tt class="descname">get_meta_object</tt><big>(</big><em>coll_name</em>, <em>values</em><big>)</big><a class="headerlink" href="#jnpr.space.collection.get_meta_object" title="Permalink to this definition">¶</a></dt>
-<dd><p>Looks up the meta object for a collection based on its name.</p>
+<tt class="descclassname">jnpr.space.collection.</tt><tt class="descname">get_meta_object</tt><big>(</big><em>app_name</em>, <em>service_name</em>, <em>coll_name</em>, <em>values</em><big>)</big><a class="headerlink" href="#jnpr.space.collection.get_meta_object" title="Permalink to this definition">¶</a></dt>
+<dd><p>Looks up the meta object for a collection based on its fully qualified
+type name of the form <tt class="docutils literal"><span class="pre">&lt;service-name&gt;.&lt;coll_name&gt;</span></tt> or
+<tt class="docutils literal"><span class="pre">&lt;app-name&gt;.&lt;service-name&gt;.&lt;coll-name&gt;</span></tt>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>app_name</strong> (<em>str</em>) &#8211; Name of the application.</li>
+<li><strong>service_name</strong> (<em>str</em>) &#8211; Name of the service.</li>
 <li><strong>coll_name</strong> (<em>str</em>) &#8211; Name of the collection.</li>
-<li><strong>values</strong> (<em>dict</em>) &#8211; Attribute value settings which form the meta data
-for this collection. This is read from the descriptions yml file for
-the corresponding service.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A <tt class="docutils literal"><span class="pre">jnpr.space.resource.MetaCollection</span></tt> object.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A <tt class="docutils literal"><span class="pre">jnpr.space.collection.MetaCollection</span></tt> object.</p>
 </td>
 </tr>
 </tbody>
@@ -817,14 +817,16 @@ the full response from Space.</p>
 
 <dl class="function">
 <dt id="jnpr.space.method.get_meta_object">
-<tt class="descclassname">jnpr.space.method.</tt><tt class="descname">get_meta_object</tt><big>(</big><em>service_name</em>, <em>method_name</em>, <em>values</em><big>)</big><a class="headerlink" href="#jnpr.space.method.get_meta_object" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">jnpr.space.method.</tt><tt class="descname">get_meta_object</tt><big>(</big><em>app_name</em>, <em>service_name</em>, <em>method_name</em>, <em>values</em><big>)</big><a class="headerlink" href="#jnpr.space.method.get_meta_object" title="Permalink to this definition">¶</a></dt>
 <dd><p>Looks up the meta object for a method based on its fully qualified
-type name of the form <tt class="docutils literal"><span class="pre">&lt;service-name&gt;.&lt;method_name&gt;</span></tt>.</p>
+type name of the form <tt class="docutils literal"><span class="pre">&lt;service-name&gt;.&lt;method_name&gt;</span></tt> or
+<tt class="docutils literal"><span class="pre">&lt;app-name&gt;.&lt;service-name&gt;.&lt;method-name&gt;</span></tt>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>app_name</strong> (<em>str</em>) &#8211; Name of the application.</li>
 <li><strong>service_name</strong> (<em>str</em>) &#8211; Name of the service.</li>
 <li><strong>method_name</strong> (<em>str</em>) &#8211; Name of the service.</li>
 </ul>
@@ -842,7 +844,7 @@ type name of the form <tt class="docutils literal"><span class="pre">&lt;service
 <span id="service"></span><h2>Service<a class="headerlink" href="#module-jnpr.space.service" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="jnpr.space.service.MetaService">
-<em class="property">class </em><tt class="descclassname">jnpr.space.service.</tt><tt class="descname">MetaService</tt><big>(</big><em>name</em>, <em>values</em><big>)</big><a class="headerlink" href="#jnpr.space.service.MetaService" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">jnpr.space.service.</tt><tt class="descname">MetaService</tt><big>(</big><em>name</em>, <em>values</em>, <em>application=None</em><big>)</big><a class="headerlink" href="#jnpr.space.service.MetaService" title="Permalink to this definition">¶</a></dt>
 <dd><p>Encapsulates the meta data for a service.</p>
 <dl class="method">
 <dt id="jnpr.space.service.MetaService.create_collection">
@@ -876,7 +878,7 @@ name.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>service</strong> (<em>str</em>) &#8211; Name of the parent service.</li>
+<li><strong>service</strong> (<a class="reference internal" href="#jnpr.space.service.Service" title="jnpr.space.service.Service"><em>jnpr.space.service.Service</em></a>) &#8211; Parent service.</li>
 <li><strong>name</strong> (<em>str</em>) &#8211; Name of the method.</li>
 </ul>
 </td>
@@ -889,6 +891,12 @@ name.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="jnpr.space.service.MetaService.get_application_name">
+<tt class="descname">get_application_name</tt><big>(</big><big>)</big><a class="headerlink" href="#jnpr.space.service.MetaService.get_application_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the name of the containing application if there is one.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="jnpr.space.service.MetaService.get_meta_resource">
 <tt class="descname">get_meta_resource</tt><big>(</big><em>name</em><big>)</big><a class="headerlink" href="#jnpr.space.service.MetaService.get_meta_resource" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the MetaResource object with the given name.</p>
@@ -898,7 +906,7 @@ name.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<em>str</em>) &#8211; Name of the resource.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A <tt class="docutils literal"><span class="pre">jnpr.space.resource.Resource</span></tt> object.</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A <tt class="docutils literal"><span class="pre">jnpr.space.resource.MetaResource</span></tt> object.</td>
 </tr>
 </tbody>
 </table>
@@ -908,7 +916,7 @@ name.</p>
 
 <dl class="class">
 <dt id="jnpr.space.service.Service">
-<em class="property">class </em><tt class="descclassname">jnpr.space.service.</tt><tt class="descname">Service</tt><big>(</big><em>rest_end_point</em>, <em>name</em>, <em>values</em><big>)</big><a class="headerlink" href="#jnpr.space.service.Service" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">jnpr.space.service.</tt><tt class="descname">Service</tt><big>(</big><em>rest_end_point</em>, <em>name</em>, <em>values</em>, <em>application=None</em><big>)</big><a class="headerlink" href="#jnpr.space.service.Service" title="Permalink to this definition">¶</a></dt>
 <dd><p>Represents a <strong>service</strong> that is exposed by Junos Space REST API.
 Some examples of services are:</p>
 <ul class="simple">
@@ -933,12 +941,40 @@ Some examples of services are:</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<em>str</em>) &#8211; Name of the resource.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A <tt class="docutils literal"><span class="pre">jnpr.space.resource.Resource</span></tt> object.</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A <tt class="docutils literal"><span class="pre">jnpr.space.resource.MetaResource</span></tt> object.</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
+</dd></dl>
+
+</div>
+<div class="section" id="module-jnpr.space.application">
+<span id="application"></span><h2>Application<a class="headerlink" href="#module-jnpr.space.application" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="jnpr.space.application.Application">
+<em class="property">class </em><tt class="descclassname">jnpr.space.application.</tt><tt class="descname">Application</tt><big>(</big><em>rest_end_point</em>, <em>name</em>, <em>values</em><big>)</big><a class="headerlink" href="#jnpr.space.application.Application" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents an <strong>application</strong> that is hosted on Junos Space platform.
+Some examples of applications are:</p>
+<ul class="simple">
+<li>Service Now
+(<tt class="docutils literal"><span class="pre">/api/juniper/servicenow</span></tt>)</li>
+<li>Service Insight
+(<tt class="docutils literal"><span class="pre">/api/juniper/serviceinsight</span></tt>)</li>
+</ul>
+<dl class="method">
+<dt id="jnpr.space.application.Application.get_href">
+<tt class="descname">get_href</tt><big>(</big><big>)</big><a class="headerlink" href="#jnpr.space.application.Application.get_href" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the href of this application.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="jnpr.space.application.MetaApplication">
+<em class="property">class </em><tt class="descclassname">jnpr.space.application.</tt><tt class="descname">MetaApplication</tt><big>(</big><em>name</em>, <em>values</em><big>)</big><a class="headerlink" href="#jnpr.space.application.MetaApplication" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encapsulates the meta data for an application.</p>
 </dd></dl>
 
 </div>
@@ -1147,6 +1183,7 @@ Code copied from recipe at:
 <li><a class="reference internal" href="#module-jnpr.space.collection">Collection</a></li>
 <li><a class="reference internal" href="#module-jnpr.space.method">Method</a></li>
 <li><a class="reference internal" href="#module-jnpr.space.service">Service</a></li>
+<li><a class="reference internal" href="#module-jnpr.space.application">Application</a></li>
 <li><a class="reference internal" href="#module-jnpr.space.async">Async</a></li>
 <li><a class="reference internal" href="#module-jnpr.space.factory">Factory</a></li>
 <li><a class="reference internal" href="#module-jnpr.space.xmlutil">XML Util</a></li>

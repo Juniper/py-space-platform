@@ -44,7 +44,7 @@ class Service(object):
 
         :param str name: Name of the resource.
 
-        :returns: A ``jnpr.space.resource.Resource`` object.
+        :returns: A ``jnpr.space.resource.MetaResource`` object.
 
         """
         return self.meta_object.get_meta_resource(resource_type)
@@ -104,6 +104,8 @@ class MetaService(object):
 
         """
         self.url = values['url']
+        self._application = application
+
         path = os.path.abspath(__file__)
         dir_path = os.path.dirname(path)
         file_name = dir_path + '/descriptions/'
@@ -118,6 +120,12 @@ class MetaService(object):
             self._meta_methods = y['methods']
             self._meta_resources = y['resources']
 
+    def get_application_name(self):
+        """Returns the name of the containing application if there is one.
+        """
+        if self._application:
+            return self._application._name
+
     def create_collection(self, service, name):
         """Creates a collection object corresponding to the given service and
         name.
@@ -130,14 +138,18 @@ class MetaService(object):
         """
         if name in self._meta_collections:
             from jnpr.space import collection
-            mObj = collection.get_meta_object(name, self._meta_collections[name])
+            mObj = collection.get_meta_object(self.get_application_name(),
+                                              service._name,
+                                              name,
+                                              self._meta_collections[name])
             return collection.Collection(service, name, mObj)
 
     def create_method(self, service, name):
         """Creates a method object corresponding to the given service and
         name.
 
-        :param str service: Name of the parent service.
+        :param service: Parent service.
+        :type service: jnpr.space.service.Service
         :param str name: Name of the method.
 
         :returns: A ``jnpr.space.method.Method`` object.
@@ -145,7 +157,10 @@ class MetaService(object):
         """
         if name in self._meta_methods:
             from jnpr.space import method
-            mObj = method.get_meta_object(service._name, name, self._meta_methods[name])
+            mObj = method.get_meta_object(self.get_application_name(),
+                                          service._name,
+                                          name,
+                                          self._meta_methods[name])
             return method.Method(service, name, mObj)
 
     def get_meta_resource(self, name):
@@ -153,7 +168,7 @@ class MetaService(object):
 
         :param str name: Name of the resource.
 
-        :returns: A ``jnpr.space.resource.Resource`` object.
+        :returns: A ``jnpr.space.resource.MetaResource`` object.
 
         """
         return self._meta_resources[name]

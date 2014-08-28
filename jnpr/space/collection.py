@@ -329,16 +329,18 @@ class MetaCollection(object):
     """ Encapsulates the meta data for a collection type.
     """
 
-    def __init__(self, key, values):
+    def __init__(self, app_name, service_name, key, values):
         """Initializes a MetaCollection object.
 
+        :param str app_name: Name of the application.
+        :param str service_name: Name of the service.
         :param str key: Name of the collection.
-
         :param dict values:  Attribute value settings which form the meta data
             for this collection. This is read from the descriptions yml file for
             the corresponding service.
-
         """
+        self.app_name = app_name
+        self.service_name = service_name
         self.key = key
         self.name = values['name'] \
             if ('name' in values) else None
@@ -359,7 +361,8 @@ class MetaCollection(object):
         """Creates a method object corresponding to the given service and
         name.
 
-        :param str service: Name of the parent service.
+        :param service: Parent service.
+        :type service: jnpr.space.service.Service
         :param str name: Name of the method.
 
         :returns: A ``jnpr.space.method.Method`` object.
@@ -367,7 +370,12 @@ class MetaCollection(object):
         """
         if name in self.methods:
             from jnpr.space import method
-            mObj = method.get_meta_object(service._name, name, self.methods[name])
+            mObj = method.get_meta_object(
+                                          self.app_name,
+                                          service._name,
+                                          name,
+                                          self.methods[name]
+                                          )
             return method.Method(service, name, mObj)
 
 """
@@ -377,20 +385,26 @@ jnpr.space.collection.MetaCollection.
 """
 _meta_collections = {}
 
-def get_meta_object(coll_name, values):
-    """Looks up the meta object for a collection based on its name.
+def get_meta_object(app_name, service_name, coll_name, values):
+    """Looks up the meta object for a collection based on its fully qualified
+    type name of the form ``<service-name>.<coll_name>`` or
+    ``<app-name>.<service-name>.<coll-name>``.
 
+    :param str app_name: Name of the application.
+    :param str service_name: Name of the service.
     :param str coll_name: Name of the collection.
-    :param dict values:  Attribute value settings which form the meta data
-            for this collection. This is read from the descriptions yml file for
-            the corresponding service.
 
-    :returns: A ``jnpr.space.resource.MetaCollection`` object.
+    :returns: A ``jnpr.space.collection.MetaCollection`` object.
 
     """
-    if coll_name in _meta_collections:
-        return _meta_collections[coll_name]
+    if app_name:
+        fullname = '.'.join([app_name, service_name, coll_name])
+    else:
+        fullname = '.'.join([service_name, coll_name])
 
-    c = MetaCollection(coll_name, values)
-    _meta_collections[coll_name] = c
+    if fullname in _meta_collections:
+        return _meta_collections[fullname]
+
+    c = MetaCollection(app_name, service_name, coll_name, values)
+    _meta_collections[fullname] = c
     return c

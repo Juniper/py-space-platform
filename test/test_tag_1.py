@@ -1,4 +1,3 @@
-import logging.config
 import ConfigParser
 
 import pytest
@@ -9,9 +8,6 @@ from jnpr.space import resource
 class TestTag:
 
     def setup_class(self):
-        # Initialize logging
-        logging.config.fileConfig('./logging.conf')
-
         # Extract Space URL, userid, password from config file
         config = ConfigParser.RawConfigParser()
         config.read("./test.conf")

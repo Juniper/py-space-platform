@@ -1,4 +1,3 @@
-import logging.config
 import ConfigParser
 
 from jnpr.space import xmlutil
@@ -7,9 +6,6 @@ from jnpr.space import rest
 class TestDevices:
 
     def setup_class(self):
-        # Initialize logging
-        logging.config.fileConfig('./logging.conf')
-
         # Extract Space URL, userid, password from config file
         config = ConfigParser.RawConfigParser()
         config.read("./test.conf")
@@ -24,9 +20,9 @@ class TestDevices:
         devices_list = self.space.device_management.devices.get(
                             filter_={'managedStatus': 'In Sync'},
                             sortby=['name', 'platform'])
-        assert len(devices_list) > 0, "Not enough devices on Space"
+        assert len(devices_list) > 1, "Not enough devices on Space"
 
-        for d in devices_list:
+        for d in devices_list[:1]:
             exp = d.configurations.expanded.post(xpaths=['/configuration/version',
             '/configuration/interfaces/interface[starts-with(name, "ge-")]'])
 
@@ -47,9 +43,9 @@ class TestDevices:
     def test_devices_raw_config(self):
         devices_list = self.space.device_management.devices.get(
                             filter_={'managedStatus': 'In Sync'})
-        assert len(devices_list) > 0, "Not enough devices on Space"
+        assert len(devices_list) > 1, "Not enough devices on Space"
 
-        for d in devices_list:
+        for d in devices_list[:1]:
             raw = d.configurations.raw.get()
             assert raw
             raw_config = xmlutil.xml2obj(raw.configuration)
@@ -63,9 +59,9 @@ class TestDevices:
     def test_devices_raw_config_post(self):
         devices_list = self.space.device_management.devices.get(
                             filter_={'managedStatus': 'In Sync'})
-        assert len(devices_list) > 0, "Not enough devices on Space"
+        assert len(devices_list) > 1, "Not enough devices on Space"
 
-        for d in devices_list:
+        for d in devices_list[:1]:
             raw = d.configurations.raw.post(xpaths=['/configuration/version',
             '/configuration/interfaces/interface[starts-with(name, "ge-")]'])
 
@@ -80,9 +76,9 @@ class TestDevices:
     def test_devices_expanded_config(self):
         devices_list = self.space.device_management.devices.get(
                             filter_={'managedStatus': 'In Sync'})
-        assert len(devices_list) > 0, "Not enough devices on Space"
+        assert len(devices_list) > 1, "Not enough devices on Space"
 
-        for d in devices_list:
+        for d in devices_list[:1]:
             exp = d.configurations.expanded.get()
             assert exp
             exp_config = xmlutil.xml2obj(exp.configuration)
@@ -94,9 +90,9 @@ class TestDevices:
     def test_devices_configs(self):
         devices_list = self.space.device_management.devices.get(
                             filter_={'managedStatus': 'In Sync'})
-        assert len(devices_list) > 0, "Not enough devices on Space"
+        assert len(devices_list) > 1, "Not enough devices on Space"
 
-        for d in devices_list:
+        for d in devices_list[:1]:
             configs = d.configurations.get()
             assert len(configs) == 2
             for c in configs:
@@ -108,7 +104,7 @@ class TestDevices:
         devices_list = self.space.device_management.devices.get()
         assert len(devices_list) > 1, "Not enough devices on Space"
 
-        for d in devices_list:
+        for d in devices_list[:1]:
             try:
                 scripts = d.associated_scripts.get()
                 assert len(scripts) > 0
@@ -121,7 +117,7 @@ class TestDevices:
         devices_list = self.space.device_management.devices.get()
         assert len(devices_list) > 1, "Not enough devices on Space"
 
-        for d in devices_list:
+        for d in devices_list[:1]:
             try:
                 sws = d.associated_softwares.get()
                 assert len(sws) >= 0
@@ -132,7 +128,7 @@ class TestDevices:
         devices_list = self.space.device_management.devices.get()
         assert len(devices_list) > 1, "Not enough devices on Space"
 
-        for d in devices_list:
+        for d in devices_list[:1]:
             crs = d.change_requests.get()
             assert len(crs) >= 0
             for cr in crs:
