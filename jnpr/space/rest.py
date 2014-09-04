@@ -22,7 +22,7 @@ class Space:
         >>> devs = s.device_management.devices.get()
     """
 
-    def __init__(self, url, user, passwd):
+    def __init__(self, url, user, passwd, use_session=False):
         """Creates an instance of this class to represent a Junos Space cluster.
 
         :param url: URL of the Junos Space cluster using its VIP address.
@@ -45,6 +45,11 @@ class Space:
         self._meta_applications = self._init_applications()
         self._services = {}
         self._applications = {}
+        self.use_session = use_session
+
+        if use_session:
+            from jnpr.space import connection
+            self.connection = connection.Connection(url, user, passwd)
 
     def __str__(self):
         return ' '.join(['Space <',
@@ -112,7 +117,10 @@ class Space:
         req_url = self.space_url + url
         self._logger.debug("GET %s" % req_url)
         self._logger.debug(headers)
-        r = requests.get(req_url, auth=(self.space_user, self.space_passwd), headers=headers, verify=False)
+        if self.use_session:
+            r = self.connection.get_session().get(req_url, headers=headers, verify=False)
+        else:
+            r = requests.get(req_url, auth=(self.space_user, self.space_passwd), headers=headers, verify=False)
         self._logger.debug(r)
         self._logger.debug(r.text)
         return r
@@ -131,7 +139,10 @@ class Space:
         req_url = self.space_url + url
         self._logger.debug("HEAD %s" % req_url)
         self._logger.debug(headers)
-        r = requests.head(req_url, auth=(self.space_user, self.space_passwd), headers=headers, verify=False)
+        if self.use_session:
+            r = self.connection.get_session().head(req_url, headers=headers, verify=False)
+        else:
+            r = requests.head(req_url, auth=(self.space_user, self.space_passwd), headers=headers, verify=False)
         self._logger.debug(r)
         self._logger.debug(r.headers)
         self._logger.debug(r.text)
@@ -154,7 +165,10 @@ class Space:
         self._logger.debug("POST %s" % req_url)
         self._logger.debug(headers)
         self._logger.debug(body)
-        r = requests.post(req_url, auth=(self.space_user, self.space_passwd), data=body, headers=headers, verify=False)
+        if self.use_session:
+            r = self.connection.get_session().post(req_url, data=body, headers=headers, verify=False)
+        else:
+            r = requests.post(req_url, auth=(self.space_user, self.space_passwd), data=body, headers=headers, verify=False)
         self._logger.debug(r)
         self._logger.debug(r.headers)
         self._logger.debug(r.text)
@@ -177,7 +191,10 @@ class Space:
         self._logger.debug("PUT %s" % req_url)
         self._logger.debug(headers)
         self._logger.debug(body)
-        r = requests.put(req_url, auth=(self.space_user, self.space_passwd), data=body, headers=headers, verify=False)
+        if self.use_session:
+            r = self.connection.get_session().put(req_url, data=body, headers=headers, verify=False)
+        else:
+            r = requests.put(req_url, auth=(self.space_user, self.space_passwd), data=body, headers=headers, verify=False)
         self._logger.debug(r)
         self._logger.debug(r.text)
         return r
@@ -193,10 +210,16 @@ class Space:
         """
         req_url = self.space_url + delete_url
         self._logger.debug("DELETE %s" % req_url)
-        r = requests.delete(req_url, auth=(self.space_user, self.space_passwd), verify=False)
+        if self.use_session:
+            r = self.connection.get_session().delete(req_url, verify=False)
+        else:
+            r = requests.delete(req_url, auth=(self.space_user, self.space_passwd), verify=False)
         self._logger.debug(r)
         self._logger.debug(r.text)
         return r
+
+    def logout(self):
+        self.connection.logout()
 
 class RestException(Exception):
     """An exception that is raised when a REST API invocation returns a response
