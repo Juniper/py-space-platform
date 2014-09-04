@@ -4,7 +4,7 @@ collections:
         xml_name: 'devices'
         media_type: 'vnd.juniper.servicenow.device-management.devices+xml;version=5'
         url: '/api/juniper/servicenow/device-management/devices'
-        resource_type: 'device_management.device'
+        resource_type: 'servicenow.device_management.device'
 
 resources:
     device:
@@ -12,9 +12,12 @@ resources:
         media_type: 'vnd.juniper.servicenow.device-management.device+xml;version=5;charset=UTF-8'
         collection_name: 'devices'
         service_url: '/api/juniper/servicenow/device-management'
-        collections:
-
         methods:
+            associateDeviceGroup:
+                name: 'associateDeviceGroup'
+                request_type: 'application/vnd.juniper.servicenow.device-management.associatedevicegroup+xml;version=1;charset=UTF-8'
+                request_template: 'sn_associateDeviceGroup.tpl'
+                response_type: 'application/vnd.juniper.servicenow.device-management.servicenowmsg+xml;version=1'
 
 methods:
 

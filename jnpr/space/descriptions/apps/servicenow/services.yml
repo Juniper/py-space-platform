@@ -4,4 +4,7 @@ services:
         service_name: 'device-management'
         url: '/api/juniper/servicenow/device-management'
 
+    device_group_management:
+        service_name: 'device-group-management'
+        url: '/api/juniper/servicenow/device-group-management'
 ...

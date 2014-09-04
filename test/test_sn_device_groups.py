@@ -2,12 +2,12 @@ import ConfigParser
 
 from jnpr.space import rest
 
-class TestDevices:
+class TestDeviceGroups:
 
     def setup_class(self):
         # Extract Space URL, userid, password from config file
         config = ConfigParser.RawConfigParser()
-        config.read("../test.conf")
+        config.read("./test.conf")
         url = config.get('space', 'url')
         user = config.get('space', 'user')
         passwd = config.get('space', 'passwd')
@@ -15,15 +15,13 @@ class TestDevices:
         # Create a Space REST end point
         self.space = rest.Space(url, user, passwd)
 
-    def test_devices(self):
-        devs = self.space.device_management.devices.get()
-        for d in devs:
-            print d.name
+    def test_device_groups(self):
+        dg_list = self.space.servicenow.device_group_management.device_groups.get()
+        assert len(dg_list) >= 0
+
+        for d in dg_list:
+            print d.deviceGroupName
 
         devices_list = self.space.servicenow.device_management.devices.get()
-        assert len(devices_list) > 0, "Not enough devices on Service Now"
-
         for d in devices_list:
-            print d.hostName
-
-        assert 0
+            d.associateDeviceGroup.post(devicegroup=dg_list[0])

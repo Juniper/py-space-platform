@@ -1,0 +1,18 @@
+---
+collections:
+    device_groups:
+        xml_name: 'deviceGroup'
+        media_type: 'vnd.juniper.servicenow.device-group-management.devicegroups+xml;version=2'
+        url: '/api/juniper/servicenow/device-group-management/deviceGroup'
+        resource_type: 'servicenow.device_group_management.device_group'
+
+resources:
+    device_group:
+        xml_name: 'deviceGroup'
+        media_type: 'vnd.juniper.servicenow.device-group-management.devicegroup+xml;version=2'
+        collection_name: 'device_groups'
+        service_url: '/api/juniper/servicenow/device-group-management'
+
+methods:
+
+...
