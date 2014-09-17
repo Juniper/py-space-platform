@@ -22,18 +22,18 @@ class TestInventory:
 
     def test_get_each_managed_element(self):
         me_list = self.space.managed_domain.managed_elements.get()
-        assert len(me_list) > 0, "Not enough devices on Space"
+        assert len(me_list) >= 2, "Not enough devices on Space"
 
-        for m in me_list:
+        for m in me_list[:1]:
             assert isinstance(m, resource.Resource)
             me_details = m.get()
             assert me_details.device.deviceFamily.startswith('junos')
 
     def test_get_ptps_from_each_managed_element(self):
         me_list = self.space.managed_domain.managed_elements.get()
-        assert len(me_list) > 0, "Not enough devices on Space"
+        assert len(me_list) > 1, "Not enough devices on Space"
 
-        for me in me_list:
+        for me in me_list[0:1]:
             assert isinstance(me, resource.Resource)
             ptp_ref_list = me.ptps.get()
             assert len(ptp_ref_list) > 0
@@ -43,9 +43,9 @@ class TestInventory:
 
     def test_get_eqpt_from_each_managed_element(self):
         me_list = self.space.managed_domain.managed_elements.get()
-        assert len(me_list) > 0, "Not enough devices on Space"
+        assert len(me_list) > 1, "Not enough devices on Space"
 
-        for me in me_list:
+        for me in me_list[0:1]:
             assert isinstance(me, resource.Resource)
             eh_list = me.equipment_holders.get()
             assert len(eh_list) > 0
@@ -57,9 +57,9 @@ class TestInventory:
 
     def test_get_re_from_each_managed_element(self):
         me_list = self.space.managed_domain.managed_elements.get()
-        assert len(me_list) > 0, "Not enough devices on Space"
+        assert len(me_list) > 1, "Not enough devices on Space"
 
-        for me in me_list:
+        for me in me_list[0:1]:
             re_list = me.routing_engines.get()
             assert len(re_list) > 0
             for re in re_list:
@@ -85,9 +85,9 @@ class TestInventory:
 
     def test_get_vlans_from_each_managed_element(self):
         me_list = self.space.managed_domain.managed_elements.get()
-        assert len(me_list) > 0, "Not enough devices on Space"
+        assert len(me_list) > 1, "Not enough devices on Space"
 
-        for me in me_list:
+        for me in me_list[0:1]:
             vlans_list = me.vlans.get()
             assert len(vlans_list) > 0
             for vlan in vlans_list:
