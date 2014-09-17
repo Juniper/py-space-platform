@@ -2,14 +2,14 @@
 collections:
     devices:
         xml_name: 'devices'
-        media_type: 'vnd.juniper.servicenow.device-management.devices+xml;version=5'
+        media_type: 'application/vnd.juniper.servicenow.device-management.devices+xml;version=5'
         url: '/api/juniper/servicenow/device-management/devices'
         resource_type: 'servicenow.device_management.device'
 
 resources:
     device:
         xml_name: 'device'
-        media_type: 'vnd.juniper.servicenow.device-management.device+xml;version=5;charset=UTF-8'
+        media_type: 'application/vnd.juniper.servicenow.device-management.device+xml;version=5;charset=UTF-8'
         collection_name: 'devices'
         service_url: '/api/juniper/servicenow/device-management'
         methods:

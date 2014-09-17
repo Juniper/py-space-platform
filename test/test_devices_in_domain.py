@@ -34,5 +34,3 @@ class TestLogin:
             devices = xmlutil.xml2obj(r.text)
             for d in devices.device:
                 print d.name, d.ipAddr, d.domain_id
-
-        assert 0

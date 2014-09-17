@@ -23,15 +23,7 @@ class TestRpc:
 
         d = devices_list[0]
 
-        #result = d.exec_rpc_v1.post(rpcCommand="<get-system-information/>")
-        result = d.exec_rpc_v1.post(rpcCommand="""<request-snmp-spoof-trap>
-                <trap>jnxFanFailure</trap>
-                <variable-bindings>jnxContentsContainerIndex=2 ,jnxContentsL1Index=2, jnxContentsL2Index=0, jnxContentsL3Index=0 , jnxContentsDescr='Test Alarm' , jnxOperatingState=6</variable-bindings>
-        </request-snmp-spoof-trap>""")
-
-        result = d.exec_rpc_v1.post(rpcCommand="""
-        <command>request snmp spoof-trap jnxFanFailure variable-bindings "jnxContentsContainerIndex=2 ,jnxContentsL1Index=2, jnxContentsL2Index=0, jnxContentsL3Index=0 , jnxContentsDescr='Test Alarm' , jnxOperatingState=6"</command>
-        """)
+        result = d.exec_rpc_v1.post(rpcCommand="<get-system-information/>")
 
         from pprint import pprint
         pprint(result)
@@ -76,7 +68,7 @@ class TestRpc:
 
         try:
             task_id_list = []
-            for d in devices_list:
+            for d in devices_list[0:1]:
                 result = d.exec_rpc_v3.post(
                                             task_monitor=tm,
                                             rpcCommand="<get-system-information/>"

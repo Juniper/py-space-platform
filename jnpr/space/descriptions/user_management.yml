@@ -94,7 +94,8 @@ resources:
         collections:
             roles:
                 xml_name: 'roles'
-                media_type: 'application/vnd.net.juniper.space.user-management.roles-ref+xml;version=1;charset=UTF-8'
+                media_type: 'application/vnd.net.juniper.space.user-management.roles-ref+xml;version=1'
+                content_type: 'application/vnd.net.juniper.space.user-management.roles-ref+xml;version=1;charset=UTF-8'
                 resource_type: 'user_management.role'
             active_user_sessions:
                 xml_name: 'active-user-sessions'

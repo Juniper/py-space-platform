@@ -102,8 +102,17 @@ class Collection(object):
         """
         url = self._form_get_url(filter_, paging, sortby)
 
+        mtype = self.meta_object.media_type
+        if mtype is not None:
+            #end = mtype.find(';charset=')
+            #if end > 0:
+            #    mtype = mtype[0:end]
+            headers = {'accept' : mtype}
+        else:
+            headers = {}
+
         resource_list = []
-        response = self._rest_end_point.get(url)
+        response = self._rest_end_point.get(url, headers)
         if response.status_code != 200:
             if response.status_code == 204:
                 return []
@@ -204,7 +213,10 @@ class Collection(object):
         if content_type:
             media_type = content_type
         elif isinstance(new_obj, list):
-            media_type = self.meta_object.media_type
+            if self.meta_object.content_type is not None:
+                media_type = self.meta_object.content_type
+            else:
+                media_type = self.meta_object.media_type
         else:
             media_type = new_obj.get_meta_object().media_type
 
@@ -352,6 +364,8 @@ class MetaCollection(object):
             if ('xml_name' in values) else None
         self.media_type = values['media_type'] \
             if ('media_type' in values) else None
+        self.content_type = values['content_type'] \
+            if ('content_type' in values) else None
         self.resource_type = values['resource_type'] \
             if ('resource_type' in values) else None
         self.url = values['url'] \
