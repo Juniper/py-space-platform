@@ -221,6 +221,12 @@ class Space:
     def logout(self):
         self.connection.logout()
 
+    def login(self):
+        from jnpr.space import connection
+        self.connection = connection.Connection(self.space_url,
+                                                self.space_user,
+                                                self.space_passwd)
+
 class RestException(Exception):
     """An exception that is raised when a REST API invocation returns a response
     indicating an error. The exception contains the complete response inside.

@@ -70,9 +70,14 @@ def fetch_resource(rest_end_point, href):
     media_type = response.headers['content-type']
     end = media_type.index('+')
     parts = media_type[:end].split('.')
+    app_ = parts[len(parts)-3]
     service_ = parts[len(parts)-2]
     type_ = parts[len(parts)-1]
 
-    type_name = util.unmake_xml_name('.'.join([service_, type_]))
+    if app_ == 'space':
+        type_name = util.unmake_xml_name('.'.join([service_, type_]))
+    else:
+        type_name = util.unmake_xml_name('.'.join([app_, service_, type_]))
+
     xml_data = etree.fromstring(response.content)
     return make_resource(type_name, rest_end_point, xml_data)

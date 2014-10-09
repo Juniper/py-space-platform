@@ -74,6 +74,10 @@ resources:
                 xml_name: 'capabilities'
                 media_type: 'application/vnd.net.juniper.space.user-management.capabilities-ref+xml;version=1'
                 resource_type: 'user_management.capability'
+            tasks:
+                xml_name: 'tasks'
+                media_type: 'application/vnd.net.juniper.space.user-management.task-refs+xml;version=3'
+                resource_type: 'user_management.task'
 
     profile:
         xml_name: 'profile'

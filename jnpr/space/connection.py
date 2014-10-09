@@ -1,5 +1,7 @@
 import requests
 import logging
+import httplib
+
 
 class Connection:
     """ Creates a connection to Space Platform """
@@ -21,8 +23,8 @@ class Connection:
         self.session = requests.Session()
         s = self.session;
         r = s.get(self.homeurl, verify=False)
-        self._logger.debug(r.status_code)
-        self._logger.debug(r.headers)
+        #self._logger.debug(r.status_code)
+        #self._logger.debug(r.headers)
         self._logger.debug(r.text)
 
         # Extract the ipAddr and code variables embbed in the form validation code
@@ -53,8 +55,8 @@ class Connection:
         self._logger.debug(data)
         r = s.post(self.authurl, data=data, verify=False)
 
-        self._logger.debug(r.status_code)
-        self._logger.debug(r.headers)
+        #self._logger.debug(r.status_code)
+        #self._logger.debug(r.headers)
         self._logger.debug(r.text)
 
         self.check_login_status()
@@ -88,9 +90,24 @@ class Connection:
         """ Logout from Space Server  """
         logout_url = self.homeurl + "/unsecured/logout.jsp"
         r = self.session.get(logout_url, verify=False)
-        self._logger.debug(r.status_code)
-        self._logger.debug(r.headers)
+        #self._logger.debug(r.status_code)
+        #self._logger.debug(r.headers)
         self._logger.debug(r.text)
 
         if r.status_code == 200:
             self.session = None
+
+if __name__ == '__main__':
+
+    httplib.HTTPConnection.debuglevel = 1
+
+    logging.basicConfig()
+    logging.getLogger().setLevel(logging.DEBUG)
+    requests_log = logging.getLogger("requests.packages.urllib3")
+    requests_log.setLevel(logging.DEBUG)
+    requests_log.propagate = True
+
+    c = Connection('https://10.205.10.1', 'super', 'juniper123')
+    r = c.session.get("https://10.205.10.1/api/space", verify=False)
+    print r.text
+    c.logout()

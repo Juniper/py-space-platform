@@ -40,6 +40,14 @@ class TestLogin:
         rls = u.roles.get()
         assert rls[0].href == r.href
 
+    def test_logout_1(self):
+        self.space.logout()
+        with pytest.raises(Exception):
+            self.space.user_management.users.get(filter_={'name':'super'})
+
+    def test_login(self):
+        self.space.login()
+
     def test_change_password(self):
         us = self.space.user_management.users.get(filter_={'name':'space_ez1'})
         assert len(us) == 1
@@ -63,3 +71,12 @@ class TestLogin:
         self.space.logout()
         with pytest.raises(Exception):
             self.space.user_management.users.get(filter_={'name':'super'})
+
+    def test_login_logout_loop(self):
+        for i in range(1,10):
+            self.space.login()
+            users_list = self.space.user_management.users.get()
+            assert len(users_list) > 0
+            self.space.logout()
+            #with pytest.raises(Exception):
+            self.space.user_management.users.get()
