@@ -32,6 +32,8 @@ class Space:
         :type user: str
         :param passwd: Password for the userid.
         :type passwd: str
+        :param bool use_session: Whether to use a session based login or not.
+            It is ``False`` by default.
 
         :returns:  An instance of this class encapsulating the Junos Space
                    cluster whose **url** was given as a parameter. It can be
@@ -48,8 +50,7 @@ class Space:
         self.use_session = use_session
 
         if use_session:
-            from jnpr.space import connection
-            self.connection = connection.Connection(url, user, passwd)
+            self.login()
 
     def __str__(self):
         return ' '.join(['Space <',
@@ -219,9 +220,15 @@ class Space:
         return r
 
     def logout(self):
+        """Logs out the current session being used.
+        """
         self.connection.logout()
 
     def login(self):
+        """Logs into Space and creates a session (connection) that is maintained.
+        All API calls will use this session and will use the JSESSIONID,
+        JSESSIONIDSSO cookies - they will not be individually authenticated.
+        """
         from jnpr.space import connection
         self.connection = connection.Connection(self.space_url,
                                                 self.space_user,

@@ -78,5 +78,5 @@ class TestLogin:
             users_list = self.space.user_management.users.get()
             assert len(users_list) > 0
             self.space.logout()
-            #with pytest.raises(Exception):
-            self.space.user_management.users.get()
+            with pytest.raises(Exception):
+                self.space.user_management.users.get()
