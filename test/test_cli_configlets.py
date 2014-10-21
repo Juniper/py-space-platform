@@ -1,7 +1,7 @@
 import ConfigParser
 import time
 
-from jnpr.space import rest, factory
+from jnpr.space import rest, factory, async
 
 class TestCliConfiglets:
 

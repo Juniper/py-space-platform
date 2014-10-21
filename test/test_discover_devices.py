@@ -16,6 +16,27 @@ class TestDiscoverDevices:
         # Create a Space REST end point
         self.space = rest.Space(url, user, passwd)
 
+    def test_discover_devices_later(self):
+        tm = async.TaskMonitor(self.space, 'test_DD_q')
+        try:
+            result = self.space.device_management.discover_devices.post(
+                        task_monitor=tm,
+                        schedule='(after(00 01))',
+                        hostName='test-host-name',
+                        manageDiscoveredSystemsFlag=True,
+                        userName='regress', password='MaRtInI')
+
+            from pprint import pprint
+            pprint(result)
+
+            assert result.id > 0, "Device Discovery execution Failed"
+
+            pu = tm.wait_for_task(result.id)
+            assert (pu.state)
+            pprint(pu)
+        finally:
+            tm.delete()
+
     def test_discover_devices_1(self):
         tm = async.TaskMonitor(self.space, 'test_DD_q')
         try:
