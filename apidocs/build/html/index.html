@@ -54,7 +54,7 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#jnpr.space.rest.Space" title="jnpr.space.rest.Space"><tt class="xref py py-obj docutils literal"><span class="pre">jnpr.space.rest.Space</span></tt></a>(url,&nbsp;user,&nbsp;passwd)</td>
+<tr class="row-odd"><td><a class="reference internal" href="#jnpr.space.rest.Space" title="jnpr.space.rest.Space"><tt class="xref py py-obj docutils literal"><span class="pre">jnpr.space.rest.Space</span></tt></a>(url,&nbsp;user,&nbsp;passwd[,&nbsp;...])</td>
 <td>Encapsulates a Junos Space cluster and provides access to all RESTful web-service APIs provided by Space.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#jnpr.space.resource.Resource" title="jnpr.space.resource.Resource"><tt class="xref py py-obj docutils literal"><span class="pre">jnpr.space.resource.Resource</span></tt></a>(type_name,&nbsp;...)</td>
@@ -120,7 +120,7 @@ indicating an error. The exception contains the complete response inside.</p>
 
 <dl class="class">
 <dt id="jnpr.space.rest.Space">
-<em class="property">class </em><tt class="descclassname">jnpr.space.rest.</tt><tt class="descname">Space</tt><big>(</big><em>url</em>, <em>user</em>, <em>passwd</em><big>)</big><a class="headerlink" href="#jnpr.space.rest.Space" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">jnpr.space.rest.</tt><tt class="descname">Space</tt><big>(</big><em>url</em>, <em>user</em>, <em>passwd</em>, <em>use_session=False</em><big>)</big><a class="headerlink" href="#jnpr.space.rest.Space" title="Permalink to this definition">¶</a></dt>
 <dd><p>Encapsulates a Junos Space cluster and provides access to all RESTful
 web-service APIs provided by Space. An instance of this class is also
 referred to as a <em>&#8216;rest end point&#8217;</em> in this documentation.</p>
@@ -161,7 +161,7 @@ with the given name.</td>
 
 <dl class="method">
 <dt id="jnpr.space.rest.Space.__init__">
-<tt class="descname">__init__</tt><big>(</big><em>url</em>, <em>user</em>, <em>passwd</em><big>)</big><a class="headerlink" href="#jnpr.space.rest.Space.__init__" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">__init__</tt><big>(</big><em>url</em>, <em>user</em>, <em>passwd</em>, <em>use_session=False</em><big>)</big><a class="headerlink" href="#jnpr.space.rest.Space.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates an instance of this class to represent a Junos Space cluster.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -172,6 +172,8 @@ with the given name.</td>
 E.g. <a class="reference external" href="https:/">https:/</a>/&lt;VIP&gt;</li>
 <li><strong>user</strong> (<em>str</em>) &#8211; A valid userid for invoking APIs on this Space cluster.</li>
 <li><strong>passwd</strong> (<em>str</em>) &#8211; Password for the userid.</li>
+<li><strong>use_session</strong> (<em>bool</em>) &#8211; Whether to use a session based login or not.
+It is <tt class="docutils literal"><span class="pre">False</span></tt> by default.</li>
 </ul>
 </td>
 </tr>
@@ -250,6 +252,20 @@ returned by the HEAD request.</p>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="method">
+<dt id="jnpr.space.rest.Space.login">
+<tt class="descname">login</tt><big>(</big><big>)</big><a class="headerlink" href="#jnpr.space.rest.Space.login" title="Permalink to this definition">¶</a></dt>
+<dd><p>Logs into Space and creates a session (connection) that is maintained.
+All API calls will use this session and will use the JSESSIONID,
+JSESSIONIDSSO cookies - they will not be individually authenticated.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jnpr.space.rest.Space.logout">
+<tt class="descname">logout</tt><big>(</big><big>)</big><a class="headerlink" href="#jnpr.space.rest.Space.logout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Logs out the current session being used.</p>
 </dd></dl>
 
 <dl class="method">
