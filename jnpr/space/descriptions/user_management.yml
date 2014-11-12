@@ -32,7 +32,7 @@ collections:
 
     users:
         xml_name: 'users'
-        media_type: 'application/vnd.net.juniper.space.user-management.users+xml;version=1'
+        media_type: 'application/vnd.net.juniper.space.user-management.users+xml;version=3'
         url: '/api/space/user-management/users'
         resource_type: 'user_management.user'
 

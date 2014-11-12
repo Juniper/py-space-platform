@@ -1,7 +1,7 @@
 import ConfigParser
 import time
 
-from jnpr.space import rest, factory, async
+from jnpr.space import rest, factory
 
 class TestCliConfiglets:
 
@@ -97,11 +97,11 @@ class TestCliConfiglets:
             for p in params:
                 assert p.parameter
                 assert p.order
-                assert p.display_name
+                assert p['display-name']
 
                 details = p.get()
                 assert details
-                assert details.parameter_type
+                assert details['parameter-type']
 
     def test_get_configlets_pages(self):
         cglets = self.space.configuration_management.cli_configlets.get()

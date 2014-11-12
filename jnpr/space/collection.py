@@ -71,6 +71,18 @@ class Collection(object):
             self._methods[attr] = method
             return method
 
+    def __getitem__(self, attr):
+        """
+        This method is overridden so that contained elements can be accessed
+        using their 'xml names' - e.g. user['first-name']. The implementation
+        just calls __getattr__ internally.
+
+        See doc for __getattr__ for more details.
+        """
+
+        from jnpr.space import xmlutil
+        return self.__getattr__(xmlutil.unmake_xml_name(attr))
+
     def get(self, filter_=None, paging=None, sortby=None):
         """Gets the contained resources of this collection from Space.
 

@@ -24,7 +24,8 @@ class TestDevices:
         assert len(devices_list) > 0, "Not enough devices on Service Now"
 
         for d in devices_list:
-            if d.deviceGroup:
-                print "%s is already put in group %s" % (d.hostName, d.deviceGroup.id)
-
-        assert 0
+            try:
+                if d.deviceGroup:
+                    print "%s is already put in group %s" % (d.hostName, d.deviceGroup.id)
+            except AttributeError:
+                pass

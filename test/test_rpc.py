@@ -29,7 +29,7 @@ class TestRpc:
         pprint(result)
 
         assert result.status == 'Success', "RPC Failed"
-        assert result.netConfReplies.netConfReply.replyMsgData.system_information.os_name.startswith('junos')
+        assert result.netConfReplies.netConfReply.replyMsgData['system-information']['os-name'].text.startswith('junos')
 
     def test_rpc_async(self):
         devices_list = self.space.device_management.devices.get(
@@ -55,7 +55,7 @@ class TestRpc:
             pprint(pu)
 
             assert (pu.state == "DONE" and pu.status == "SUCCESS" and
-                    pu.percentage == "100.0")
+                    str(pu.percentage) == "100.0")
         finally:
             tm.delete()
 
@@ -87,7 +87,7 @@ class TestRpc:
 
             for r in task_results:
                 assert (r.state == "DONE" and r.status == "SUCCESS" and
-                        r.percentage == "100.0")
+                        str(r.percentage) == "100.0")
         finally:
             tm.delete()
 
@@ -111,6 +111,6 @@ class TestRpc:
             r = tm.wait_for_task(result.id)
             pprint(r)
             assert (r.state == "DONE" and r.status == "SUCCESS" and
-                        r.percentage == "100.0")
+                        str(r.percentage) == "100.0")
         finally:
             tm.delete()

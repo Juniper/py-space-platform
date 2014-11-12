@@ -1,4 +1,5 @@
 import ConfigParser
+import time
 
 from jnpr.space import rest, factory, async
 
@@ -18,7 +19,7 @@ class TestConfigTemplates:
     def test_create_quick_template(self):
         t = factory.make_resource(type_name='config_template_management.config_template',
                                         rest_end_point=self.space)
-        t.name = 'Space_EZ_Test_Quick_Template_1'
+        t.name = 'Space_EZ_Test_Quick_Template_3'
         t.description = 'Quick Template for testing from space-ez'
         t.device_family = 'junos'
         t.os_version = '1' # Crap: Some value must be given! Otherwise it throws exception!
@@ -30,6 +31,7 @@ class TestConfigTemplates:
                             accept='application/vnd.net.juniper.space.config-template-management.config-template-no-definition+xml;version=1')
         assert t.id > 0
 
+        time.sleep(10)
         CLI_DATA = "set interfaces $(interface) description $(description)"
         result = t.configuration.post(clis=CLI_DATA)
         assert result.status == 'SUCCESS'
@@ -60,7 +62,7 @@ class TestConfigTemplates:
                 assert config
 
     def test_deploy_test_template(self):
-        cts = self.space.config_template_management.config_templates.get(filter_={'name': 'Space_EZ_Test_Quick_Template_1'})
+        cts = self.space.config_template_management.config_templates.get(filter_={'name': 'Space_EZ_Test_Quick_Template_3'})
         assert len(cts) > 0, 'Test config template not present on Space!'
 
         devices = self.space.device_management.devices.get(filter_={'deviceFamily': 'junos',
@@ -87,7 +89,7 @@ class TestConfigTemplates:
 
     def test_audit_test_template(self):
         tm = async.TaskMonitor(self.space, 'test_ct_audit_q')
-        cts = self.space.config_template_management.config_templates.get(filter_={'name': 'Space_EZ_Test_Quick_Template_1'})
+        cts = self.space.config_template_management.config_templates.get(filter_={'name': 'Space_EZ_Test_Quick_Template_3'})
         assert len(cts) > 0, 'Test config template not present on Space!'
 
         try:
@@ -100,12 +102,12 @@ class TestConfigTemplates:
 
     def test_undeploy_test_template(self):
         tm = async.TaskMonitor(self.space, 'test_ct_undeploy_q')
-        cts = self.space.config_template_management.config_templates.get(filter_={'name': 'Space_EZ_Test_Quick_Template_1'})
+        cts = self.space.config_template_management.config_templates.get(filter_={'name': 'Space_EZ_Test_Quick_Template_3'})
         assert len(cts) > 0, 'Test config template not present on Space!'
 
         assocs = cts[0].device_associations.get()
         devices = []
-        for d in assocs.device_association:
+        for d in assocs['device-association']:
             devices.append(d.device)
 
         try:
@@ -118,7 +120,7 @@ class TestConfigTemplates:
             tm.delete()
 
     def test_delete_test_template(self):
-        cts = self.space.config_template_management.config_templates.get(filter_={'name': 'Space_EZ_Test_Quick_Template_1'})
+        cts = self.space.config_template_management.config_templates.get(filter_={'name': 'Space_EZ_Test_Quick_Template_3'})
         assert len(cts) > 0, 'Test config template not present on Space!'
 
         cts[0].delete()

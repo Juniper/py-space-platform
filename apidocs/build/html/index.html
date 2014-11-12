@@ -160,6 +160,15 @@ with the given name.</td>
 </dd></dl>
 
 <dl class="method">
+<dt id="jnpr.space.rest.Space.__getitem__">
+<tt class="descname">__getitem__</tt><big>(</big><em>attr</em><big>)</big><a class="headerlink" href="#jnpr.space.rest.Space.__getitem__" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method is overridden so that contained elements can be accessed
+using their &#8216;xml names&#8217; - e.g. user[&#8216;first-name&#8217;]. The implementation
+just calls __getattr__ internally.</p>
+<p>See doc for __getattr__ for more details.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="jnpr.space.rest.Space.__init__">
 <tt class="descname">__init__</tt><big>(</big><em>url</em>, <em>user</em>, <em>passwd</em>, <em>use_session=False</em><big>)</big><a class="headerlink" href="#jnpr.space.rest.Space.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates an instance of this class to represent a Junos Space cluster.</p>
@@ -423,15 +432,23 @@ this resource.</td>
 
 <dl class="method">
 <dt id="jnpr.space.resource.Resource.get">
-<tt class="descname">get</tt><big>(</big><big>)</big><a class="headerlink" href="#jnpr.space.resource.Resource.get" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets the current state of this resource from Space.</p>
+<tt class="descname">get</tt><big>(</big><em>attr=None</em><big>)</big><a class="headerlink" href="#jnpr.space.resource.Resource.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is an overloaded method that does two things: If the <tt class="docutils literal"><span class="pre">attr</span></tt>
+parameter is passed, it returns the corresponding XML attribute from
+the top level XML data element contained by this resource. If the
+<tt class="docutils literal"><span class="pre">attr</span></tt> parameter is not passed, it performs an HTTP GET for
+this resource and get its current state.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The current state of this resource fetched from Space and
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
+<li>Value of the named XML attribute. OR</li>
+<li>The current state of this resource fetched from Space and
 represented as a Python object. You can access the fields of the
-resource&#8217;s state directly as attributes of this object.</td>
+resource&#8217;s state directly as attributes of this object.</li>
+</ul>
+</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><tt class="docutils literal"><span class="pre">jnpr.space.rest.RestException</span></tt> if the GET method results in an
 error response. The exception&#8217;s <tt class="docutils literal"><span class="pre">response</span></tt> attribute will have the
@@ -1166,10 +1183,18 @@ all &#8216;-&#8216; with &#8216;_&#8217;. CamelCase names are retained as such.<
 <dl class="function">
 <dt id="jnpr.space.xmlutil.xml2obj">
 <tt class="descclassname">jnpr.space.xmlutil.</tt><tt class="descname">xml2obj</tt><big>(</big><em>src</em><big>)</big><a class="headerlink" href="#jnpr.space.xmlutil.xml2obj" title="Permalink to this definition">¶</a></dt>
-<dd><p>A simple function to convert XML data into native Python object.
-Code copied from recipe at:
-<a class="reference external" href="http://code.activestate.com/recipes/534109-xml-to-python-data-structure/">http://code.activestate.com/recipes/534109-xml-to-python-data-structure/</a></p>
-<p>&#64;author: Wai Yip Tung</p>
+<dd><p>Uses lxml.objectify to parse the given XML string and returns a Python
+object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>src</strong> (<em>str</em>) &#8211; Source XML string</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">An instance of <tt class="docutils literal"><span class="pre">`lxml.objectify.ObjectifiedElement`</span></tt></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>

@@ -131,7 +131,13 @@ class Resource(object):
             self._methods[attr] = method
             return method
 
-        return self._xml_data.__getattr__(attr)
+        # Check if it is an XML attribute
+        thing = self._xml_data.get(attr)
+        if thing is not None:
+            return thing
+
+        return self._xml_data[xmlutil.make_xml_name(attr)]
+        # return self._xml_data.__getattr__(attr) # For issue #27
 
         """
         Fix for issue #19
@@ -150,6 +156,17 @@ class Resource(object):
             raise AttributeError("No attribute '%s'" % attr)
         """
 
+    def __getitem__(self, attr):
+        """
+        This method is overridden so that contained elements can be accessed
+        using their 'xml names' - e.g. user['first-name']. The implementation
+        just calls __getattr__ internally.
+
+        See doc for __getattr__ for more details.
+        """
+
+        return self.__getattr__(xmlutil.unmake_xml_name(attr))
+
     def get_meta_object(self):
         """Returns the meta object which holds meta data for this resource.
 
@@ -157,24 +174,44 @@ class Resource(object):
         """
         return self._meta_object
 
-    def get(self):
-        """Gets the current state of this resource from Space.
+    def _get_xml_attr(self, attr):
+        """Returns the named XML attribute from the XML data element contained
+        by this resource.
 
-        :returns: The current state of this resource fetched from Space and
-            represented as a Python object. You can access the fields of the
-            resource's state directly as attributes of this object.
+        :returns: Value of the named attribute
+        :raises: ``AttributeError`` if there is no such XML attribute
+        """
+        return self._xml_data.get(attr)
+
+    def get(self, attr=None):
+        """
+        This is an overloaded method that does two things: If the ``attr``
+        parameter is passed, it returns the corresponding XML attribute from
+        the top level XML data element contained by this resource. If the
+        ``attr`` parameter is not passed, it performs an HTTP GET for
+        this resource and get its current state.
+
+        :returns:
+            - Value of the named XML attribute. OR
+            - The current state of this resource fetched from Space and
+              represented as a Python object. You can access the fields of the
+              resource's state directly as attributes of this object.
 
         :raises: ``jnpr.space.rest.RestException`` if the GET method results in an
             error response. The exception's ``response`` attribute will have the
             full response from Space.
 
         """
+        if attr is not None:
+            return self._get_xml_attr(attr)
+
         response = self._rest_end_point.get(self.get_href())
         if response.status_code != 200:
             raise rest.RestException("GET failed on %s" % self.get_href(),
                                      response)
 
-        r = response.text
+        #r = response.text
+        r = response.content # Fix as part of issue #27
         return xmlutil.xml2obj(r)
 
     def put(self, new_val_obj = None):
@@ -218,7 +255,7 @@ class Resource(object):
         #root = etree.fromstring(response.content)
 
         # Fixing issue #19 self._xml_data = root
-        self._xml_data = xmlutil.xml2obj(response.text)
+        self._xml_data = xmlutil.xml2obj(response.content) # Changed text to content
 
     def delete(self):
         """Deletes this resource on Space by sending a DELETE request with the
@@ -231,9 +268,9 @@ class Resource(object):
 
         """
         if self._meta_object.use_uri_for_delete:
-            url = self.uri
+            url = self._xml_data.get('uri')
             if url is None:
-                url = '/'.join([self._parent.get_href(), self.id])
+                url = '/'.join([self._parent.get_href(), str(self.id)])
         else:
             url = self.get_href()
         response = self._rest_end_point.delete(url)
@@ -298,7 +335,7 @@ class Resource(object):
         if (response.status_code != 202) and (response.status_code != 200):
             raise rest.RestException("POST failed on %s" % url, response)
 
-        return xmlutil.xml2obj(xmlutil.cleanup(response.text))
+        return xmlutil.xml2obj(xmlutil.cleanup(response.content)) # Changed text to content
 
     def get_href(self):
         """Gets the href for this resource. If ``href`` is available as an attr
@@ -313,12 +350,12 @@ class Resource(object):
 
         """
         if self._xml_data is not None:
-            h = self._xml_data.href
+            h = self._xml_data.get('href')
             # Fixing issue #19 h = self._xml_data.get('href')
             if h:
                 return h
 
-            u = self._xml_data.uri
+            u = self._xml_data.get('uri')
             if u and not u.endswith(self._meta_object.collection_name):
                 return u
 

@@ -84,6 +84,18 @@ class Service(object):
         else:
             raise AttributeError
 
+    def __getitem__(self, attr):
+        """
+        This method is overridden so that contained elements can be accessed
+        using their 'xml names' - e.g. user['first-name']. The implementation
+        just calls __getattr__ internally.
+
+        See doc for __getattr__ for more details.
+        """
+
+        from jnpr.space import xmlutil
+        return self.__getattr__(xmlutil.unmake_xml_name(attr))
+
 class MetaService(object):
     """
     Encapsulates the meta data for a service.

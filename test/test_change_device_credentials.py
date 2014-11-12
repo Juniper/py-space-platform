@@ -25,10 +25,10 @@ class TestChangeDeviceCredentials:
         try:
                 result = self.space.device_management.change_device_credentials.post(
                             task_monitor=tm,
-                            devices=devices_list,
+                            devices=devices_list[0:1],
                             user_name='regress',
                             password='MaRtInI',
-                            change_to='MaRtInI2',
+                            change_to='CREDENTIAL',
                             change_on_device=True)
 
                 from pprint import pprint

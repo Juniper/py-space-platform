@@ -4,15 +4,17 @@ from jnpr.space import rest, factory
 
 def main():
     # Create a Space REST end point
-    my_space = rest.Space(url='http://localhost:8080',
+    my_space = rest.Space(url='https://10.205.57.90',
                           user='super', passwd='juniper123')
 
-    devices_list = my_space.device_management.devices.get()
+    devices_list = my_space.device_management.devices.get(filter_={'connectionStatus': 'up'})
     for d in devices_list:
-        print d.name, d.ipAddr, d.platform, d.serialNumber
+        print d.name, d.ipAddr, d.platform
         c = d.configurations.expanded.post(xpaths=['configuration/snmp/location'])
-        if c.configuration.location:
+        try:
             tag_device(my_space, d, c.configuration.location)
+        except AttributeError:
+            pass
 
 def tag_device(spc, device, tag_name):
     try:

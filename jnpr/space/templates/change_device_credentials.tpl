@@ -17,10 +17,10 @@
      <device href="{{d.href}}"></device>
 {%- endfor %}
    </devices>
-   <user-name>{{user_name}}</userName>
+   <user-name>{{user_name}}</user-name>
    <password>{{password}}</password>
-   <change-to>{{change_to}}</changeTo>
+   <change-to>{{change_to}}</change-to>
 {%- if change_on_device %}
-   <change-on-device>{{change_on_device}}</change-on-device>
+   <change-on-device>{{change_on_device|lower}}</change-on-device>
 {% endif -%}
 </change-credentials>

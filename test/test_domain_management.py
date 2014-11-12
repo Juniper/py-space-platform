@@ -25,7 +25,7 @@ class TestDomainManagement:
 
         for d in ds[0].children.domain:
             assert d.name
-            dom = factory.fetch_resource(self.space, d.href)
+            dom = factory.fetch_resource(self.space, d.get('href'))
             assert dom.name
             assert dom.id
 
@@ -49,7 +49,7 @@ class TestDomainManagement:
             assert d.name
             if d.name == 'test_domain':
                 """ Move one device to test_domain """
-                dom = factory.fetch_resource(self.space, d.href)
+                dom = factory.fetch_resource(self.space, d.get('href'))
                 report = dom.devices.post(device_to_move)
                 assert report.status
 
@@ -94,7 +94,7 @@ class TestDomainManagement:
             assert d.name
             if d.name == 'test_domain':
                 """ Assign user to test_domain """
-                dom = factory.fetch_resource(self.space, d.href)
+                dom = factory.fetch_resource(self.space, d.get('href'))
                 dom.users.post(user_to_move)
 
     def test_remove_user_from_domain(self):
@@ -105,7 +105,7 @@ class TestDomainManagement:
             assert d.name
             if d.name == 'test_domain':
                 """ Remove user from test_domain """
-                dom = factory.fetch_resource(self.space, d.href)
+                dom = factory.fetch_resource(self.space, d.get('href'))
                 usrs = dom.users.get()
 
                 assert len(usrs) == 1

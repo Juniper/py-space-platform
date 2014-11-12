@@ -59,7 +59,7 @@ class TaskMonitor:
 
         if response.status_code == 200:
             #xml = xmlutil.cleanup(response.text)
-            xml = response.text
+            xml = response.content
             return xmlutil.xml2obj(xml)
 
     def wait_for_task(self, task_id):
@@ -111,14 +111,14 @@ class TaskMonitor:
         if pu.state == "DONE":
             return True
 
-        if pu.subTask is not None:
+        try:
             for s in pu.subTask:
                 if s.state != "DONE":
                     return False
 
             return True
-
-        return False
+        except AttributeError:
+            return False
 
     def delete(self):
         """Cleanup by deleting the hornetq"""

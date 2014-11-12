@@ -106,7 +106,7 @@ class Method(object):
         if (response.status_code != 202) and (response.status_code != 200):
             raise rest.RestException("POST failed on %s " % url, response)
 
-        return xml2obj(cleanup(response.text)) if response.text else None
+        return xml2obj(cleanup(response.content)) if response.content else None
 
     def get(self):
         """Performs a GET corresponding to the Method object.
@@ -124,7 +124,7 @@ class Method(object):
             raise rest.RestException("GET failed on %s " % self.get_href(),
                                     response)
 
-        r = response.text
+        r = response.content
         return xml2obj(r)
 
 class MetaMethod(object):

@@ -34,8 +34,8 @@ class TestDevices:
                         assert i.name.startswith('ge-'), \
                             "Intf name %s failed check" % i.name
                     else:
-                        print i.name.data
-                        assert i.name.data.startswith('ge-'), \
+                        print i.name.pyval
+                        assert i.name.pyval.startswith('ge-'), \
                             "Intf name %s failed check" % i.name.data
 
             assert c.version[:7] == d.OSVersion[:7]
@@ -48,7 +48,7 @@ class TestDevices:
         for d in devices_list[:1]:
             raw = d.configurations.raw.get()
             assert raw
-            raw_config = xmlutil.xml2obj(raw.configuration)
+            raw_config = xmlutil.xml2obj(raw.configuration.text)
 
             assert raw_config.version[:7] == d.OSVersion[:7]
 
@@ -69,7 +69,7 @@ class TestDevices:
             if c.interface is not None:
                 for i in c.interface:
                     print i.name
-                    assert i.name.startswith('ge-')
+                    assert i.name.pyval.startswith('ge-')
 
             assert c.version[:7] == d.OSVersion[:7]
 
@@ -81,9 +81,11 @@ class TestDevices:
         for d in devices_list[:1]:
             exp = d.configurations.expanded.get()
             assert exp
-            exp_config = xmlutil.xml2obj(exp.configuration)
+            exp_config = xmlutil.xml2obj(exp.configuration.text)
 
-            assert exp_config.groups is None
+            import pytest
+            with pytest.raises(AttributeError):
+                assert exp_config.groups is None
 
             assert exp_config.version[:7] == d.OSVersion[:7]
 
@@ -97,7 +99,7 @@ class TestDevices:
             assert len(configs) == 2
             for c in configs:
                 xml_config = c.get()
-                xml_config = xmlutil.xml2obj(xml_config.configuration)
+                xml_config = xmlutil.xml2obj(xml_config.configuration.text)
                 assert xml_config.version[:7] == d.OSVersion[:7]
 
     def test_devices_scripts(self):
@@ -132,4 +134,4 @@ class TestDevices:
             crs = d.change_requests.get()
             assert len(crs) >= 0
             for cr in crs:
-                assert cr.deviceId == d.key
+                assert int(cr.deviceId) == int(d.key)

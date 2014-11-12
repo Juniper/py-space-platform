@@ -27,7 +27,7 @@ class TestInventory:
         for m in me_list[:1]:
             assert isinstance(m, resource.Resource)
             me_details = m.get()
-            assert me_details.device.deviceFamily.startswith('junos')
+            assert me_details.device.deviceFamily.text.startswith('junos')
 
     def test_get_ptps_from_each_managed_element(self):
         me_list = self.space.managed_domain.managed_elements.get()
@@ -65,8 +65,10 @@ class TestInventory:
             for re in re_list:
                 assert re.id
                 re_details = re.get()
-                assert re_details.name.startswith("Routing Engine")
+                assert re_details.name.text.startswith("Routing Engine")
                 assert re_details.installedSerialNumber
+                print type(re_details.name)
+                print type(re_details.installedSerialNumber)
 
     """
     def test_get_mlsn_from_each_managed_element(self):
@@ -79,7 +81,7 @@ class TestInventory:
             for mlsn in mlsn_list:
                 assert mlsn.id
                 mlsn_details = mlsn.get()
-                assert mlsn_details.name.startswith("mlsns")
+                assert mlsn_details.name.text.startswith("mlsns")
                 assert mlsn_details.managed_elements.managed_element.id
     """
 
@@ -91,4 +93,4 @@ class TestInventory:
             vlans_list = me.vlans.get()
             assert len(vlans_list) > 0
             for vlan in vlans_list:
-                assert vlan.id
+                assert vlan.id >= 0
