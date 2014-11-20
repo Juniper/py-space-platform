@@ -1,0 +1,24 @@
+---
+collections:
+    eventProfiles:
+        xml_name: 'eventProfiles'
+        media_type: 'application/vnd.juniper.servicenow.event-profile-management.eventprofiles+xml;version=1'
+        url: '/api/juniper/servicenow/event-profile-management/eventProfiles'
+        resource_type: 'servicenow.event_profile_management.eventProfile'
+
+resources:
+    eventProfile:
+        xml_name: 'eventProfile'
+        media_type: 'application/vnd.juniper.servicenow.event-profile-management.eventprofile+xml;version=1'
+        collection_name: 'eventProfiles'
+        service_url: '/api/juniper/servicenow/event-profile-management'
+        methods:
+            installEventProfile:
+                name: 'installEventProfile'
+                request_type: 'application/vnd.juniper.servicenow.event-profile-management.installeventprofile+xml;version=1;charset=UTF-8'
+                request_template: 'sn_installEventProfile.tpl'
+                response_type: 'application/vnd.juniper.servicenow.event-profile-management.eventprofiles+xml;version=1'
+
+methods:
+
+...

@@ -7,4 +7,8 @@ services:
     device_group_management:
         service_name: 'device-group-management'
         url: '/api/juniper/servicenow/device-group-management'
+
+    event_profile_management:
+        service_name: 'event-profile-management'
+        url: '/api/juniper/servicenow/event-profile-management'
 ...
