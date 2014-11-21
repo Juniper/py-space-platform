@@ -31,8 +31,8 @@ class TestDomainManagement:
 
             us = dom.users.get()
             for u in us:
-                details = u.get()
-                assert details
+                user = factory.fetch_resource(self.space, u.get('href'))
+                assert user
 
     def test_add_devices_to_domain(self):
         ds = self.space.domain_management.domains.get()

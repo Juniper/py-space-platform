@@ -22,6 +22,7 @@ collections:
     cli_configlets:
         xml_name: 'cli-configlets'
         media_type: 'application/vnd.net.juniper.space.configuration-management.cli-configlets+xml;version=2;charset=UTF-8'
+        retain_charset_in_accept: True
         url: '/api/space/configuration-management/cli-configlets'
         resource_type: 'configuration_management.cli_configlet'
         methods:
@@ -30,17 +31,19 @@ collections:
                 request_type: 'application/vnd.net.juniper.space.configuration-management.cli-configlet-by-context+xml;version=2;charset=UTF-8'
                 request_template: 'cli_configlets_by_context.tpl'
                 response_type: 'application/vnd.net.juniper.space.configuration-management.cli-configlets+xml;version=2;charset=UTF-8'
+                retain_charset_in_accept: True
 
 resources:
     change_request:
         xml_name: 'change-request'
-        media_type: 'application/vnd.net.juniper.space.configuration-management.change-request+xml;version=2'
+        media_type: 'application/vnd.net.juniper.space.configuration-management.change-request+xml;version=1'
         collection_name: 'change_requests'
         service_url: '/api/space/configuration-management'
 
     cli_configlet:
         xml_name: 'cli-configlet'
-        media_type: 'application/vnd.net.juniper.space.configuration-management.cli-configlet+xml;version=2;charset=UTF-8'
+        media_type: 'application/vnd.net.juniper.space.configuration-management.view-cli-configlet+xml;version=1;charset=UTF-8'
+        retain_charset_in_accept: True
         collection_name: 'cli_configlets'
         service_url: '/api/space/configuration-management'
         collections:
@@ -48,11 +51,13 @@ resources:
                 name: 'cli-configlet-params'
                 xml_name: 'cli-configlet-params'
                 media_type: 'application/vnd.net.juniper.space.configuration-management.cli-configlet-params+xml;version=2;charset=UTF-8'
+                retain_charset_in_accept: True
                 resource_type: 'configuration_management.cli_configlet_param'
             cli_configlet_pages:
                 name: 'cli-configlet-pages'
                 xml_name: 'cli-configlet-pages'
                 media_type: 'application/vnd.net.juniper.space.configuration-management.cli-configlet-pages+xml;version=2;charset=UTF-8'
+                retain_charset_in_accept: True
                 resource_type: 'configuration_management.cli_configlet_page'
         methods:
             apply_configlet:
@@ -64,11 +69,13 @@ resources:
     cli_configlet_param:
         xml_name: 'cli-configlet-param'
         media_type: 'application/vnd.net.juniper.space.configuration-management.cli-configlet-param+xml;version=2;charset=UTF-8'
+        retain_charset_in_accept: True
         collection_name: 'cli_configlet_params'
         service_url: '/api/space/configuration-management'
     cli_configlet_page:
         xml_name: 'cli-configlet-page'
         media_type: 'application/vnd.net.juniper.space.configuration-management.cli-configlet-page+xml;version=2;charset=UTF-8'
+        retain_charset_in_accept: True
         collection_name: 'cli_configlet_pages'
         service_url: '/api/space/configuration-management'
 

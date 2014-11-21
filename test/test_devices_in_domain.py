@@ -1,6 +1,6 @@
 import ConfigParser
 
-from jnpr.space import rest, xmlutil
+from jnpr.space import rest
 
 class TestLogin:
 
@@ -29,8 +29,6 @@ class TestLogin:
 
         for d in ds[0].children.domain:
             assert d.name
-            r = self.space.get('/api/space/device-management/devices?domainContext=(filterDomainIds eq %s)' % d.id)
-            assert r.status_code == 200
-            devices = xmlutil.xml2obj(r.text)
-            for d in devices.device:
-                print d.name, d.ipAddr, d.domain_id
+            devices = self.space.device_management.devices.get(domain_id = d.id)
+            for d in devices:
+                print d.name, d.ipAddr, d['domain-id']

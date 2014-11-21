@@ -22,7 +22,7 @@ class TestConfigTemplates:
         t.name = 'Space_EZ_Test_Quick_Template_3'
         t.description = 'Quick Template for testing from space-ez'
         t.device_family = 'junos'
-        t.os_version = '1' # Crap: Some value must be given! Otherwise it throws exception!
+        t.os_version = '12.3R1.7' # Crap: Some value must be given! Otherwise it throws exception!
 
         t = self.space.config_template_management.config_templates.post(
                             t,

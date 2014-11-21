@@ -49,7 +49,8 @@ class TestCliConfiglets:
         cg.cli_configlet_params = [param1, param2]
         cg.cli_configlet_pages = [pg1]
 
-        cg = self.space.configuration_management.cli_configlets.post(cg)
+        cg = self.space.configuration_management.cli_configlets.post(cg,
+                content_type='application/vnd.net.juniper.space.configuration-management.cli-configlet+xml;version=1;charset=UTF-8')
 
         assert cg.id > 0
 

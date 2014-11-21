@@ -83,7 +83,7 @@ class Collection(object):
         from jnpr.space import xmlutil
         return self.__getattr__(xmlutil.unmake_xml_name(attr))
 
-    def get(self, filter_=None, paging=None, sortby=None):
+    def get(self, version=None, filter_=None, domain_id=None, paging=None, sortby=None):
         """Gets the contained resources of this collection from Space.
 
         :param filter_: A filter expression to apply on the collection. This
@@ -112,13 +112,14 @@ class Collection(object):
             full response from Space.
 
         """
-        url = self._form_get_url(filter_, paging, sortby)
+        url = self._form_get_url(filter_, domain_id, paging, sortby)
 
-        mtype = self.meta_object.media_type
+        mtype = self.meta_object.get_media_type(version)
         if mtype is not None:
-            #end = mtype.find(';charset=')
-            #if end > 0:
-            #    mtype = mtype[0:end]
+            if not self.meta_object.retain_charset_in_accept:
+                end = mtype.find(';charset=')
+                if end > 0:
+                    mtype = mtype[0:end]
             headers = {'accept' : mtype}
         else:
             headers = {}
@@ -187,7 +188,7 @@ class Collection(object):
             s = etree.tostring(xml_data)
             return xmlutil.xml2obj(s)
 
-    def post(self, new_obj, xml_name=None, content_type=None, accept=None):
+    def post(self, new_obj, version=None, xml_name=None, content_type=None, accept=None):
         """
         Sends a POST request to the Space server to create a new Resource in
         this collection.
@@ -228,9 +229,9 @@ class Collection(object):
             if self.meta_object.content_type is not None:
                 media_type = self.meta_object.content_type
             else:
-                media_type = self.meta_object.media_type
+                media_type = self.meta_object.get_media_type(version)
         else:
-            media_type = new_obj.get_meta_object().media_type
+            media_type = new_obj.get_meta_object().get_media_type(version)
 
         headers = {'content-type': media_type}
         if accept:
@@ -274,22 +275,32 @@ class Collection(object):
 
         return new_obj
 
-    def _form_get_url(self, filter_, paging, sortby):
+    def _form_get_url(self, filter_, domain_id, paging, sortby):
         """
         Helper method to form the URL for a GET on this collection including
         filtering, paging, and sortby clauses.
         """
         url = self.get_href()
 
-        f, p, s = None, None, None
+        f, d, p, s = None, None, None, None
         if filter_ is not None:
             f = self._stringify_filter(filter_)
+        if domain_id is not None:
+            d = "domainContext=(filterDomainIds eq %d)" % domain_id
         if paging is not None:
             p = self._stringify_paging(paging)
         if sortby is not None:
             s = self._stringify_sortby(sortby)
 
-        if f is not None:
+        if d is not None:
+            url = '?'.join([url, d])
+            if f is not None:
+                url = '&'.join([url, f])
+            if p is not None:
+                url = '&'.join([url, p])
+            if s is not None:
+                url = '&'.join([url, s])
+        elif f is not None:
             url = '?'.join([url, f])
             if p is not None:
                 url = '&'.join([url, p])
@@ -376,6 +387,8 @@ class MetaCollection(object):
             if ('xml_name' in values) else None
         self.media_type = values['media_type'] \
             if ('media_type' in values) else None
+        self.retain_charset_in_accept = values['retain_charset_in_accept'] \
+            if ('retain_charset_in_accept' in values) else False
         self.content_type = values['content_type'] \
             if ('content_type' in values) else None
         self.resource_type = values['resource_type'] \
@@ -386,6 +399,20 @@ class MetaCollection(object):
             if ('named_members' in values) else {}
         self.methods = values['methods'] \
             if ('methods' in values) else {}
+
+    def get_media_type(self, version):
+        if isinstance(self.media_type, dict):
+            if version is not None:
+                return self.media_type[str(version)]
+            if len(self.media_type) == 1:
+                return self.media_type.itervalues().next()
+            else:
+                raise Exception("You must specify the required media-type version")
+        elif version is None:
+            return self.media_type
+
+        raise Exception("Version %s not defined for '%s' in descriptions!" %
+                        (str(version), self.key))
 
     def create_method(self, service, name):
         """Creates a method object corresponding to the given service and

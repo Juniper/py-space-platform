@@ -49,7 +49,8 @@ class Method(object):
             return self._parent.get_href()
 
 
-    def post(self, task_monitor=None, schedule=None, *args, **kwargs):
+    def post(self, request_version=None, response_version=None,
+             task_monitor=None, schedule=None, *args, **kwargs):
         """
         This sends a POST request corresponding to this Method object.
 
@@ -93,22 +94,21 @@ class Method(object):
                 url = '&schedule='.join([url, schedule])
 
         headers = {}
-        if self.meta_object.response_type:
-            headers['accept'] = self.meta_object.response_type
+        headers['accept'] = self.meta_object.get_response_type(response_version)
 
         if self.meta_object.request_template:
             body = self.meta_object.request_template.render(**kwargs)
-            headers['content-type'] = self.meta_object.request_type
+            headers['content-type'] = self.meta_object.get_request_type(request_version)
         else:
             body = None
 
-        response = self._rest_end_point.post(url,headers,body)
+        response = self._rest_end_point.post(url, headers, body)
         if (response.status_code != 202) and (response.status_code != 200):
             raise rest.RestException("POST failed on %s " % url, response)
 
         return xml2obj(cleanup(response.content)) if response.content else None
 
-    def get(self):
+    def get(self, version=None):
         """Performs a GET corresponding to the Method object.
 
         :returns: A Python object constructed from the response body that Space
@@ -119,7 +119,18 @@ class Method(object):
             full response from Space.
 
         """
-        response = self._rest_end_point.get(self.get_href())
+
+        mtype = self.meta_object.get_media_type(version)
+        if mtype is not None:
+            if not self.meta_object.retain_charset_in_accept:
+                end = mtype.find(';charset=')
+                if end > 0:
+                    mtype = mtype[0:end]
+            headers = {'accept' : mtype}
+        else:
+            headers = {}
+
+        response = self._rest_end_point.get(self.get_href(), headers)
         if response.status_code != 200:
             raise rest.RestException("GET failed on %s " % self.get_href(),
                                     response)
@@ -148,6 +159,10 @@ class MetaMethod(object):
             if ('request_type' in values) else None
         self.response_type = values['response_type'] \
             if 'response_type' in values else None
+        self.media_type = values['media_type'] \
+            if ('media_type' in values) else None
+        self.retain_charset_in_accept = values['retain_charset_in_accept'] \
+            if ('retain_charset_in_accept' in values) else False
 
         if 'request_template' in values:
             env = Environment(loader=PackageLoader('jnpr.space',
@@ -156,6 +171,47 @@ class MetaMethod(object):
         else:
             self.request_template = None
 
+    def get_request_type(self, version):
+        if isinstance(self.request_type, dict):
+            if version is not None:
+                return self.request_type[str(version)]
+            if len(self.request_type) == 1:
+                return self.request_type.itervalues().next()
+            else:
+                raise Exception("You must specify the required request_type version")
+        elif version is None:
+            return self.request_type
+
+        raise Exception("Request Type Version %s not defined for '%s' in descriptions!" %
+                        (str(version), self.key))
+
+    def get_response_type(self, version):
+        if isinstance(self.response_type, dict):
+            if version is not None:
+                return self.response_type[str(version)]
+            if len(self.response_type) == 1:
+                return self.response_type.itervalues().next()
+            else:
+                raise Exception("You must specify the required response_type version")
+        elif version is None:
+            return self.response_type
+
+        raise Exception("Response Type Version %s not defined for '%s' in descriptions!" %
+                        (str(version), self.key))
+
+    def get_media_type(self, version):
+        if isinstance(self.media_type, dict):
+            if version is not None:
+                return self.media_type[str(version)]
+            if len(self.media_type) == 1:
+                return self.media_type.itervalues().next()
+            else:
+                raise Exception("You must specify the required media_type version")
+        elif version is None:
+            return self.media_type
+
+        raise Exception("Media Type Version %s not defined for '%s' in descriptions!" %
+                        (str(version), self.key))
 """
 A dictionary that acts as a cache for meta objects representing methods.
 Keys are of the form <service-name>.<method-name>. Values are instances of

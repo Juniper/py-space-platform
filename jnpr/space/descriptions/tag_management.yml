@@ -15,8 +15,7 @@ resources:
         collections:
             targets:
                 xml_name: 'targets'
-                media_type: 'application/vnd.net.juniper.space.tag-management.targets+xml;version=1'
-                content_type: 'application/vnd.net.juniper.space.tag-management.targets+xml;version=1;charset=UTF-8'
+                media_type: 'application/vnd.net.juniper.space.tag-management.targets+xml;version=1;charset=UTF-8'
                 resource_type: 'tag_management.target'
 
     target:

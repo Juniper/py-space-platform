@@ -183,7 +183,7 @@ class Resource(object):
         """
         return self._xml_data.get(attr)
 
-    def get(self, attr=None):
+    def get(self, attr=None, version=None):
         """
         This is an overloaded method that does two things: If the ``attr``
         parameter is passed, it returns the corresponding XML attribute from
@@ -205,7 +205,17 @@ class Resource(object):
         if attr is not None:
             return self._get_xml_attr(attr)
 
-        response = self._rest_end_point.get(self.get_href())
+        mtype = self._meta_object.get_media_type(version)
+        if mtype is not None:
+            if not self._meta_object.retain_charset_in_accept:
+                end = mtype.find(';charset=')
+                if end > 0:
+                    mtype = mtype[0:end]
+            headers = {'accept' : mtype}
+        else:
+            headers = {}
+
+        response = self._rest_end_point.get(self.get_href(), headers)
         if response.status_code != 200:
             raise rest.RestException("GET failed on %s" % self.get_href(),
                                      response)
@@ -214,7 +224,7 @@ class Resource(object):
         r = response.content # Fix as part of issue #27
         return xmlutil.xml2obj(r)
 
-    def put(self, new_val_obj = None):
+    def put(self, new_val_obj = None, version=None):
         """Modifies the state of this resource on Space by sending a PUT request
         with the new state. The attributes of *new_val_obj* are
         formatted to form the XML request body for the PUT request. If the
@@ -240,7 +250,7 @@ class Resource(object):
 
         response = self._rest_end_point.put(
                             self.get_href(),
-                            {'content-type': self._meta_object.media_type},
+                            {'content-type': self.get_meta_object().get_media_type(version)},
                             etree.tostring(x)
                         )
         if response.status_code != 200:
@@ -493,6 +503,8 @@ class MetaResource(object):
             if ('xml_name' in values) else None
         self.media_type = values['media_type'] \
             if ('media_type' in values) else None
+        self.retain_charset_in_accept = values['retain_charset_in_accept'] \
+            if ('retain_charset_in_accept' in values) else False
         self.collection_name = values['collection_name'] \
             if ('collection_name' in values) else None
         self.service_url = values['service_url'] \
@@ -535,6 +547,20 @@ class MetaResource(object):
                 self.methods[key] = mObj
         except KeyError:
             pass
+
+    def get_media_type(self, version):
+        if isinstance(self.media_type, dict):
+            if version is not None:
+                return self.media_type[str(version)]
+            if len(self.media_type) == 1:
+                return self.media_type.itervalues().next()
+            else:
+                raise Exception("You must specify the required media-type version")
+        elif version is None:
+            return self.media_type
+
+        raise Exception("Version %s not defined for '%s' in descriptions!" %
+                        (str(version), self.key))
 
     def create_collection(self, resrc, name):
         """Creates a collection object.

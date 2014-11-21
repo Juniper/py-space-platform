@@ -13,7 +13,7 @@ import time
 import re
 import csv
 
-from jnpr.space import rest, async, factory
+from jnpr.space import rest, async, factory, xmlutil
 
 INTERRUPTED = False
 
@@ -103,28 +103,35 @@ def get_target_devices(spc, config):
     pg_size = config.getint('target_devices', 'page_size')
 
     target_devices = []
-    while True:
-        devices = spc.servicenow.device_management.devices.get(
-                                                               paging={
-                                                                       'start': pg_start,
-                                                                       'limit': pg_size
-                                                                      }
-                                                               )
-        for d in devices:
-            try:
-                if ais_version_regex:
-                    if re.match(ais_version_regex, d.scriptBundle.text):
-                        target_devices.append(d)
-                else:
-                    if target_devices_map.has_key(d.hostName):
-                        target_devices.append(d)
-            except AttributeError:
-                target_devices.append(d)
 
-        if len(devices) < pg_size:
-            break
-        else:
-            pg_start = pg_start + pg_size
+    domains = spc.domain_management.domains.get()
+    domain_ids = [domains[0].id]
+    domain_ids.extend([d.id for d in domains[0].children.domain])
+
+    for domain_id in domain_ids:
+        while True:
+            devices = spc.servicenow.device_management.devices.get(
+                                                                   domain_id = domain_id,
+                                                                   paging={
+                                                                           'start': pg_start,
+                                                                           'limit': pg_size
+                                                                          }
+                                                                   )
+            for d in devices:
+                try:
+                    if ais_version_regex:
+                        if re.match(ais_version_regex, d.scriptBundle.text):
+                            target_devices.append(d)
+                    else:
+                        if target_devices_map.has_key(d.hostName):
+                            target_devices.append(d)
+                except AttributeError:
+                    target_devices.append(d)
+
+            if len(devices) < pg_size:
+                break
+            else:
+                pg_start = pg_start + pg_size
 
     return target_devices
 
@@ -163,6 +170,10 @@ if __name__ == '__main__':
     target_devices = get_target_devices(spc, config)
     if len(target_devices) == 0:
         raise Exception("No target devices selected for installation!")
+
+    print "AIS event profile '%s' will be installed on the following devices: " % ep.profileName
+    for tgt in target_devices:
+        print '\t', tgt.hostName
 
     batch_size = config.getint('target_devices', 'batch_size')
 
