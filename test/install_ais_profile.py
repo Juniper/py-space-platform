@@ -13,9 +13,11 @@ import time
 import re
 import csv
 
-from jnpr.space import rest, async, factory, xmlutil
+from jnpr.space import rest, async, factory
 
 INTERRUPTED = False
+USE_LOGIN_SESSION = False
+VIP_NODE_NAME = None
 
 def wait_for_jobs(spc, tasks):
     done_jobs = {}
@@ -66,6 +68,14 @@ def install(spc, event_profile, target_devices, batch_size, outfile):
         if INTERRUPTED:
             print "Exiting due to interrupt..."
             return
+
+        global USE_LOGIN_SESSION
+        global VIP_NODE_NAME
+        if USE_LOGIN_SESSION:
+            spc.logout()
+            time.sleep(10)
+            spc.login(VIP_NODE_NAME)
+
         install_on_each_batch(spc, event_profile, batch, outfile)
 
 def get_event_profile(spc, config):
@@ -145,7 +155,7 @@ if __name__ == '__main__':
     parser.add_argument("-c", "--conf", required=True, help="Full pathname of the config file")
     args = parser.parse_args()
 
-    logging.config.fileConfig(args.conf)
+    logging.config.fileConfig(args.conf, disable_existing_loggers=False)
 
     # Extract parameters from config file
     config = ConfigParser.RawConfigParser()
@@ -164,7 +174,16 @@ if __name__ == '__main__':
     with open(outfile, "w") as out:
         out.write("#Device Name, Job Name, Start Day, Start Time, End Day, End Time, Job Status\r\n")
 
-    spc = rest.Space(url, user, passwd, use_session=True)
+    import httplib
+    httplib.HTTPConnection.debuglevel = 1
+
+    USE_LOGIN_SESSION = config.getboolean('space', 'use_login_session')
+
+    VIP_NODE_NAME = config.get('space', 'vip_node_name')
+
+    spc = rest.Space(url, user, passwd,
+                     use_session=USE_LOGIN_SESSION,
+                     required_node=VIP_NODE_NAME)
 
     ep = get_event_profile(spc, config)
     target_devices = get_target_devices(spc, config)
@@ -182,3 +201,6 @@ if __name__ == '__main__':
         install(spc, ep, target_devices, batch_size, outfile)
     except Exception as e:
         print e
+    finally:
+        if USE_LOGIN_SESSION:
+            spc.logout()

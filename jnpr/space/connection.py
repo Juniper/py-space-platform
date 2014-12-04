@@ -14,7 +14,7 @@ class Connection:
         self.username = username
         self.password = password
 
-        print "JSConnection: Initiaing login to ", self.homeurl
+        self._logger.debug("Connection: Initiating login to %s" % self.homeurl)
         self.login()
 
     def login(self):

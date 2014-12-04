@@ -22,7 +22,7 @@ class Space:
         >>> devs = s.device_management.devices.get()
     """
 
-    def __init__(self, url, user, passwd, use_session=False):
+    def __init__(self, url, user, passwd, use_session=False, required_node=None):
         """Creates an instance of this class to represent a Junos Space cluster.
 
         :param url: URL of the Junos Space cluster using its VIP address.
@@ -34,6 +34,10 @@ class Space:
         :type passwd: str
         :param bool use_session: Whether to use a session based login or not.
             It is ``False`` by default.
+        :param str required_node: This parameter is used only if ``use_session``
+            is set to True. This is used to specify the name of the Junos Space
+            node (e.g. space-000c2980f778) in the cluster on which the session
+            should be established. This parameter is ``None`` by default.
 
         :returns:  An instance of this class encapsulating the Junos Space
                    cluster whose **url** was given as a parameter. It can be
@@ -50,7 +54,7 @@ class Space:
         self.use_session = use_session
 
         if use_session:
-            self.login()
+            self.login(required_node)
 
     def __str__(self):
         return ' '.join(['Space <',
@@ -135,6 +139,8 @@ class Space:
         else:
             r = requests.get(req_url, auth=(self.space_user, self.space_passwd), headers=headers, verify=False)
         self._logger.debug(r)
+        self._logger.debug(r.headers)
+        self._logger.debug(r.cookies)
         self._logger.debug(r.text)
         return r
 
@@ -158,6 +164,7 @@ class Space:
             r = requests.head(req_url, auth=(self.space_user, self.space_passwd), headers=headers, verify=False)
         self._logger.debug(r)
         self._logger.debug(r.headers)
+        self._logger.debug(r.cookies)
         self._logger.debug(r.text)
         return r
 
@@ -184,6 +191,7 @@ class Space:
             r = requests.post(req_url, auth=(self.space_user, self.space_passwd), data=body, headers=headers, verify=False)
         self._logger.debug(r)
         self._logger.debug(r.headers)
+        self._logger.debug(r.cookies)
         self._logger.debug(r.text)
         return r
 
@@ -209,6 +217,8 @@ class Space:
         else:
             r = requests.put(req_url, auth=(self.space_user, self.space_passwd), data=body, headers=headers, verify=False)
         self._logger.debug(r)
+        self._logger.debug(r.headers)
+        self._logger.debug(r.cookies)
         self._logger.debug(r.text)
         return r
 
@@ -228,6 +238,8 @@ class Space:
         else:
             r = requests.delete(req_url, auth=(self.space_user, self.space_passwd), verify=False)
         self._logger.debug(r)
+        self._logger.debug(r.headers)
+        self._logger.debug(r.cookies)
         self._logger.debug(r.text)
         return r
 
@@ -236,15 +248,36 @@ class Space:
         """
         self.connection.logout()
 
-    def login(self):
+    def login(self, required_node=None):
         """Logs into Space and creates a session (connection) that is maintained.
         All API calls will use this session and will use the JSESSIONID,
         JSESSIONIDSSO cookies - they will not be individually authenticated.
+
+        :param str required_node: This is used to specify the name of the Junos
+            Space node in the cluster on which the session should be established.
+            It is ``None`` by default.
         """
         from jnpr.space import connection
-        self.connection = connection.Connection(self.space_url,
-                                                self.space_user,
-                                                self.space_passwd)
+        for i in range(10):
+            self.connection = connection.Connection(self.space_url,
+                                                    self.space_user,
+                                                    self.space_passwd)
+            if required_node is not None:
+                sid = self.connection.get_session().cookies['JSESSIONID']
+                end = sid.rindex(':')
+                start = sid.rindex('.') + 1
+                node_name = sid[start:end]
+                if required_node == node_name:
+                    self._logger.debug("Try %d: Got session on %s" % (i, required_node))
+                    return
+                else:
+                    self._logger.debug("Try %d: Got session on %s instead of %s" % (i, node_name, required_node))
+                    self.logout()
+            else:
+                return
+
+        raise Exception('Unable to get a session on %s in 10 attempts' % required_node)
+
 
 class RestException(Exception):
     """An exception that is raised when a REST API invocation returns a response
