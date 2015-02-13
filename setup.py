@@ -9,9 +9,9 @@ setup(name='space-ez',
                                    'descriptions/apps/servicenow/*.*',
                                    'descriptions/apps/serviceinsight/*.*',
                                    'templates/*.*']},
-      install_requires=['requests',
-                        'lxml',
-                        'PyYAML',
-                        'pytest',
-                        'jinja2']
+      install_requires=['requests>=2.5.1',
+                        'lxml>=3.3.5',
+                        'PyYAML>=3.11',
+                        'pytest>=2.5.2',
+                        'jinja2>=2.7.3']
       )

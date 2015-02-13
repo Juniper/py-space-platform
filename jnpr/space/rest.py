@@ -1,4 +1,6 @@
+from __future__ import print_function
 import os
+import re
 
 import requests
 import logging
@@ -22,30 +24,65 @@ class Space:
         >>> devs = s.device_management.devices.get()
     """
 
-    def __init__(self, url, user, passwd, use_session=False, required_node=None):
+    def __init__(self,
+                 url,
+                 user=None,
+                 passwd=None,
+                 cert=None,
+                 use_session=False,
+                 required_node=None,
+                 profile_file=None):
         """Creates an instance of this class to represent a Junos Space cluster.
 
         :param url: URL of the Junos Space cluster using its VIP address.
                     E.g. https://<VIP>
         :type url: str
-        :param user: A valid userid for invoking APIs on this Space cluster.
-        :type user: str
-        :param passwd: Password for the userid.
-        :type passwd: str
+        :param str user: A valid userid for invoking APIs on this Space cluster.
+            Can be omitted if ``cert`` is provided for X.509 certificate based
+            authentication to Junos Space.
+        :param str passwd: Password for the userid.
+        :param tuple cert: X.509 certificate details for authentication.
+            This is to be used only to access Junos Space that is configured to
+            perform X.509 certificate based authentication. Otherwise, this
+            parameter defaults to ``None``. If used, it MUST be a tuple that
+            contains (1) the full pathname of the X.509 certificate PEM file;
+            and (2) the full pathname of the X.509 certificate key file. It is
+            recommended that the key file is unencrypted - otherwise the SSL
+            layer will prompt you to enter the passphrase used for encrypting
+            key file and this prompt will appear for each SSL connection.
         :param bool use_session: Whether to use a session based login or not.
             It is ``False`` by default.
         :param str required_node: This parameter is used only if ``use_session``
             is set to True. This is used to specify the name of the Junos Space
             node (e.g. space-000c2980f778) in the cluster on which the session
             should be established. This parameter is ``None`` by default.
+        :param str profile_file: Full pathname of a file where response times
+            for each API call is to be recorded. This parameter is ``None``
+            by default.
 
         :returns:  An instance of this class encapsulating the Junos Space
                    cluster whose **url** was given as a parameter. It can be
                    used to access all APIs provided by Space.
         """
         self.space_url = url
-        self.space_user = user
-        self.space_passwd = passwd
+
+        if user is not None:
+            if passwd is None:
+                raise ValueError('passwd is mandatory along with user')
+            if cert is not None:
+                raise ValueError('You must provide only one of user+passwd or cert')
+            self.space_user = user
+            self.space_passwd = passwd
+            self.cert = None
+        else:
+            if passwd is not None:
+                raise ValueError('passwd is valid only along with user')
+            if cert is None:
+                raise ValueError('You must provide one of user+passwd or cert')
+            self.cert = cert
+            self.space_user = None
+            self.space_passwd = None
+
         self._logger = logging.getLogger('root')
         self._meta_services = self._init_services()
         self._meta_applications = self._init_applications()
@@ -55,6 +92,11 @@ class Space:
 
         if use_session:
             self.login(required_node)
+
+        if profile_file is not None:
+            self.profile_file = open(profile_file, 'w')
+        else:
+            self.profile_file = None
 
     def __str__(self):
         return ' '.join(['Space <',
@@ -120,6 +162,16 @@ class Space:
         from jnpr.space import xmlutil
         return self.__getattr__(xmlutil.unmake_xml_name(attr))
 
+    def _log_time(self, op, url, response):
+        if self.profile_file is not None:
+            url = re.sub(r'\d+', '{id}', url)
+            url = re.sub(r',', '_', url)
+            num_ms = response.elapsed.seconds * 1000 + \
+                     response.elapsed.microseconds / 1000
+            print("%s, %s, %d, %d" % (op, url, response.status_code,
+                                      num_ms),
+                  file=self.profile_file)
+
     def get(self, url, headers={}):
         """Performs an HTTP GET on the given url. Acts as a wrapper over
         requests.get() function.
@@ -137,11 +189,15 @@ class Space:
         if self.use_session:
             r = self.connection.get_session().get(req_url, headers=headers, verify=False)
         else:
-            r = requests.get(req_url, auth=(self.space_user, self.space_passwd), headers=headers, verify=False)
+            if self.cert is not None:
+                r = requests.get(req_url, cert=self.cert, headers=headers, verify=False)
+            else:
+                r = requests.get(req_url, auth=(self.space_user, self.space_passwd), headers=headers, verify=False)
         self._logger.debug(r)
         self._logger.debug(r.headers)
         self._logger.debug(r.cookies)
         self._logger.debug(r.text)
+        self._log_time('GET', url, r)
         return r
 
     def head(self, url, headers={}):
@@ -161,11 +217,15 @@ class Space:
         if self.use_session:
             r = self.connection.get_session().head(req_url, headers=headers, verify=False)
         else:
-            r = requests.head(req_url, auth=(self.space_user, self.space_passwd), headers=headers, verify=False)
+            if self.cert is not None:
+                r = requests.head(req_url, cert=self.cert, headers=headers, verify=False)
+            else:
+                r = requests.head(req_url, auth=(self.space_user, self.space_passwd), headers=headers, verify=False)
         self._logger.debug(r)
         self._logger.debug(r.headers)
         self._logger.debug(r.cookies)
         self._logger.debug(r.text)
+        self._log_time('HEAD', url, r)
         return r
 
     def post(self, url, headers, body):
@@ -188,11 +248,15 @@ class Space:
         if self.use_session:
             r = self.connection.get_session().post(req_url, data=body, headers=headers, verify=False)
         else:
-            r = requests.post(req_url, auth=(self.space_user, self.space_passwd), data=body, headers=headers, verify=False)
+            if self.cert is not None:
+                r = requests.post(req_url, cert=self.cert, data=body, headers=headers, verify=False)
+            else:
+                r = requests.post(req_url, auth=(self.space_user, self.space_passwd), data=body, headers=headers, verify=False)
         self._logger.debug(r)
         self._logger.debug(r.headers)
         self._logger.debug(r.cookies)
         self._logger.debug(r.text)
+        self._log_time('POST', url, r)
         return r
 
     def put(self, put_url, headers, body):
@@ -215,11 +279,15 @@ class Space:
         if self.use_session:
             r = self.connection.get_session().put(req_url, data=body, headers=headers, verify=False)
         else:
-            r = requests.put(req_url, auth=(self.space_user, self.space_passwd), data=body, headers=headers, verify=False)
+            if self.cert is not None:
+                r = requests.put(req_url, cert=self.cert, data=body, headers=headers, verify=False)
+            else:
+                r = requests.put(req_url, auth=(self.space_user, self.space_passwd), data=body, headers=headers, verify=False)
         self._logger.debug(r)
         self._logger.debug(r.headers)
         self._logger.debug(r.cookies)
         self._logger.debug(r.text)
+        self._log_time('PUT', put_url, r)
         return r
 
     def delete(self, delete_url):
@@ -236,11 +304,15 @@ class Space:
         if self.use_session:
             r = self.connection.get_session().delete(req_url, verify=False)
         else:
-            r = requests.delete(req_url, auth=(self.space_user, self.space_passwd), verify=False)
+            if self.cert is not None:
+                r = requests.delete(req_url, cert=self.cert, verify=False)
+            else:
+                r = requests.delete(req_url, auth=(self.space_user, self.space_passwd), verify=False)
         self._logger.debug(r)
         self._logger.debug(r.headers)
         self._logger.debug(r.cookies)
         self._logger.debug(r.text)
+        self._log_time('DELETE', delete_url, r)
         return r
 
     def logout(self):
@@ -259,9 +331,13 @@ class Space:
         """
         from jnpr.space import connection
         for i in range(10):
-            self.connection = connection.Connection(self.space_url,
-                                                    self.space_user,
-                                                    self.space_passwd)
+            if self.space_user:
+                self.connection = connection.Connection(self.space_url,
+                                                        self.space_user,
+                                                        self.space_passwd)
+            else:
+                self.connection = connection.Connection(self.space_url,
+                                                        cert=self.cert)
             if required_node is not None:
                 sid = self.connection.get_session().cookies['JSESSIONID']
                 end = sid.rindex(':')

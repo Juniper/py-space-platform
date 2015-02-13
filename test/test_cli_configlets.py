@@ -118,8 +118,9 @@ class TestCliConfiglets:
                 details = p.get()
                 assert details
                 assert details.content
-
+'''
     def test_delete_configlet(self):
         cglets = self.space.configuration_management.cli_configlets.get(filter_={'name': 'Set description - Pytest'})
         if len(cglets) > 0:
             cglets[0].delete()
+'''

@@ -24,8 +24,8 @@ class TestChangeDeviceCredentials:
 
         try:
                 result = self.space.device_management.change_device_credentials.post(
-                            task_monitor=tm,
-                            devices=devices_list[0:1],
+                            #task_monitor=tm,
+                            devices=devices_list[0:2],
                             user_name='regress',
                             password='MaRtInI',
                             change_to='CREDENTIAL',

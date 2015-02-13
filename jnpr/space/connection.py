@@ -4,15 +4,34 @@ import httplib
 
 
 class Connection:
-    """ Creates a connection to Space Platform """
+    """ Creates a connection to Space Platform mimicking a GUI login."""
 
-    def __init__(self, homeurl, username, password):
+    def __init__(self,
+                 homeurl,
+                 username=None,
+                 password=None,
+                 cert=None,
+                 our_ip=None):
         self._logger = logging.getLogger('root')
         self.homeurl = homeurl + '/mainui'
         self.authurl = homeurl + '/mainui/j_security_check';
 
+        if username is not None:
+            if password is None:
+                raise ValueError('password is mandatory along with username')
+            if cert is not None:
+                raise ValueError('You must provide only one of username+password or cert')
+        else:
+            if password is not None:
+                raise ValueError('password is valid only along with username')
+            if cert is None:
+                raise ValueError('You must provide one of username+password or cert')
+
         self.username = username
         self.password = password
+        self.our_ip = our_ip
+
+        self.cert=cert
 
         self._logger.debug("Connection: Initiating login to %s" % self.homeurl)
         self.login()
@@ -22,29 +41,35 @@ class Connection:
 
         self.session = requests.Session()
         s = self.session;
-        r = s.get(self.homeurl, verify=False)
-        #self._logger.debug(r.status_code)
-        #self._logger.debug(r.headers)
-        self._logger.debug(r.text)
+        if self.our_ip is None:
+            r = s.get(self.homeurl, cert=self.cert, verify=False)
+            #self._logger.debug(r.status_code)
+            #self._logger.debug(r.headers)
+            #self._logger.debug(r.text)
 
-        # Extract the ipAddr and code variables embbed in the form validation code
-        ipAddrStartIdx = r.text.find("var ipAddr = ");
-        if (ipAddrStartIdx < 0) :
-            self.check_login_status()
-            return
+            # Extract the ipAddr and code variables embbed in the form validation code
+            ipAddrStartIdx = r.text.find("var ipAddr = ");
+            if (ipAddrStartIdx < 0) :
+                self.check_login_status()
+                return
 
-        ipAddrEndIdx = r.text.find("\n", ipAddrStartIdx);
-        ipAddrLine = r.text[ipAddrStartIdx : ipAddrEndIdx]
-        ipAddrItems = ipAddrLine.split("=", 2);
-        ipAddr = ipAddrItems[1].strip("'; ").strip();
+            ipAddrEndIdx = r.text.find("\n", ipAddrStartIdx);
+            ipAddrLine = r.text[ipAddrStartIdx : ipAddrEndIdx]
+            ipAddrItems = ipAddrLine.split("=", 2);
+            ipAddr = ipAddrItems[1].strip("'; ").strip();
 
-        codeStartIdx = r.text.find("var code = ", ipAddrEndIdx);
-        codeEndIdx = r.text.find("\n", codeStartIdx);
-        codeLine = r.text[codeStartIdx : codeEndIdx]
-        codeItems = codeLine.split("=", 2);
-        code = codeItems[1].strip("'; ").strip();
+            #codeStartIdx = r.text.find("var code = ", ipAddrEndIdx);
+            #codeEndIdx = r.text.find("\n", codeStartIdx);
+            #codeLine = r.text[codeStartIdx : codeEndIdx]
+            #codeItems = codeLine.split("=", 2);
+            #code = codeItems[1].strip("'; ").strip();'''
 
-        form_username = self.username + '%' + code + '@' + ipAddr;
+            #form_username = self.username + '%' + code + '@' + ipAddr;
+        else:
+            r = s.get(self.homeurl, cert=self.cert, verify=False)
+            ipAddr = self.our_ip
+
+        form_username = self.username + '@' + ipAddr;
 
         data = {
             "j_screen_username" : self.username,
@@ -53,11 +78,11 @@ class Connection:
         }
 
         self._logger.debug(data)
-        r = s.post(self.authurl, data=data, verify=False)
+        r = s.post(self.authurl, data=data, cert=self.cert, verify=False)
 
         #self._logger.debug(r.status_code)
         #self._logger.debug(r.headers)
-        self._logger.debug(r.text)
+        #self._logger.debug(r.text)
 
         self.check_login_status()
 
@@ -92,7 +117,7 @@ class Connection:
         r = self.session.get(logout_url, verify=False)
         #self._logger.debug(r.status_code)
         #self._logger.debug(r.headers)
-        self._logger.debug(r.text)
+        #self._logger.debug(r.text)
 
         if r.status_code == 200:
             self.session = None
@@ -107,7 +132,11 @@ if __name__ == '__main__':
     requests_log.setLevel(logging.DEBUG)
     requests_log.propagate = True
 
-    c = Connection('https://10.205.10.1', 'super', 'juniper123')
-    r = c.session.get("https://10.205.10.1/api/space", verify=False)
+    c = Connection('https://10.155.78.212', '', '',
+                   cert=(
+                        '/Users/rjoyce/ssl-cert-test/super.pem',
+                        '/Users/rjoyce/ssl-cert-test/super_unencrypted.key'
+                        ))
+    r = c.session.get("https://10.155.78.212/api/space/user-management/users", verify=False)
     print r.text
     c.logout()

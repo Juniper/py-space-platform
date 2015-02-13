@@ -54,7 +54,7 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#jnpr.space.rest.Space" title="jnpr.space.rest.Space"><tt class="xref py py-obj docutils literal"><span class="pre">jnpr.space.rest.Space</span></tt></a>(url,&nbsp;user,&nbsp;passwd[,&nbsp;...])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#jnpr.space.rest.Space" title="jnpr.space.rest.Space"><tt class="xref py py-obj docutils literal"><span class="pre">jnpr.space.rest.Space</span></tt></a>(url[,&nbsp;user,&nbsp;passwd,&nbsp;...])</td>
 <td>Encapsulates a Junos Space cluster and provides access to all RESTful web-service APIs provided by Space.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#jnpr.space.resource.Resource" title="jnpr.space.resource.Resource"><tt class="xref py py-obj docutils literal"><span class="pre">jnpr.space.resource.Resource</span></tt></a>(type_name,&nbsp;...)</td>
@@ -120,7 +120,7 @@ indicating an error. The exception contains the complete response inside.</p>
 
 <dl class="class">
 <dt id="jnpr.space.rest.Space">
-<em class="property">class </em><tt class="descclassname">jnpr.space.rest.</tt><tt class="descname">Space</tt><big>(</big><em>url</em>, <em>user</em>, <em>passwd</em>, <em>use_session=False</em><big>)</big><a class="headerlink" href="#jnpr.space.rest.Space" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">jnpr.space.rest.</tt><tt class="descname">Space</tt><big>(</big><em>url</em>, <em>user=None</em>, <em>passwd=None</em>, <em>cert=None</em>, <em>use_session=False</em>, <em>required_node=None</em>, <em>profile_file=None</em><big>)</big><a class="headerlink" href="#jnpr.space.rest.Space" title="Permalink to this definition">¶</a></dt>
 <dd><p>Encapsulates a Junos Space cluster and provides access to all RESTful
 web-service APIs provided by Space. An instance of this class is also
 referred to as a <em>&#8216;rest end point&#8217;</em> in this documentation.</p>
@@ -170,7 +170,7 @@ just calls __getattr__ internally.</p>
 
 <dl class="method">
 <dt id="jnpr.space.rest.Space.__init__">
-<tt class="descname">__init__</tt><big>(</big><em>url</em>, <em>user</em>, <em>passwd</em>, <em>use_session=False</em><big>)</big><a class="headerlink" href="#jnpr.space.rest.Space.__init__" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">__init__</tt><big>(</big><em>url</em>, <em>user=None</em>, <em>passwd=None</em>, <em>cert=None</em>, <em>use_session=False</em>, <em>required_node=None</em>, <em>profile_file=None</em><big>)</big><a class="headerlink" href="#jnpr.space.rest.Space.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates an instance of this class to represent a Junos Space cluster.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -179,10 +179,28 @@ just calls __getattr__ internally.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>url</strong> (<em>str</em>) &#8211; URL of the Junos Space cluster using its VIP address.
 E.g. <a class="reference external" href="https:/">https:/</a>/&lt;VIP&gt;</li>
-<li><strong>user</strong> (<em>str</em>) &#8211; A valid userid for invoking APIs on this Space cluster.</li>
+<li><strong>user</strong> (<em>str</em>) &#8211; A valid userid for invoking APIs on this Space cluster.
+Can be omitted if <tt class="docutils literal"><span class="pre">cert</span></tt> is provided for X.509 certificate based
+authentication to Junos Space.</li>
 <li><strong>passwd</strong> (<em>str</em>) &#8211; Password for the userid.</li>
+<li><strong>cert</strong> (<em>tuple</em>) &#8211; X.509 certificate details for authentication.
+This is to be used only to access Junos Space that is configured to
+perform X.509 certificate based authentication. Otherwise, this
+parameter defaults to <tt class="docutils literal"><span class="pre">None</span></tt>. If used, it MUST be a tuple that
+contains (1) the full pathname of the X.509 certificate PEM file;
+and (2) the full pathname of the X.509 certificate key file. It is
+recommended that the key file is unencrypted - otherwise the SSL
+layer will prompt you to enter the passphrase used for encrypting
+key file and this prompt will appear for each SSL connection.</li>
 <li><strong>use_session</strong> (<em>bool</em>) &#8211; Whether to use a session based login or not.
 It is <tt class="docutils literal"><span class="pre">False</span></tt> by default.</li>
+<li><strong>required_node</strong> (<em>str</em>) &#8211; This parameter is used only if <tt class="docutils literal"><span class="pre">use_session</span></tt>
+is set to True. This is used to specify the name of the Junos Space
+node (e.g. space-000c2980f778) in the cluster on which the session
+should be established. This parameter is <tt class="docutils literal"><span class="pre">None</span></tt> by default.</li>
+<li><strong>profile_file</strong> (<em>str</em>) &#8211; Full pathname of a file where response times
+for each API call is to be recorded. This parameter is <tt class="docutils literal"><span class="pre">None</span></tt>
+by default.</li>
 </ul>
 </td>
 </tr>
@@ -265,10 +283,20 @@ returned by the HEAD request.</p>
 
 <dl class="method">
 <dt id="jnpr.space.rest.Space.login">
-<tt class="descname">login</tt><big>(</big><big>)</big><a class="headerlink" href="#jnpr.space.rest.Space.login" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">login</tt><big>(</big><em>required_node=None</em><big>)</big><a class="headerlink" href="#jnpr.space.rest.Space.login" title="Permalink to this definition">¶</a></dt>
 <dd><p>Logs into Space and creates a session (connection) that is maintained.
 All API calls will use this session and will use the JSESSIONID,
 JSESSIONIDSSO cookies - they will not be individually authenticated.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>required_node</strong> (<em>str</em>) &#8211; This is used to specify the name of the Junos
+Space node in the cluster on which the session should be established.
+It is <tt class="docutils literal"><span class="pre">None</span></tt> by default.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -432,7 +460,7 @@ this resource.</td>
 
 <dl class="method">
 <dt id="jnpr.space.resource.Resource.get">
-<tt class="descname">get</tt><big>(</big><em>attr=None</em><big>)</big><a class="headerlink" href="#jnpr.space.resource.Resource.get" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get</tt><big>(</big><em>attr=None</em>, <em>version=None</em><big>)</big><a class="headerlink" href="#jnpr.space.resource.Resource.get" title="Permalink to this definition">¶</a></dt>
 <dd><p>This is an overloaded method that does two things: If the <tt class="docutils literal"><span class="pre">attr</span></tt>
 parameter is passed, it returns the corresponding XML attribute from
 the top level XML data element contained by this resource. If the
@@ -539,7 +567,7 @@ the full response from Space.</p>
 
 <dl class="method">
 <dt id="jnpr.space.resource.Resource.put">
-<tt class="descname">put</tt><big>(</big><em>new_val_obj=None</em><big>)</big><a class="headerlink" href="#jnpr.space.resource.Resource.put" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">put</tt><big>(</big><em>new_val_obj=None</em>, <em>version=None</em><big>)</big><a class="headerlink" href="#jnpr.space.resource.Resource.put" title="Permalink to this definition">¶</a></dt>
 <dd><p>Modifies the state of this resource on Space by sending a PUT request
 with the new state. The attributes of <em>new_val_obj</em> are
 formatted to form the XML request body for the PUT request. If the
@@ -599,7 +627,7 @@ Some examples of collections are:</p>
 </ul>
 <dl class="method">
 <dt id="jnpr.space.collection.Collection.get">
-<tt class="descname">get</tt><big>(</big><em>filter_=None</em>, <em>paging=None</em>, <em>sortby=None</em><big>)</big><a class="headerlink" href="#jnpr.space.collection.Collection.get" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get</tt><big>(</big><em>version=None</em>, <em>filter_=None</em>, <em>domain_id=None</em>, <em>paging=None</em>, <em>sortby=None</em><big>)</big><a class="headerlink" href="#jnpr.space.collection.Collection.get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the contained resources of this collection from Space.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -652,7 +680,7 @@ object and the name of this collection to form the href and returns it.</p>
 
 <dl class="method">
 <dt id="jnpr.space.collection.Collection.post">
-<tt class="descname">post</tt><big>(</big><em>new_obj</em>, <em>xml_name=None</em>, <em>content_type=None</em>, <em>accept=None</em><big>)</big><a class="headerlink" href="#jnpr.space.collection.Collection.post" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">post</tt><big>(</big><em>new_obj</em>, <em>version=None</em>, <em>xml_name=None</em>, <em>content_type=None</em>, <em>accept=None</em><big>)</big><a class="headerlink" href="#jnpr.space.collection.Collection.post" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sends a POST request to the Space server to create a new Resource in
 this collection.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -721,6 +749,11 @@ name.</p>
 </table>
 </dd></dl>
 
+<dl class="method">
+<dt id="jnpr.space.collection.MetaCollection.get_media_type">
+<tt class="descname">get_media_type</tt><big>(</big><em>version</em><big>)</big><a class="headerlink" href="#jnpr.space.collection.MetaCollection.get_media_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="function">
@@ -754,6 +787,21 @@ type name of the form <tt class="docutils literal"><span class="pre">&lt;service
 <dt id="jnpr.space.method.MetaMethod">
 <em class="property">class </em><tt class="descclassname">jnpr.space.method.</tt><tt class="descname">MetaMethod</tt><big>(</big><em>key</em>, <em>values</em><big>)</big><a class="headerlink" href="#jnpr.space.method.MetaMethod" title="Permalink to this definition">¶</a></dt>
 <dd><p>Encapsulates the meta data for a method.</p>
+<dl class="method">
+<dt id="jnpr.space.method.MetaMethod.get_media_type">
+<tt class="descname">get_media_type</tt><big>(</big><em>version</em><big>)</big><a class="headerlink" href="#jnpr.space.method.MetaMethod.get_media_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="jnpr.space.method.MetaMethod.get_request_type">
+<tt class="descname">get_request_type</tt><big>(</big><em>version</em><big>)</big><a class="headerlink" href="#jnpr.space.method.MetaMethod.get_request_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="jnpr.space.method.MetaMethod.get_response_type">
+<tt class="descname">get_response_type</tt><big>(</big><em>version</em><big>)</big><a class="headerlink" href="#jnpr.space.method.MetaMethod.get_response_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -769,7 +817,7 @@ Some examples of methods are:</p>
 </ul>
 <dl class="method">
 <dt id="jnpr.space.method.Method.get">
-<tt class="descname">get</tt><big>(</big><big>)</big><a class="headerlink" href="#jnpr.space.method.Method.get" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get</tt><big>(</big><em>version=None</em><big>)</big><a class="headerlink" href="#jnpr.space.method.Method.get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Performs a GET corresponding to the Method object.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -805,7 +853,7 @@ href and returns it.</p>
 
 <dl class="method">
 <dt id="jnpr.space.method.Method.post">
-<tt class="descname">post</tt><big>(</big><em>task_monitor=None</em>, <em>schedule=None</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#jnpr.space.method.Method.post" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">post</tt><big>(</big><em>request_version=None</em>, <em>response_version=None</em>, <em>task_monitor=None</em>, <em>schedule=None</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#jnpr.space.method.Method.post" title="Permalink to this definition">¶</a></dt>
 <dd><p>This sends a POST request corresponding to this Method object.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
