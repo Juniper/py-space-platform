@@ -157,7 +157,7 @@ class Collection(object):
                     else:
                         raise e
 
-        return resource_list
+        return ResourceList(resource_list)
 
     def _create_named_resource(self, key, meta_object, xml_root):
         """
@@ -361,6 +361,35 @@ class Collection(object):
         proper sortby clause for the GET URL.
         """
         return 'sortby=(%s)' % ','.join(field_list)
+
+class ResourceList(list):
+    """
+    Encapsulates a list of Resource objects and provides
+    methods to print the state of all of them.
+    """
+    def __init__(self, resource_list):
+        self.resources = resource_list
+        super(ResourceList, self).__init__(resource_list)
+
+    def xml_data(self):
+        """
+        Returns a formatted string that represents the state of all resources
+        in this list.
+        """
+        val = []
+        for r in self.resources:
+            val.append(r.xml_data())
+        return '\n\n'.join(val)
+
+    def xml_string(self):
+        """
+        Returns a string that contains formatted XML representing the
+        state of all resources in this list.
+        """
+        val = []
+        for r in self.resources:
+            val.append(r.xml_string())
+        return '\n\n'.join(val)
 
 class MetaCollection(object):
     """ Encapsulates the meta data for a collection type.

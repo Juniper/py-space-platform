@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>SpaceEZ APIs &mdash; SpaceEZ v0.0.2 documentation</title>
+    <title>SpaceEZ APIs &mdash; SpaceEZ v0.1.1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     'v0.0.2',
+        VERSION:     'v0.1.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="SpaceEZ v0.0.2 documentation" href="#" /> 
+    <link rel="top" title="SpaceEZ v0.1.1 documentation" href="#" /> 
   </head>
   <body>
     <div class="related">
@@ -35,7 +35,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="#">SpaceEZ v0.0.2 documentation</a> &raquo;</li> 
+        <li><a href="#">SpaceEZ v0.1.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -73,7 +73,7 @@
 <td>Represents an <strong>application</strong> that is hosted on Junos Space platform.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="#jnpr.space.async.TaskMonitor" title="jnpr.space.async.TaskMonitor"><tt class="xref py py-obj docutils literal"><span class="pre">jnpr.space.async.TaskMonitor</span></tt></a>(rest_end_point,&nbsp;...)</td>
-<td>Encapsulates the logic required to monitor the progress of tasks</td>
+<td>Encapsulates the logic required to monitor the progress of tasks using a hornet-q.</td>
 </tr>
 </tbody>
 </table>
@@ -136,6 +136,12 @@ web service:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">rest</span><span class="o">.</span><span class="n">Space</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s">&#39;https://1.1.1.1&#39;</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="s">&#39;super&#39;</span><span class="p">,</span> <span class="n">passwd</span><span class="o">=</span><span class="s">&#39;password&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">devs</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">device_management</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
 </pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Instances of this class are thread-safe. So you can have multiple
+threads invoking APIs on the same Junos Space cluster
+using one instance of this class.</p>
 </div>
 <dl class="method">
 <dt id="jnpr.space.rest.Space.__getattr__">
@@ -592,6 +598,19 @@ the full response from Space.</td>
 </table>
 </dd></dl>
 
+<dl class="method">
+<dt id="jnpr.space.resource.Resource.xml_data">
+<tt class="descname">xml_data</tt><big>(</big><big>)</big><a class="headerlink" href="#jnpr.space.resource.Resource.xml_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a formatted string that represents the state of this resource.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jnpr.space.resource.Resource.xml_string">
+<tt class="descname">xml_string</tt><big>(</big><big>)</big><a class="headerlink" href="#jnpr.space.resource.Resource.xml_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a string that contains formatted XML representing the
+state of this resource.</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="function">
@@ -753,6 +772,27 @@ name.</p>
 <dt id="jnpr.space.collection.MetaCollection.get_media_type">
 <tt class="descname">get_media_type</tt><big>(</big><em>version</em><big>)</big><a class="headerlink" href="#jnpr.space.collection.MetaCollection.get_media_type" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="jnpr.space.collection.ResourceList">
+<em class="property">class </em><tt class="descclassname">jnpr.space.collection.</tt><tt class="descname">ResourceList</tt><big>(</big><em>resource_list</em><big>)</big><a class="headerlink" href="#jnpr.space.collection.ResourceList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encapsulates a list of Resource objects and provides
+methods to print the state of all of them.</p>
+<dl class="method">
+<dt id="jnpr.space.collection.ResourceList.xml_data">
+<tt class="descname">xml_data</tt><big>(</big><big>)</big><a class="headerlink" href="#jnpr.space.collection.ResourceList.xml_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a formatted string that represents the state of all resources
+in this list.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jnpr.space.collection.ResourceList.xml_string">
+<tt class="descname">xml_string</tt><big>(</big><big>)</big><a class="headerlink" href="#jnpr.space.collection.ResourceList.xml_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a string that contains formatted XML representing the
+state of all resources in this list.</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -1063,35 +1103,159 @@ Some examples of applications are:</p>
 <span id="async"></span><h2>Async<a class="headerlink" href="#module-jnpr.space.async" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="jnpr.space.async.TaskMonitor">
-<em class="property">class </em><tt class="descclassname">jnpr.space.async.</tt><tt class="descname">TaskMonitor</tt><big>(</big><em>rest_end_point</em>, <em>qname</em>, <em>wait_time=10</em>, <em>max_retries=18</em><big>)</big><a class="headerlink" href="#jnpr.space.async.TaskMonitor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Encapsulates the logic required to monitor the progress of tasks</p>
+<em class="property">class </em><tt class="descclassname">jnpr.space.async.</tt><tt class="descname">TaskMonitor</tt><big>(</big><em>rest_end_point</em>, <em>qname</em>, <em>wait_time=10</em>, <em>max_consecutive_attempts=10</em><big>)</big><a class="headerlink" href="#jnpr.space.async.TaskMonitor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encapsulates the logic required to monitor the progress of tasks using
+a hornet-q. An instance of this class acts as a wrapper over a hornet-q.
+When you instantiate this class, it internally creates a hornet-q with
+the given <tt class="docutils literal"><span class="pre">qname</span></tt>. You can then use this <tt class="docutils literal"><span class="pre">TaskMonitor</span></tt> instance when
+invoking asynchronous APIs using the SpaceEZ library. Each asynchronous API
+invocation will create a new task (a.k.a Job) in Junos Space. You can wait
+for a single task to complete using the <tt class="docutils literal"><span class="pre">wait_for_task</span></tt> method which
+returns the <tt class="docutils literal"><span class="pre">ProgressUpdate</span></tt> message for the task with completion state
+and status of the task. If you use the same <tt class="docutils literal"><span class="pre">TaskMonitor</span></tt> object to
+create multiple tasks, you can wait for the completion of all of them
+using the <tt class="docutils literal"><span class="pre">wait_for_tasks</span></tt> method which returns a list of
+<tt class="docutils literal"><span class="pre">ProgressUpdate</span></tt> messages - one for each task.</p>
+<p>The snippet below shows an example where a TaskMonitor is used in creating
+a discover-devices task and waiting for its completion:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">rest</span><span class="o">.</span><span class="n">Space</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s">&#39;https://1.1.1.1&#39;</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="s">&#39;super&#39;</span><span class="p">,</span> <span class="n">passwd</span><span class="o">=</span><span class="s">&#39;password&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">devs</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">device_management</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tm</span> <span class="o">=</span> <span class="n">async</span><span class="o">.</span><span class="n">TaskMonitor</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="s">&#39;test_DD_q&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">device_management</span><span class="o">.</span><span class="n">discover_devices</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+<span class="go">        task_monitor=tm,</span>
+<span class="go">        hostName=&#39;test-host-name&#39;,</span>
+<span class="go">        manageDiscoveredSystemsFlag=True,</span>
+<span class="go">        userName=&#39;regress&#39;, password=&#39;MaRtInI&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pu</span> <span class="o">=</span> <span class="n">tm</span><span class="o">.</span><span class="n">wait_for_task</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">pu</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">pu</span><span class="o">.</span><span class="n">status</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you use multi-threaded programming, make sure that you <strong>do not</strong>
+share a <tt class="docutils literal"><span class="pre">TaskMonitor</span></tt> instance across multiple threads. You should
+use separate <tt class="docutils literal"><span class="pre">TaskMonitor</span></tt> objects for separate threads.</p>
+</div>
+<dl class="method">
+<dt id="jnpr.space.async.TaskMonitor.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>rest_end_point</em>, <em>qname</em>, <em>wait_time=10</em>, <em>max_consecutive_attempts=10</em><big>)</big><a class="headerlink" href="#jnpr.space.async.TaskMonitor.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an instance of this class to encapsulate a hornet-q.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>rest_end_point</strong> &#8211; An instance of <tt class="docutils literal"><span class="pre">rest.Space</span></tt> class which
+encapsulates a Junos Space system on which tasks need to be
+monitored.</li>
+<li><strong>qname</strong> (<em>str</em>) &#8211; The name of the underlying hornet-q.</li>
+<li><strong>wait_time</strong> (<em>int</em>) &#8211; Number of seconds to sleep between trying to pull
+progress-update messages from the hornet-q. This is also used as
+the value of the <tt class="docutils literal"><span class="pre">accept-wait</span></tt> header when pulling messages from
+the hornet-q. The default value of this argument is 10.</li>
+<li><strong>max_consecutive_attempts</strong> (<em>int</em>) &#8211; The maximum number of consecutive
+attempts that will be made to pull progress-update messages from
+the hornet-q. This defaults to 10. We will consider the task as
+hanging if we are not able to pull a progress-update message from
+the hornet-q after this many attempts.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">An instance of this class encapsulating a hornet-q with the
+given name (<tt class="docutils literal"><span class="pre">qname</span></tt>).</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="jnpr.space.async.TaskMonitor.__module__">
+<tt class="descname">__module__</tt><em class="property"> = 'jnpr.space.async'</em><a class="headerlink" href="#jnpr.space.async.TaskMonitor.__module__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="method">
 <dt id="jnpr.space.async.TaskMonitor.delete">
 <tt class="descname">delete</tt><big>(</big><big>)</big><a class="headerlink" href="#jnpr.space.async.TaskMonitor.delete" title="Permalink to this definition">¶</a></dt>
-<dd><p>Cleanup by deleting the hornetq</p>
+<dd><p>Cleanup by deleting the hornet-q encapsulated by this object.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="jnpr.space.async.TaskMonitor.get_queue_url">
 <tt class="descname">get_queue_url</tt><big>(</big><big>)</big><a class="headerlink" href="#jnpr.space.async.TaskMonitor.get_queue_url" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns the full URL for the encapsulated hornet-q</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="jnpr.space.async.TaskMonitor.pull_message">
 <tt class="descname">pull_message</tt><big>(</big><big>)</big><a class="headerlink" href="#jnpr.space.async.TaskMonitor.pull_message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Try to pull the next message from the queue</p>
+<dd><p>Pull the next message from the hornet-q. It specifies an <tt class="docutils literal"><span class="pre">accept-wait</span></tt>
+header with the value that was given as the <tt class="docutils literal"><span class="pre">wait_time</span></tt> argument in
+the constructor so that the pull waits for this many seconds on the
+server side waiting for a message.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">If a message is pulled, it is parsed into a Python object
+and returned. If no message was pulled, returns <tt class="docutils literal"><span class="pre">None</span></tt>.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="jnpr.space.async.TaskMonitor.wait_for_task">
 <tt class="descname">wait_for_task</tt><big>(</big><em>task_id</em><big>)</big><a class="headerlink" href="#jnpr.space.async.TaskMonitor.wait_for_task" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get progress updates till the given task completes</p>
+<dd><p>Waits for the given task to complete by periodically pulling
+progress-update messages from the hornet-q and checking if the message
+indicates that the task is Done. The time between consecutive pulls
+is the value given as the <tt class="docutils literal"><span class="pre">wait_time</span></tt> argument in the constructor.
+The maximum number of consecutive pulls is determined by the
+<tt class="docutils literal"><span class="pre">max_consecutive_attempts</span></tt> argument in the constructor. If we&#8217;re
+unable to pull a progress-update message from hornet-q after this many
+consecutive attempts, we will consider the task as hanging and this
+method will raise an Exception.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You should use this method only when you have created one task using
+this TaskMonitor object. If you created multiple tasks, you must
+use the wait_for_tasks() method to wait for their completion.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The progress-update message indicating task completion is
+parsed into a Python object and returned.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="jnpr.space.async.TaskMonitor.wait_for_tasks">
 <tt class="descname">wait_for_tasks</tt><big>(</big><em>task_id_list</em><big>)</big><a class="headerlink" href="#jnpr.space.async.TaskMonitor.wait_for_tasks" title="Permalink to this definition">¶</a></dt>
-<dd><p>Wait till all tasks in the given list completes</p>
+<dd><p>Waits for all the tasks in the given list to complete by periodically
+pulling progress-update messages from the hornet-q and checking if the
+message indicates that any of the given tasks is Done. The time between
+consecutive pulls is the value given as the <tt class="docutils literal"><span class="pre">wait_time</span></tt> argument in
+the constructor.</p>
+<p>The maximum number of consecutive pulls is determined by the
+<tt class="docutils literal"><span class="pre">max_consecutive_attempts</span></tt> argument in the constructor. If we&#8217;re
+unable to pull a progress-update message from hornet-q after this many
+consecutive attempts, we will consider the tasks as hanging and this
+method will raise an Exception.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of progress-update messages indicating the completion
+state and status of all the given tasks. Each entry in the list is
+a Python object parsed from a progress-update message..</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>
@@ -1312,11 +1476,11 @@ object.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="#">SpaceEZ v0.0.2 documentation</a> &raquo;</li> 
+        <li><a href="#">SpaceEZ v0.1.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2014, Juniper Networks Inc..
+        &copy; Copyright 2015, Juniper Networks Inc..
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>

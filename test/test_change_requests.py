@@ -31,12 +31,12 @@ class TestChangeRequests:
 
     def test_one_change_request_sync(self):
         devices = self.space.device_management.devices.get(filter_={'deviceFamily': 'junos', 'connectionStatus': 'up'})
-        assert len(devices) > 0, 'No Junos devices present on Space!'
+        assert len(devices) > 1, 'No Junos devices present on Space!'
 
         cr = self.space.configuration_management.change_requests.v2_single.post(
                     name = 'Test-from-space-ez',
                     description = 'Test case for space-ez via PyTest',
-                    device = devices[0],
+                    device = devices[1],
                     xmlData = '''<configuration>
                                    <snmp>
                                      <contact>space-ez Test Case</contact>
@@ -52,11 +52,11 @@ class TestChangeRequests:
         crs = self.space.configuration_management.change_requests.v2_multiple.post(
                     name = 'Test-from-space-ez',
                     description = 'Test case for space-ez via PyTest',
-                    devices = devices[len(devices)-1:],
+                    devices = devices[len(devices)-2:],
                     xmlData = '''<configuration>
-                                   <snmpp>
+                                   <snmp>
                                      <contact>space-ez Test Case</contact>
-                                   </snmpp>
+                                   </snmp>
                                  </configuration>''')
 
         assert crs

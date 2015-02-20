@@ -1,6 +1,7 @@
 from __future__ import print_function
 import os
 import re
+import threading
 
 import requests
 import logging
@@ -22,6 +23,11 @@ class Space:
 
         >>> s = rest.Space(url='https://1.1.1.1', user='super', passwd='password')
         >>> devs = s.device_management.devices.get()
+
+    .. note::
+        Instances of this class are thread-safe. So you can have multiple
+        threads invoking APIs on the same Junos Space cluster
+        using one instance of this class.
     """
 
     def __init__(self,
@@ -64,6 +70,7 @@ class Space:
                    cluster whose **url** was given as a parameter. It can be
                    used to access all APIs provided by Space.
         """
+        self._lock = threading.Lock()
         self.space_url = url
 
         if user is not None:
@@ -88,7 +95,7 @@ class Space:
         self._meta_applications = self._init_applications()
         self._services = {}
         self._applications = {}
-        self.use_session = use_session
+        self._use_session = use_session
 
         if use_session:
             self.login(required_node)
@@ -186,8 +193,8 @@ class Space:
         req_url = self.space_url + url
         self._logger.debug("GET %s" % req_url)
         self._logger.debug(headers)
-        if self.use_session:
-            r = self.connection.get_session().get(req_url, headers=headers, verify=False)
+        if self._use_session:
+            r = self._connection.get_session().get(req_url, headers=headers, verify=False)
         else:
             if self.cert is not None:
                 r = requests.get(req_url, cert=self.cert, headers=headers, verify=False)
@@ -214,8 +221,8 @@ class Space:
         req_url = self.space_url + url
         self._logger.debug("HEAD %s" % req_url)
         self._logger.debug(headers)
-        if self.use_session:
-            r = self.connection.get_session().head(req_url, headers=headers, verify=False)
+        if self._use_session:
+            r = self._connection.get_session().head(req_url, headers=headers, verify=False)
         else:
             if self.cert is not None:
                 r = requests.head(req_url, cert=self.cert, headers=headers, verify=False)
@@ -245,8 +252,8 @@ class Space:
         self._logger.debug("POST %s" % req_url)
         self._logger.debug(headers)
         self._logger.debug(body)
-        if self.use_session:
-            r = self.connection.get_session().post(req_url, data=body, headers=headers, verify=False)
+        if self._use_session:
+            r = self._connection.get_session().post(req_url, data=body, headers=headers, verify=False)
         else:
             if self.cert is not None:
                 r = requests.post(req_url, cert=self.cert, data=body, headers=headers, verify=False)
@@ -276,8 +283,8 @@ class Space:
         self._logger.debug("PUT %s" % req_url)
         self._logger.debug(headers)
         self._logger.debug(body)
-        if self.use_session:
-            r = self.connection.get_session().put(req_url, data=body, headers=headers, verify=False)
+        if self._use_session:
+            r = self._connection.get_session().put(req_url, data=body, headers=headers, verify=False)
         else:
             if self.cert is not None:
                 r = requests.put(req_url, cert=self.cert, data=body, headers=headers, verify=False)
@@ -301,8 +308,8 @@ class Space:
         """
         req_url = self.space_url + delete_url
         self._logger.debug("DELETE %s" % req_url)
-        if self.use_session:
-            r = self.connection.get_session().delete(req_url, verify=False)
+        if self._use_session:
+            r = self._connection.get_session().delete(req_url, verify=False)
         else:
             if self.cert is not None:
                 r = requests.delete(req_url, cert=self.cert, verify=False)
@@ -318,7 +325,8 @@ class Space:
     def logout(self):
         """Logs out the current session being used.
         """
-        self.connection.logout()
+        with self._lock:
+            self._connection.logout()
 
     def login(self, required_node=None):
         """Logs into Space and creates a session (connection) that is maintained.
@@ -329,30 +337,31 @@ class Space:
             Space node in the cluster on which the session should be established.
             It is ``None`` by default.
         """
-        from jnpr.space import connection
-        for i in range(10):
-            if self.space_user:
-                self.connection = connection.Connection(self.space_url,
-                                                        self.space_user,
-                                                        self.space_passwd)
-            else:
-                self.connection = connection.Connection(self.space_url,
-                                                        cert=self.cert)
-            if required_node is not None:
-                sid = self.connection.get_session().cookies['JSESSIONID']
-                end = sid.rindex(':')
-                start = sid.rindex('.') + 1
-                node_name = sid[start:end]
-                if required_node == node_name:
-                    self._logger.debug("Try %d: Got session on %s" % (i, required_node))
-                    return
+        with self._lock:
+            from jnpr.space import connection
+            for i in range(10):
+                if self.space_user:
+                    self._connection = connection.Connection(self.space_url,
+                                                            self.space_user,
+                                                            self.space_passwd)
                 else:
-                    self._logger.debug("Try %d: Got session on %s instead of %s" % (i, node_name, required_node))
-                    self.logout()
-            else:
-                return
+                    self._connection = connection.Connection(self.space_url,
+                                                            cert=self.cert)
+                if required_node is not None:
+                    sid = self._connection.get_session().cookies['JSESSIONID']
+                    end = sid.rindex(':')
+                    start = sid.rindex('.') + 1
+                    node_name = sid[start:end]
+                    if required_node == node_name:
+                        self._logger.debug("Try %d: Got session on %s" % (i, required_node))
+                        return
+                    else:
+                        self._logger.debug("Try %d: Got session on %s instead of %s" % (i, node_name, required_node))
+                        self.logout()
+                else:
+                    return
 
-        raise Exception('Unable to get a session on %s in 10 attempts' % required_node)
+            raise Exception('Unable to get a session on %s in 10 attempts' % required_node)
 
 
 class RestException(Exception):

@@ -106,7 +106,10 @@ class Method(object):
         if (response.status_code != 202) and (response.status_code != 200):
             raise rest.RestException("POST failed on %s " % url, response)
 
-        return xml2obj(cleanup(response.content)) if response.content else None
+        try:
+            return xml2obj(cleanup(response.content)) if response.content else None
+        except:
+            raise rest.RestException("Failed to parse XML response for %s " % url, response)
 
     def get(self, version=None):
         """Performs a GET corresponding to the Method object.

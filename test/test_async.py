@@ -34,7 +34,7 @@ class TestAsync:
         tm.delete()
 
     def test_wait_for_task(self):
-        tm = async.TaskMonitor(self.space, 'testqqqq', wait_time=1, max_retries=10)
+        tm = async.TaskMonitor(self.space, 'testqqqq', wait_time=1, max_consecutive_attempts=10)
         err = None
         task_id = 100
 

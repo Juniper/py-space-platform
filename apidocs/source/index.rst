@@ -65,6 +65,7 @@ Async
 -----
 .. automodule:: jnpr.space.async
    :members:
+   :special-members:
    :undoc-members:
 
 Factory

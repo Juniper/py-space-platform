@@ -1,5 +1,5 @@
 from pprint import pformat
-from lxml import etree
+from lxml import etree, objectify
 from jinja2 import Environment, PackageLoader
 
 from jnpr.space import xmlutil, util, rest
@@ -428,6 +428,25 @@ class Resource(object):
 
     def __str__(self):
         return pformat(self, depth=6)
+
+    def xml_string(self):
+        """
+        Returns a string that contains formatted XML representing the
+        state of this resource.
+        """
+        if self._xml_data is not None:
+            return etree.tostring(self._xml_data, pretty_print=True)
+        else:
+            return 'No XML data'
+
+    def xml_data(self):
+        """
+        Returns a formatted string that represents the state of this resource.
+        """
+        if self._xml_data is not None:
+            return objectify.dump(self._xml_data)
+        else:
+            return 'No XML data'
 
 """
 A dictionary that acts as a cache for meta objects representing resources.

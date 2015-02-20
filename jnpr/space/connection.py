@@ -4,7 +4,12 @@ import httplib
 
 
 class Connection:
-    """ Creates a connection to Space Platform mimicking a GUI login."""
+    """ Creates a connection to Space Platform mimicking a GUI login.
+    This class is **not** thread-safe. It is up to the users of the class to
+    ensure thread safety. The ``rest.Space`` class uses this class for
+    supporting session-based connections to Junos Space. Thread-safety
+    requirements are met by that class.
+    """
 
     def __init__(self,
                  homeurl,
