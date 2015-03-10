@@ -466,7 +466,7 @@ this resource.</td>
 
 <dl class="method">
 <dt id="jnpr.space.resource.Resource.get">
-<tt class="descname">get</tt><big>(</big><em>attr=None</em>, <em>version=None</em><big>)</big><a class="headerlink" href="#jnpr.space.resource.Resource.get" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get</tt><big>(</big><em>attr=None</em>, <em>accept=None</em><big>)</big><a class="headerlink" href="#jnpr.space.resource.Resource.get" title="Permalink to this definition">¶</a></dt>
 <dd><p>This is an overloaded method that does two things: If the <tt class="docutils literal"><span class="pre">attr</span></tt>
 parameter is passed, it returns the corresponding XML attribute from
 the top level XML data element contained by this resource. If the
@@ -476,17 +476,29 @@ this resource and get its current state.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>attr</strong> (<em>str</em>) &#8211; The name of the XML attribute in the top-level
+element of the XML state of the resource. Defaults to <tt class="docutils literal"><span class="pre">None</span></tt>.</li>
+<li><strong>accept</strong> (<em>str</em>) &#8211; This can be used to supply a media-type that must
+be used as the Accept header in the GET request. This defaults to
+<tt class="docutils literal"><span class="pre">None</span></tt> and in this case SpaceEZ will use the media-type modeled
+in the description file.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><ul class="simple">
 <li>Value of the named XML attribute. OR</li>
 <li>The current state of this resource fetched from Space and
 represented as a Python object. You can access the fields of the
 resource&#8217;s state directly as attributes of this object.</li>
 </ul>
+</p>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><tt class="docutils literal"><span class="pre">jnpr.space.rest.RestException</span></tt> if the GET method results in an
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><tt class="docutils literal"><span class="pre">jnpr.space.rest.RestException</span></tt> if the GET method results in an
 error response. The exception&#8217;s <tt class="docutils literal"><span class="pre">response</span></tt> attribute will have the
-full response from Space.</td>
+full response from Space.</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -528,7 +540,7 @@ from its meta object and appends the <tt class="docutils literal"><span class="p
 
 <dl class="method">
 <dt id="jnpr.space.resource.Resource.post">
-<tt class="descname">post</tt><big>(</big><em>task_monitor=None</em>, <em>schedule=None</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#jnpr.space.resource.Resource.post" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">post</tt><big>(</big><em>accept=None</em>, <em>content_type=None</em>, <em>request_body=None</em>, <em>task_monitor=None</em>, <em>schedule=None</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#jnpr.space.resource.Resource.post" title="Permalink to this definition">¶</a></dt>
 <dd><p>Some resources support the POST method. For example, the configuration
 of a device supports the POST method which can be used to fetch
 selected portions of the configuration based on xpath expressions.
@@ -538,6 +550,18 @@ On such resources, this method can be used to send the POST request.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>accept</strong> (<em>str</em>) &#8211; This can be used to supply a media-type that must
+be used as the Accept header in the request. This defaults to
+<tt class="docutils literal"><span class="pre">None</span></tt> and in this case SpaceEZ will use the media-type modeled
+in the description file.</li>
+<li><strong>content_type</strong> (<em>str</em>) &#8211; This can be used to supply a media-type that must
+be used as the Content-Type header in the request. This defaults to
+<tt class="docutils literal"><span class="pre">None</span></tt> and in this case SpaceEZ will use the media-type modeled
+in the description file.</li>
+<li><strong>request_body</strong> (<em>str</em>) &#8211; This can be used to supply a string that must
+be used as the request body in the request. This defaults to
+<tt class="docutils literal"><span class="pre">None</span></tt> and in this case SpaceEZ will create the request body
+using the modeled template, replacing variables with kwargs.</li>
 <li><strong>task_monitor</strong> (<a class="reference internal" href="#jnpr.space.async.TaskMonitor" title="jnpr.space.async.TaskMonitor"><em>jnpr.space.async.TaskMonitor</em></a>) &#8211; A TaskMonitor object that can be used to monitor
 the progress of the POST request, in case of asynchronous
 invocations. You need to check Junos Space API documentation to
@@ -573,29 +597,55 @@ the full response from Space.</p>
 
 <dl class="method">
 <dt id="jnpr.space.resource.Resource.put">
-<tt class="descname">put</tt><big>(</big><em>new_val_obj=None</em>, <em>version=None</em><big>)</big><a class="headerlink" href="#jnpr.space.resource.Resource.put" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">put</tt><big>(</big><em>new_val_obj=None</em>, <em>request_body=None</em>, <em>accept=None</em>, <em>content_type=None</em><big>)</big><a class="headerlink" href="#jnpr.space.resource.Resource.put" title="Permalink to this definition">¶</a></dt>
 <dd><p>Modifies the state of this resource on Space by sending a PUT request
 with the new state. The attributes of <em>new_val_obj</em> are
 formatted to form the XML request body for the PUT request. If the
-parameter <em>new_val_obj</em> is <tt class="docutils literal"><span class="pre">None</span></tt>, then the attributes of this object
-itself are formatted to form the XML request body. Once the PUT request
-successfully completes, it re-initializes the state of this Resource
-object based on the XML response from Space.</p>
+parameter <em>new_val_obj</em> is <tt class="docutils literal"><span class="pre">None</span></tt>, then the argument <em>request_body</em>,
+if present, is used as the request body. If this is also <tt class="docutils literal"><span class="pre">None</span></tt>, then
+the attributes of this object itself are formatted to form the XML
+request body. Once the PUT request successfully completes, it
+re-initializes the state of this Resource object based on the XML
+response from Space.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>new_val_obj</strong> (<a class="reference internal" href="#jnpr.space.resource.Resource" title="jnpr.space.resource.Resource"><em>jnpr.space.resource.Resource</em></a>) &#8211; A Resource object with the newly desired state for
-the resource. This defaults to <tt class="docutils literal"><span class="pre">None</span></tt>.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>new_val_obj</strong> (<a class="reference internal" href="#jnpr.space.resource.Resource" title="jnpr.space.resource.Resource"><em>jnpr.space.resource.Resource</em></a>) &#8211; A Resource object with the newly desired state for
+the resource. This defaults to <tt class="docutils literal"><span class="pre">None</span></tt>.</li>
+<li><strong>request_body</strong> (<em>str</em>) &#8211; This can be used to supply a string that must
+be used as the request body in the request. This defaults to
+<tt class="docutils literal"><span class="pre">None</span></tt> and in this case SpaceEZ will create the request body
+using the supplied <tt class="docutils literal"><span class="pre">new_val_obj</span></tt> argument or from the current
+state of this object.</li>
+<li><strong>accept</strong> (<em>str</em>) &#8211; This can be used to supply a media-type that must
+be used as the Accept header in the request. This defaults to
+<tt class="docutils literal"><span class="pre">None</span></tt> and in this case SpaceEZ will use the media-type modeled
+in the description file.</li>
+<li><strong>content_type</strong> (<em>str</em>) &#8211; This can be used to supply a media-type that must
+be used as the Content-Type header in the request. This defaults to
+<tt class="docutils literal"><span class="pre">None</span></tt> and in this case SpaceEZ will use the media-type modeled
+in the description file.</li>
+</ul>
+</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><tt class="docutils literal"><span class="pre">None</span></tt></td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><tt class="docutils literal"><span class="pre">None</span></tt></p>
+</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><tt class="docutils literal"><span class="pre">jnpr.space.rest.RestException</span></tt> if the PUT method results in
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><tt class="docutils literal"><span class="pre">jnpr.space.rest.RestException</span></tt> if the PUT method results in
 an error response. The exception&#8217;s <tt class="docutils literal"><span class="pre">response</span></tt> attribute will have
-the full response from Space.</td>
+the full response from Space.</p>
+</td>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="method">
+<dt id="jnpr.space.resource.Resource.state">
+<tt class="descname">state</tt><big>(</big><big>)</big><a class="headerlink" href="#jnpr.space.resource.Resource.state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints the XML string into stdout.</p>
 </dd></dl>
 
 <dl class="method">
@@ -646,13 +696,17 @@ Some examples of collections are:</p>
 </ul>
 <dl class="method">
 <dt id="jnpr.space.collection.Collection.get">
-<tt class="descname">get</tt><big>(</big><em>version=None</em>, <em>filter_=None</em>, <em>domain_id=None</em>, <em>paging=None</em>, <em>sortby=None</em><big>)</big><a class="headerlink" href="#jnpr.space.collection.Collection.get" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get</tt><big>(</big><em>accept=None</em>, <em>filter_=None</em>, <em>domain_id=None</em>, <em>paging=None</em>, <em>sortby=None</em><big>)</big><a class="headerlink" href="#jnpr.space.collection.Collection.get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the contained resources of this collection from Space.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>accept</strong> (<em>str</em>) &#8211; This can be used to supply a media-type that must
+be used as the Accept header in the GET request. This defaults to
+<tt class="docutils literal"><span class="pre">None</span></tt> and in this case SpaceEZ will use the media-type modeled
+in the description file.</li>
 <li><strong>filter</strong> (<em>str or dict</em>) &#8211; A filter expression to apply on the collection. This
 can be given as a dict with name:value pairs to filter with. For
 example, <tt class="docutils literal"><span class="pre">{'name':'user1'}</span></tt>. Or this can be given as a string
@@ -699,7 +753,7 @@ object and the name of this collection to form the href and returns it.</p>
 
 <dl class="method">
 <dt id="jnpr.space.collection.Collection.post">
-<tt class="descname">post</tt><big>(</big><em>new_obj</em>, <em>version=None</em>, <em>xml_name=None</em>, <em>content_type=None</em>, <em>accept=None</em><big>)</big><a class="headerlink" href="#jnpr.space.collection.Collection.post" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">post</tt><big>(</big><em>new_obj=None</em>, <em>accept=None</em>, <em>content_type=None</em>, <em>request_body=None</em>, <em>xml_name=None</em>, <em>task_monitor=None</em><big>)</big><a class="headerlink" href="#jnpr.space.collection.Collection.post" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sends a POST request to the Space server to create a new Resource in
 this collection.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -709,26 +763,41 @@ this collection.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>new_obj</strong> (A single <tt class="docutils literal"><span class="pre">jnpr.space.resource.Resource</span></tt> instance
 or a list of them.) &#8211; The new Resource that needs to be created as a member
-of this collection.</li>
+of this collection. This can be omitted in which case the caller
+must supply a request body for the POST request as the
+<tt class="docutils literal"><span class="pre">request_body</span></tt> argument.</li>
+<li><strong>accept</strong> (<em>str</em>) &#8211; This can be used to supply a media-type that must
+be used as the Accept header in the request. This defaults to
+<tt class="docutils literal"><span class="pre">None</span></tt> and in this case SpaceEZ will use the media-type modeled
+in the description file.</li>
+<li><strong>content_type</strong> (<em>str</em>) &#8211; This can be used to supply a media-type that must
+be used as the Content-Type header in the request. This defaults to
+<tt class="docutils literal"><span class="pre">None</span></tt> and in this case SpaceEZ will use the media-type modeled
+in the description file.</li>
+<li><strong>request_body</strong> (<em>str</em>) &#8211; This can be used to supply a string that must
+be used as the request body in the request. This defaults to
+<tt class="docutils literal"><span class="pre">None</span></tt> and in this case the caller must supply the <tt class="docutils literal"><span class="pre">new_obj</span></tt>
+argument from which the request body will be formed.</li>
 <li><strong>xml_name</strong> (<em>str</em>) &#8211; Can be used to override the name of the top-level
 XML element in the generated request body. This is useful in some
 cases such as creating a quick config template.
 This parameter defaults to <tt class="docutils literal"><span class="pre">None</span></tt>.</li>
-<li><strong>content_type</strong> (<em>str</em>) &#8211; Can be used to override the <em>content-type</em>
-header of the POST request. This is useful in some
-cases such as creating a quick config template.
-This parameter defaults to <tt class="docutils literal"><span class="pre">None</span></tt>.</li>
-<li><strong>accept</strong> (<em>str</em>) &#8211; Can be used to override the <em>accept</em>
-header of the POST request. This is useful in some
-cases such as creating a quick config template.
-This parameter defaults to <tt class="docutils literal"><span class="pre">None</span></tt>.</li>
+<li><strong>task_monitor</strong> (<a class="reference internal" href="#jnpr.space.async.TaskMonitor" title="jnpr.space.async.TaskMonitor"><em>jnpr.space.async.TaskMonitor</em></a>) &#8211; A TaskMonitor object that can be used to monitor
+the progress of the POST request, in case of asynchronous
+invocations. You need to check Junos Space API documentation to
+see if the POST invocation on this resource has asynchronous
+semantics and supply the task_monitor parameter only if it is
+asynchronous. Otherwise, this will default to <tt class="docutils literal"><span class="pre">None</span></tt> and the
+method will behave with synchronous semantics.</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">If the new_obj parameter is a list, then the same list is
 returned. Otherwise, this method creates a new Resource object
 based on the state of the newly created resource, as extracted from
-the POST response body.</p>
+the POST response body. In the case of asynchronous
+invocation, this will represent a Task object and will contain the
+unique id of the Task executing the POST request in Space.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><tt class="docutils literal"><span class="pre">jnpr.space.rest.RestException</span></tt> if the POST method results in
@@ -738,6 +807,13 @@ the full response from Space.</p>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="method">
+<dt id="jnpr.space.collection.Collection.state">
+<tt class="descname">state</tt><big>(</big><big>)</big><a class="headerlink" href="#jnpr.space.collection.Collection.state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs a GET on this collection to fetch the current state and
+prints it as XML.</p>
 </dd></dl>
 
 </dd></dl>
@@ -780,6 +856,12 @@ name.</p>
 <em class="property">class </em><tt class="descclassname">jnpr.space.collection.</tt><tt class="descname">ResourceList</tt><big>(</big><em>resource_list</em><big>)</big><a class="headerlink" href="#jnpr.space.collection.ResourceList" title="Permalink to this definition">¶</a></dt>
 <dd><p>Encapsulates a list of Resource objects and provides
 methods to print the state of all of them.</p>
+<dl class="method">
+<dt id="jnpr.space.collection.ResourceList.state">
+<tt class="descname">state</tt><big>(</big><big>)</big><a class="headerlink" href="#jnpr.space.collection.ResourceList.state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints the XML string into stdout.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="jnpr.space.collection.ResourceList.xml_data">
 <tt class="descname">xml_data</tt><big>(</big><big>)</big><a class="headerlink" href="#jnpr.space.collection.ResourceList.xml_data" title="Permalink to this definition">¶</a></dt>
@@ -857,16 +939,21 @@ Some examples of methods are:</p>
 </ul>
 <dl class="method">
 <dt id="jnpr.space.method.Method.get">
-<tt class="descname">get</tt><big>(</big><em>version=None</em><big>)</big><a class="headerlink" href="#jnpr.space.method.Method.get" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get</tt><big>(</big><em>accept=None</em><big>)</big><a class="headerlink" href="#jnpr.space.method.Method.get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Performs a GET corresponding to the Method object.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A Python object constructed from the response body that Space
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>accept</strong> (<em>str</em>) &#8211; This can be used to supply a media-type that must
+be used as the Accept header in the GET request. This defaults to
+<tt class="docutils literal"><span class="pre">None</span></tt> and in this case SpaceEZ will use the media-type modeled
+in the description file.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A Python object constructed from the response body that Space
 returned for the GET request.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><tt class="docutils literal"><span class="pre">jnpr.space.rest.RestException</span></tt> if the GET results in an
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><tt class="docutils literal"><span class="pre">jnpr.space.rest.RestException</span></tt> if the GET results in an
 error response. The exception&#8217;s <tt class="docutils literal"><span class="pre">response</span></tt> attribute will have the
 full response from Space.</td>
 </tr>
@@ -893,13 +980,25 @@ href and returns it.</p>
 
 <dl class="method">
 <dt id="jnpr.space.method.Method.post">
-<tt class="descname">post</tt><big>(</big><em>request_version=None</em>, <em>response_version=None</em>, <em>task_monitor=None</em>, <em>schedule=None</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#jnpr.space.method.Method.post" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">post</tt><big>(</big><em>accept=None</em>, <em>content_type=None</em>, <em>request_body=None</em>, <em>task_monitor=None</em>, <em>schedule=None</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#jnpr.space.method.Method.post" title="Permalink to this definition">¶</a></dt>
 <dd><p>This sends a POST request corresponding to this Method object.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>accept</strong> (<em>str</em>) &#8211; This can be used to supply a media-type that must
+be used as the Accept header in the request. This defaults to
+<tt class="docutils literal"><span class="pre">None</span></tt> and in this case SpaceEZ will use the media-type modeled
+in the description file.</li>
+<li><strong>content_type</strong> (<em>str</em>) &#8211; This can be used to supply a media-type that must
+be used as the Content-Type header in the request. This defaults to
+<tt class="docutils literal"><span class="pre">None</span></tt> and in this case SpaceEZ will use the media-type modeled
+in the description file.</li>
+<li><strong>request_body</strong> (<em>str</em>) &#8211; This can be used to supply a string that must
+be used as the request body in the request. This defaults to
+<tt class="docutils literal"><span class="pre">None</span></tt> and in this case SpaceEZ will create the request body
+using the modeled template, replacing variables with kwargs.</li>
 <li><strong>task_monitor</strong> (<a class="reference internal" href="#jnpr.space.async.TaskMonitor" title="jnpr.space.async.TaskMonitor"><em>jnpr.space.async.TaskMonitor</em></a>) &#8211; A TaskMonitor object that can be used to monitor
 the progress of the POST request, in case of asynchronous
 invocations. You need to check Junos Space API documentation to
@@ -1357,6 +1456,11 @@ E.g. &#8216;&amp;lt;&#8217; for &#8216;&lt;&#8217;, etc. This method removes the
 </tbody>
 </table>
 </dd></dl>
+
+<dl class="function">
+<dt id="jnpr.space.xmlutil.info">
+<tt class="descclassname">jnpr.space.xmlutil.</tt><tt class="descname">info</tt><big>(</big><em>obj</em><big>)</big><a class="headerlink" href="#jnpr.space.xmlutil.info" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="function">
 <dt id="jnpr.space.xmlutil.make_xml_name">

@@ -23,7 +23,7 @@ class TestRpc:
 
         d = devices_list[0]
 
-        result = d.exec_rpc_v1.post(rpcCommand="<get-system-information/>")
+        result = d.exec_rpc.post(rpcCommand="<get-system-information/>")
 
         from pprint import pprint
         pprint(result)
@@ -41,7 +41,7 @@ class TestRpc:
         tm = async.TaskMonitor(self.space, 'test_rpc_q')
 
         try:
-            result = d.exec_rpc_v3.post(
+            result = d.exec_rpc_async.post(
                                         task_monitor=tm,
                                         rpcCommand="<get-system-information/>"
                                        )
@@ -69,7 +69,7 @@ class TestRpc:
         try:
             task_id_list = []
             for d in devices_list[0:1]:
-                result = d.exec_rpc_v3.post(
+                result = d.exec_rpc_async.post(
                                             task_monitor=tm,
                                             rpcCommand="<get-system-information/>"
                                            )

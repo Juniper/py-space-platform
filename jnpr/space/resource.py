@@ -2,9 +2,9 @@ from pprint import pformat
 from lxml import etree, objectify
 from jinja2 import Environment, PackageLoader
 
-from jnpr.space import xmlutil, util, rest
+from jnpr.space import xmlutil, util, base, rest
 
-class Resource(object):
+class Resource(base._SpaceBase):
     """
     Represents a **resource** that is exposed by Junos Space REST API.
     Some examples of resources are:
@@ -183,13 +183,21 @@ class Resource(object):
         """
         return self._xml_data.get(attr)
 
-    def get(self, attr=None, version=None):
+    def get(self, attr=None, accept=None):
         """
         This is an overloaded method that does two things: If the ``attr``
         parameter is passed, it returns the corresponding XML attribute from
         the top level XML data element contained by this resource. If the
         ``attr`` parameter is not passed, it performs an HTTP GET for
         this resource and get its current state.
+
+        :param str attr: The name of the XML attribute in the top-level
+            element of the XML state of the resource. Defaults to ``None``.
+
+        :param str accept: This can be used to supply a media-type that must
+            be used as the Accept header in the GET request. This defaults to
+            ``None`` and in this case SpaceEZ will use the media-type modeled
+            in the description file.
 
         :returns:
             - Value of the named XML attribute. OR
@@ -205,7 +213,11 @@ class Resource(object):
         if attr is not None:
             return self._get_xml_attr(attr)
 
-        mtype = self._meta_object.get_media_type(version)
+        if accept is not None:
+            mtype = accept
+        else:
+            mtype = self._meta_object.get_media_type(None)
+
         if mtype is not None:
             if not self._meta_object.retain_charset_in_accept:
                 end = mtype.find(';charset=')
@@ -224,18 +236,36 @@ class Resource(object):
         r = response.content # Fix as part of issue #27
         return xmlutil.xml2obj(r)
 
-    def put(self, new_val_obj = None, version=None):
+    def put(self, new_val_obj = None, request_body=None, accept=None, content_type=None):
         """Modifies the state of this resource on Space by sending a PUT request
         with the new state. The attributes of *new_val_obj* are
         formatted to form the XML request body for the PUT request. If the
-        parameter *new_val_obj* is ``None``, then the attributes of this object
-        itself are formatted to form the XML request body. Once the PUT request
-        successfully completes, it re-initializes the state of this Resource
-        object based on the XML response from Space.
+        parameter *new_val_obj* is ``None``, then the argument *request_body*,
+        if present, is used as the request body. If this is also ``None``, then
+        the attributes of this object itself are formatted to form the XML
+        request body. Once the PUT request successfully completes, it
+        re-initializes the state of this Resource object based on the XML
+        response from Space.
 
         :param new_val_obj: A Resource object with the newly desired state for
             the resource. This defaults to ``None``.
         :type new_val_obj: jnpr.space.resource.Resource
+
+        :param str request_body: This can be used to supply a string that must
+            be used as the request body in the request. This defaults to
+            ``None`` and in this case SpaceEZ will create the request body
+            using the supplied ``new_val_obj`` argument or from the current
+            state of this object.
+
+        :param str accept: This can be used to supply a media-type that must
+            be used as the Accept header in the request. This defaults to
+            ``None`` and in this case SpaceEZ will use the media-type modeled
+            in the description file.
+
+        :param str content_type: This can be used to supply a media-type that must
+            be used as the Content-Type header in the request. This defaults to
+            ``None`` and in this case SpaceEZ will use the media-type modeled
+            in the description file.
 
         :returns: ``None``
         :raises: ``jnpr.space.rest.RestException`` if the PUT method results in
@@ -243,15 +273,29 @@ class Resource(object):
             the full response from Space.
 
         """
-        if new_val_obj is not None:
-            x = new_val_obj.form_xml()
+        if request_body is not None:
+            body = request_body
+            if new_val_obj is not None:
+                raise ValueError('Cannot use both request_body and new_val_obj')
+        elif new_val_obj is not None:
+            body = etree.tostring(new_val_obj.form_xml())
         else:
-            x = self.form_xml()
+            body = etree.tostring(self.form_xml())
+
+        if content_type is not None:
+            mtype = content_type
+        else:
+            mtype = self.get_meta_object().get_media_type(None)
+
+        headers = {'content-type': mtype}
+
+        if accept:
+            headers['accept'] = accept
 
         response = self._rest_end_point.put(
                             self.get_href(),
-                            {'content-type': self.get_meta_object().get_media_type(version)},
-                            etree.tostring(x)
+                            headers,
+                            body
                         )
         if response.status_code != 200:
             raise rest.RestException("PUT failed on %s" % self.get_href(),
@@ -288,12 +332,27 @@ class Resource(object):
            response.status_code != 202:
             raise rest.RestException("DELETE failed on %s" % url, response)
 
-    def post(self, task_monitor=None, schedule=None, *args, **kwargs):
+    def post(self, accept=None, content_type=None, request_body=None, task_monitor=None, schedule=None, *args, **kwargs):
         """
         Some resources support the POST method. For example, the configuration
         of a device supports the POST method which can be used to fetch
         selected portions of the configuration based on xpath expressions.
         On such resources, this method can be used to send the POST request.
+
+        :param str accept: This can be used to supply a media-type that must
+            be used as the Accept header in the request. This defaults to
+            ``None`` and in this case SpaceEZ will use the media-type modeled
+            in the description file.
+
+        :param str content_type: This can be used to supply a media-type that must
+            be used as the Content-Type header in the request. This defaults to
+            ``None`` and in this case SpaceEZ will use the media-type modeled
+            in the description file.
+
+        :param str request_body: This can be used to supply a string that must
+            be used as the request body in the request. This defaults to
+            ``None`` and in this case SpaceEZ will create the request body
+            using the modeled template, replacing variables with kwargs.
 
         :param task_monitor: A TaskMonitor object that can be used to monitor
             the progress of the POST request, in case of asynchronous
@@ -332,12 +391,20 @@ class Resource(object):
                 url = '&schedule='.join([url, schedule])
 
         headers = {}
-        if self._meta_object.response_type:
+        if accept is not None:
+            headers['accept'] = accept
+        elif self._meta_object.response_type:
             headers['accept'] = self._meta_object.response_type
 
-        if self._meta_object.request_template:
-            body = self._meta_object.request_template.render(**kwargs)
+        if content_type is not None:
+            headers['content-type'] = content_type
+        elif self._meta_object.request_type:
             headers['content-type'] = self._meta_object.request_type
+
+        if request_body is not None:
+            body = request_body
+        elif self._meta_object.request_template:
+            body = self._meta_object.request_template.render(**kwargs)
         else:
             body = None
 
@@ -448,6 +515,12 @@ class Resource(object):
         else:
             return 'No XML data'
 
+    def state(self):
+        """
+        Prints the XML string into stdout.
+        """
+        print self.xml_string()
+
 """
 A dictionary that acts as a cache for meta objects representing resources.
 Keys are of the form ``<service-name>.<type_name>``. Values are instances of
@@ -513,6 +586,7 @@ class MetaResource(object):
             the corresponding service.
 
         """
+        self.values = values
         self.app_name = app_name
         self.service_name = service_name
         self.key = key

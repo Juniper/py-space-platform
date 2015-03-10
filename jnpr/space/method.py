@@ -1,8 +1,8 @@
 from jinja2 import Environment, PackageLoader
 from xmlutil import cleanup, xml2obj
-from jnpr.space import rest
+from jnpr.space import rest, base
 
-class Method(object):
+class Method(base._SpaceBase):
     """
     Represents a **method** that is exposed by Junos Space REST API.
     Some examples of methods are:
@@ -31,7 +31,7 @@ class Method(object):
         self._parent = parent
         self._rest_end_point = parent._rest_end_point
         self._name = name
-        self.meta_object = mobj
+        self._meta_object = mobj
 
     def get_href(self):
         """
@@ -43,16 +43,30 @@ class Method(object):
         :returns: The href of this method.
 
         """
-        if self.meta_object.name != '-':
-            return '/'.join([self._parent.get_href(), self.meta_object.name])
+        if self._meta_object.name != '-':
+            return '/'.join([self._parent.get_href(), self._meta_object.name])
         else:
             return self._parent.get_href()
 
-
-    def post(self, request_version=None, response_version=None,
+    def post(self, accept=None, content_type=None, request_body=None,
              task_monitor=None, schedule=None, *args, **kwargs):
         """
         This sends a POST request corresponding to this Method object.
+
+        :param str accept: This can be used to supply a media-type that must
+            be used as the Accept header in the request. This defaults to
+            ``None`` and in this case SpaceEZ will use the media-type modeled
+            in the description file.
+
+        :param str content_type: This can be used to supply a media-type that must
+            be used as the Content-Type header in the request. This defaults to
+            ``None`` and in this case SpaceEZ will use the media-type modeled
+            in the description file.
+
+        :param str request_body: This can be used to supply a string that must
+            be used as the request body in the request. This defaults to
+            ``None`` and in this case SpaceEZ will create the request body
+            using the modeled template, replacing variables with kwargs.
 
         :param task_monitor: A TaskMonitor object that can be used to monitor
             the progress of the POST request, in case of asynchronous
@@ -94,11 +108,21 @@ class Method(object):
                 url = '&schedule='.join([url, schedule])
 
         headers = {}
-        headers['accept'] = self.meta_object.get_response_type(response_version)
+        if content_type is not None:
+            headers['content-type'] = content_type
+        else:
+            if self._meta_object.request_template:
+                headers['content-type'] = self._meta_object.get_request_type(None)
 
-        if self.meta_object.request_template:
-            body = self.meta_object.request_template.render(**kwargs)
-            headers['content-type'] = self.meta_object.get_request_type(request_version)
+        if accept is not None:
+            headers['accept'] = accept
+        else:
+            headers['accept'] = self._meta_object.get_response_type(None)
+
+        if request_body is not None:
+            body = request_body
+        elif self._meta_object.request_template:
+            body = self._meta_object.request_template.render(**kwargs)
         else:
             body = None
 
@@ -111,8 +135,13 @@ class Method(object):
         except:
             raise rest.RestException("Failed to parse XML response for %s " % url, response)
 
-    def get(self, version=None):
+    def get(self, accept=None):
         """Performs a GET corresponding to the Method object.
+
+        :param str accept: This can be used to supply a media-type that must
+            be used as the Accept header in the GET request. This defaults to
+            ``None`` and in this case SpaceEZ will use the media-type modeled
+            in the description file.
 
         :returns: A Python object constructed from the response body that Space
             returned for the GET request.
@@ -123,9 +152,13 @@ class Method(object):
 
         """
 
-        mtype = self.meta_object.get_media_type(version)
+        if accept is not None:
+            mtype = accept
+        else:
+            mtype = self._meta_object.get_media_type(None)
+
         if mtype is not None:
-            if not self.meta_object.retain_charset_in_accept:
+            if not self._meta_object.retain_charset_in_accept:
                 end = mtype.find(';charset=')
                 if end > 0:
                     mtype = mtype[0:end]
@@ -140,6 +173,21 @@ class Method(object):
 
         r = response.content
         return xml2obj(r)
+
+    def _describe_details(self):
+        rt = self._meta_object.request_template
+        if rt is None:
+            return
+
+        print '\tFollowing named parameters may be supplied to the post() call:\n',
+        with open(rt.filename) as f:
+            lines = [line.rstrip() for line in f]
+            for line in lines:
+                if line.endswith('#}'):
+                    break
+                elif not line.strip().startswith('{#'):
+                    print '\t', line
+
 
 class MetaMethod(object):
     """
@@ -156,6 +204,7 @@ class MetaMethod(object):
             the corresponding service.
 
         """
+        self.values = values
         self.key = key
         self.name = values['name']
         self.request_type = values['request_type'] \

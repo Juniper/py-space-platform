@@ -47,12 +47,12 @@ class TestDevices:
 
         for d in devices_list[:1]:
             raw = d.configurations.raw.get()
-            assert raw
+            assert raw is not None
             raw_config = xmlutil.xml2obj(raw.configuration.text)
 
             assert raw_config.version[:7] == d.OSVersion[:7]
 
-            if raw_config.groups is not None:
+            if 'groups' in raw_config:
                 for g in raw_config.groups:
                     print "Found config group %s on device %s" % (g.name, d.name)
 

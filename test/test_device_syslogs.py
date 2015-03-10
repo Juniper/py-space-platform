@@ -28,13 +28,14 @@ class TestDeviceSyslogs:
     def test_get_syslog_events(self):
         tm = async.TaskMonitor(self.space, 'test_SYSLOG_q')
         devices_list = self.space.device_management.devices.get(
-                            filter_={'managedStatus': 'In Sync'})
+                            filter_={'managedStatus': 'In Sync',
+                                     'deviceFamily': 'junos'})
         assert len(devices_list) > 0, "Not enough devices on Space"
 
         try:
             result = self.space.device_management.devices.get_syslog_events.post(
                         task_monitor=tm,
-                        devices=devices_list,
+                        devices=devices_list[0:1],
                         text_patterns=['roshan', 'joyce'])
 
             from pprint import pprint

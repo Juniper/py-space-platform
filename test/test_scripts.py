@@ -191,7 +191,7 @@ class TestScripts:
         assert len(s) == 1, "Test script not present on Space!"
         s[0].delete()
 
-POST_SCRIPT_CONTENT = """
+POST_SCRIPT_CONTENT = """<![CDATA[
 /*
  *  show_interface_staus.slax
  *
@@ -270,9 +270,9 @@ match / {
             }
     }
 }
-"""
+]]>"""
 
-PUT_SCRIPT_CONTENT = """
+PUT_SCRIPT_CONTENT = """<![CDATA[
 /*
  *  show_interface_staus.slax
  *
@@ -352,4 +352,4 @@ match / {
             }
     }
 }
-"""
+]]>"""

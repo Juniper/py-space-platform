@@ -31,7 +31,7 @@ resources:
                 media_type: 'application/vnd.net.juniper.space.device-management.associated-softwares+xml;version=7;q=0.01'
             view_customized_attributes:
                 name: 'view-customized-attributes'
-                xml_name: customized-attributes'
+                xml_name: customized-attributes
                 media_type: 'application/vnd.net.juniper.space.device-management.view-customized-attributes+xml;version=5'
             change_requests:
                 name: 'change-requests'
@@ -54,12 +54,12 @@ resources:
                         resource_type: 'device_management.expanded_config'
 
         methods:
-            exec_rpc_v1:
+            exec_rpc:
                 name: 'exec-rpc'
                 request_type: 'application/vnd.net.juniper.space.device-management.rpc+xml;version=1;charset=UTF-8'
                 request_template: 'rpc.tpl'
                 response_type: 'application/vnd.net.juniper.space.device-management.rpc+xml;version=1'
-            exec_rpc_v3:
+            exec_rpc_async:
                 name: 'exec-rpc'
                 request_type: 'application/vnd.net.juniper.space.device-management.rpc+xml;version=3;charset=UTF-8'
                 request_template: 'rpc.tpl'

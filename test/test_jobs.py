@@ -16,7 +16,7 @@ class TestJobs:
         self.space = rest.Space(url, user, passwd)
 
     def test_get_first_2_jobs(self):
-        jobs_list = self.space.job_management.jobs.get(version=3,
+        jobs_list = self.space.job_management.jobs.get(
                         paging={'start': 0, 'limit': 2})
         print len(jobs_list)
         assert len(jobs_list) == 2, "Not enough jobs on Space"

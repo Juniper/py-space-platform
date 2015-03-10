@@ -1,0 +1,947 @@
+/api/space/application-management:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.application-management+xml;version=1
+            '2': application/vnd.net.juniper.space.application-management+xml;version=2
+            '3': application/vnd.net.juniper.space.application-management+xml;version=3
+/api/space/application-management/applications:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.application-management.applications+xml;version=1
+            '3': application/vnd.net.juniper.space.application-management.applications+xml;version=3
+/api/space/application-management/applications/{id}:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.application-management.application+xml;version=1
+            '3': application/vnd.net.juniper.space.application-management.application+xml;version=3
+/api/space/application-management/applications/{id}/settings-config:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.application-management.settings-config+xml;version=1
+            '2': application/vnd.net.juniper.space.application-management.settings-config+xml;version=2
+    PUT:
+        Accept:
+            '1': application/vnd.net.juniper.space.application-management.settings-config+xml;version=1
+            '2': application/vnd.net.juniper.space.application-management.settings-config+xml;version=2
+        Content-Type:
+            '1': application/vnd.net.juniper.space.application-management.settings-config+xml;version=1;charset=UTF-8
+            '2': application/vnd.net.juniper.space.application-management.settings-config+xml;version=2;charset=UTF-8
+/api/space/application-management/platform:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.application-management.platform+xml;version=1
+/api/space/application-management/platform/features:
+    GET:
+        Accept:
+            '3': application/vnd.net.juniper.space.application-management.features+xml;version=3
+/api/space/application-management/platform/features/{id}:
+    GET:
+        Accept:
+            '3': application/vnd.net.juniper.space.application-management.feature+xml;version=3
+/api/space/application-management/platform/settings:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.application-management.platform.settings+xml;version=1
+/api/space/application-management/platform/settings/audit-log:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.application-management.platform.settings.audit-log+xml;version=1
+    PUT:
+        Accept:
+            '1': application/vnd.net.juniper.space.application-management.platform.settings.audit-log+xml;version=1
+        Content-Type:
+            '1': application/vnd.net.juniper.space.application-management.platform.settings.audit-log+xml;version=1;charset=UTF-8
+/api/space/application-management/platform/settings/device:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.application-management.platform.settings.device+xml;version=1
+    PUT:
+        Accept:
+            '1': application/vnd.net.juniper.space.application-management.platform.settings.device+xml;version=1
+        Content-Type:
+            '1': application/vnd.net.juniper.space.application-management.platform.settings.device+xml;version=1;charset=UTF-8
+/api/space/application-management/platform/settings/password:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.application-management.platform.settings.password+xml;version=1
+    PUT:
+        Accept:
+            '1': application/vnd.net.juniper.space.application-management.platform.settings.password+xml;version=1
+        Content-Type:
+            '1': application/vnd.net.juniper.space.application-management.platform.settings.password+xml;version=1;charset=UTF-8
+/api/space/application-management/platform/settings/user:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.application-management.platform.settings.user+xml;version=1
+    PUT:
+        Accept:
+            '1': application/vnd.net.juniper.space.application-management.platform.settings.user+xml;version=1
+        Content-Type:
+            '1': application/vnd.net.juniper.space.application-management.platform.settings.user+xml;version=1;charset=UTF-8
+/api/space/audit-log-management:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.audit-log-management+xml;version=1
+/api/space/audit-log-management/audit-logs:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.audit-log-management.audit-logs+xml;version=1
+/api/space/audit-log-management/audit-logs/{id}:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.audit-log-management.audit-log+xml;version=1
+/api/space/config-file-management:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.config-file-management+xml;version=1
+/api/space/config-file-management/config-files:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.config-file-management.config-files+xml;version=1
+/api/space/config-file-management/config-files/{id}:
+    DELETE: {}
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.config-file-management.config-file+xml;version=1
+/api/space/config-file-management/config-files/{id}/config-file-versions/{id}:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.config-file-management.config-file-version+xml;version=1
+/api/space/config-file-management/config-files?filter=(deviceId:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.config-file-management.config-files+xml;version=1
+/api/space/config-file-management/exec-backup:
+    POST:
+        Accept:
+            '1': application/vnd.net.juniper.space.job-management.task+xml;version=1
+        Content-Type:
+            '1': application/vnd.net.juniper.space.config-file-management.exec-backup+xml;version=1;charset=UTF-8
+/api/space/config-file-management/exec-restore:
+    POST:
+        Accept:
+            '1': application/vnd.net.juniper.space.job-management.task+xml;version=1
+        Content-Type:
+            '1': application/vnd.net.juniper.space.config-file-management.exec-restore+xml;version=1;charset=UTF-8
+/api/space/config-file-management/versions-diff:
+    POST:
+        Accept:
+            '1': application/vnd.net.juniper.space.config-file-management.versions-diff+xml;version=1
+        Content-Type:
+            '1': application/vnd.net.juniper.space.config-file-management.versions-diff+xml;version=1;charset=UTF-8
+/api/space/config-template-management:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.config-template-management+xml;version=1
+            '2': application/vnd.net.juniper.space.config-template-management+xml;version=2
+            '3': application/vnd.net.juniper.space.config-template-management+xml;version=3
+/api/space/config-template-management/config-template-definitions:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.config-template-management.config-template-definitions+xml;version=1
+/api/space/config-template-management/config-template-definitions/{id}:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.config-template-management.config-template-definition+xml;version=1
+/api/space/config-template-management/config-template-definitions/{id}/configuration:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.config-template-management.configuration+xml;version=1
+/api/space/config-template-management/config-templates:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.config-template-management.config-templates+xml;version=1
+    POST:
+        Accept:
+            '1': application/vnd.net.juniper.space.config-template-management.config-template-no-definition+xml;version=1
+        Content-Type:
+            '1': application/vnd.net.juniper.space.config-template-management.config-template-no-definition+xml;version=1;charset=UTF-8
+/api/space/config-template-management/config-templates/{id}:
+    DELETE: {}
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.config-template-management.config-template+xml;version=1
+            '3': application/vnd.net.juniper.space.config-template-management.config-template+xml;version=3
+    PUT:
+        Accept:
+            '1': application/vnd.net.juniper.space.config-template-management.config-template+xml;version=1
+        Content-Type:
+            '1': application/vnd.net.juniper.space.config-template-management.config-template+xml;version=1;charset=UTF-8
+/api/space/config-template-management/config-templates/{id}/clone:
+    POST:
+        Accept:
+            '2': application/vnd.net.juniper.space.config-template-management.clone-template-response+xml;version=2
+        Content-Type:
+            '2': application/vnd.net.juniper.space.config-template-management.clone-template-request+xml;version=2;charset=UTF-8
+/api/space/config-template-management/config-templates/{id}/configuration:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.config-template-management.configuration+xml;version=1
+            '2': application/vnd.net.juniper.space.config-template-management.configuration-xml+xml;version=2
+    POST:
+        Accept:
+            '2': application/vnd.net.juniper.space.config-template-management.configuration-update-result+xml;version=2
+        Content-Type:
+            '2': application/vnd.net.juniper.space.config-template-management.configuration-cli-request+xml;version=2;charset=UTF-8
+/api/space/config-template-management/config-templates/{id}/device-associations:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.config-template-management.device-associations+xml;version=1
+/api/space/config-template-management/config-templates/{id}/exec-audit:
+    POST:
+        Accept:
+            '1': application/vnd.net.juniper.space.job-management.task+xml;version=1
+/api/space/config-template-management/config-templates/{id}/exec-deploy:
+    POST:
+        Accept:
+            '1': application/vnd.net.juniper.space.job-management.task+xml;version=1
+        Content-Type:
+            '1': application/vnd.net.juniper.space.config-template-management.exec-deploy-request+xml;version=1;charset=UTF-8
+            '2': application/vnd.net.juniper.space.config-template-management.exec-deploy-request+xml;version=2;charset=UTF-8
+/api/space/config-template-management/config-templates/{id}/exec-publish:
+    POST:
+        Content-Type:
+            '2': application/vnd.net.juniper.space.config-template-management.exec-publish-request+xml;version=2;charset=UTF-8
+/api/space/config-template-management/config-templates/{id}/exec-undeploy:
+    POST:
+        Accept:
+            '1': application/vnd.net.juniper.space.job-management.task+xml;version=1
+        Content-Type:
+            '1': application/vnd.net.juniper.space.config-template-management.exec-undeploy-request+xml;version=1;charset=UTF-8
+/api/space/config-template-management/config-templates/{id}/versions:
+    GET:
+        Accept:
+            '3': application/vnd.net.juniper.space.config-template-management.config-template-versions+xml;version=3
+    POST:
+        Content-Type:
+            '3': application/vnd.net.juniper.space.config-template-management.delete-config-template-versions-request+xml;version=3;charset=UTF-8
+/api/space/config-template-management/config-templates/{id}/versions/{id}:
+    DELETE: {}
+    GET:
+        Accept:
+            '3': application/vnd.net.juniper.space.config-template-management.config-template-details+xml;version=3
+/api/space/config-template-management/config-templates/{id}/versions/{id}/configuration:
+    GET:
+        Accept:
+            '2': application/vnd.net.juniper.space.config-template-management.template-config-xml+xml;version=2
+/api/space/config-template-management/config-templates/{id}/versions/{id}/device-associations:
+    GET:
+        Accept:
+            '3': application/vnd.net.juniper.space.config-template-management.device-associations+xml;version=3
+/api/space/config-template-management/config-templates/{id}/versions/{id}/exec-auditTemplate:
+    POST:
+        Accept:
+            '1': application/vnd.net.juniper.space.job-management.task+xml;version=1
+        Content-Type:
+            '2': application/vnd.net.juniper.space.config-template-management.audit-template-config-version-request+xml;version=2;charset=UTF-8
+/api/space/config-template-management/config-templates/{id}/versions/{id}/exec-compareConfig:
+    POST:
+        Accept:
+            '1': application/vnd.net.juniper.space.job-management.task+xml;version=1
+        Content-Type:
+            '2': application/vnd.net.juniper.space.config-template-management.compare-config-by-devices-request+xml;version=2;charset=UTF-8
+/api/space/config-template-management/config-templates/{id}/versions/{id}/exec-deploy:
+    POST:
+        Accept:
+            '1': application/vnd.net.juniper.space.job-management.task+xml;version=1
+        Content-Type:
+            '2': application/vnd.net.juniper.space.config-template-management.exec-deploy-request+xml;version=2;charset=UTF-8
+/api/space/config-template-management/config-templates/{id}/versions/{id}/exec-publish:
+    POST:
+        Content-Type:
+            '2': application/vnd.net.juniper.space.config-template-management.exec-publish-request+xml;version=2;charset=UTF-8
+/api/space/configuration-management:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.configuration-management+xml;version=1
+/api/space/configuration-management/change-requests:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.configuration-management.change-requests+xml;version=1
+    POST:
+        Accept:
+            '1': application/vnd.net.juniper.space.configuration-management.change-request+xml;version=1
+            '2': application/vnd.net.juniper.space.configuration-management.change-requests+xml;version=2
+        Content-Type:
+            '1': application/vnd.net.juniper.space.configuration-management.change-request+xml;version=1;charset=UTF-8
+            '2': application/vnd.net.juniper.space.configuration-management.change-requests+xml;version=2;charset=UTF-8
+/api/space/configuration-management/change-requests/{id}:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.configuration-management.change-request+xml;version=1
+    PUT:
+        Accept:
+            '1': application/vnd.net.juniper.space.configuration-management.change-request+xml;version=1
+        Content-Type:
+            '1': application/vnd.net.juniper.space.configuration-management.change-request+xml;version=1;charset=UTF-8
+/api/space/configuration-management/cli-configlets:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.configuration-management.cli-configlets+xml;version=1;charset=UTF-8
+            '2': application/vnd.net.juniper.space.configuration-management.cli-configlets+xml;version=2;charset=UTF-8
+    POST:
+        Accept:
+            '1': application/vnd.net.juniper.space.configuration-management.view-cli-configlet+xml;version=1;charset=UTF-8
+            '2': application/vnd.net.juniper.space.configuration-management.view-cli-configlet+xml;version=2;charset=UTF-8
+        Content-Type:
+            '1': application/vnd.net.juniper.space.configuration-management.cli-configlet+xml;version=1;charset=UTF-8
+            '2': application/vnd.net.juniper.space.configuration-management.cli-configlet+xml;version=2;charset=UTF-8
+/api/space/configuration-management/cli-configlets/cli-configlets-by-context:
+    POST:
+        Accept:
+            '2': application/vnd.net.juniper.space.configuration-management.cli-configlets+xml;version=2;charset=UTF-8
+        Content-Type:
+            '2': application/vnd.net.juniper.space.configuration-management.cli-configlet-by-context+xml;version=2;charset=UTF-8
+/api/space/configuration-management/cli-configlets/{id}:
+    DELETE: {}
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.configuration-management.view-cli-configlet+xml;version=1;charset=UTF-8
+            '2': application/vnd.net.juniper.space.configuration-management.view-cli-configlet+xml;version=2;charset=UTF-8
+    PUT:
+        Accept:
+            '1': application/vnd.net.juniper.space.configuration-management.view-cli-configlet+xml;version=1;charset=UTF-8
+            '2': application/vnd.net.juniper.space.configuration-management.view-cli-configlet+xml;version=2;charset=UTF-8
+        Content-Type:
+            '1': application/vnd.net.juniper.space.configuration-management.cli-configlet+xml;version=1;charset=UTF-8
+            '2': application/vnd.net.juniper.space.configuration-management.cli-configlet+xml;version=2;charset=UTF-8
+/api/space/configuration-management/cli-configlets/{id}/apply-configlet:
+    POST:
+        Accept:
+            '1': application/vnd.net.juniper.space.job-management.task+xml;version=1
+        Content-Type:
+            '1': application/vnd.net.juniper.space.configuration-management.apply-configlet+xml;version=1;charset=UTF-8
+            '2': application/vnd.net.juniper.space.configuration-management.apply-configlet+xml;version=2;charset=UTF-8
+            '3': application/vnd.net.juniper.space.configuration-management.apply-configlet-request+xml;version=3;charset=UTF-8
+/api/space/configuration-management/cli-configlets/{id}/cli-configlet-pages:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.configuration-management.cli-configlet-pages+xml;version=1;charset=UTF-8
+            '2': application/vnd.net.juniper.space.configuration-management.cli-configlet-pages+xml;version=2;charset=UTF-8
+/api/space/configuration-management/cli-configlets/{id}/cli-configlet-pages/{id}:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.configuration-management.cli-configlet-page+xml;version=1;charset=UTF-8
+            '2': application/vnd.net.juniper.space.configuration-management.cli-configlet-page+xml;version=2;charset=UTF-8
+/api/space/configuration-management/cli-configlets/{id}/cli-configlet-pages/{id}/cli-text:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.configuration-management.cli-configlet-page+xml;version=1;charset=UTF-8
+            '2': application/vnd.net.juniper.space.configuration-management.cli-configlet-page+xml;version=2;charset=UTF-8
+/api/space/configuration-management/cli-configlets/{id}/cli-configlet-params:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.configuration-management.cli-configlet-params+xml;version=1;charset=UTF-8
+            '2': application/vnd.net.juniper.space.configuration-management.cli-configlet-params+xml;version=2;charset=UTF-8
+/api/space/configuration-management/cli-configlets/{id}/cli-configlet-params/{id}:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.configuration-management.cli-configlet-param+xml;version=1;charset=UTF-8
+            '2': application/vnd.net.juniper.space.configuration-management.cli-configlet-param+xml;version=2;charset=UTF-8
+/api/space/configuration-management/cli-configlets/{id}/cli-configlet-prepopulate-params:
+    POST:
+        Content-Type:
+            '2': application/vnd.net.juniper.space.configuration-management.apply-configlet+xml;version=2;charset=UTF-8
+/api/space/debuglog-management:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.debuglog-management+xml;version=1
+/api/space/debuglog-management/categories:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.debuglog-management.categories+xml;version=1
+    POST:
+        Accept:
+            '1': application/vnd.net.juniper.space.debuglog-management.category+xml;version=1
+        Content-Type:
+            '1': application/vnd.net.juniper.space.debuglog-management.category+xml;version=1;charset=UTF-8
+/api/space/device-management:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.device-management+xml;version=1
+            '4': application/vnd.net.juniper.space.device-management+xml;version=4
+/api/space/device-management/change-device-credentials:
+    POST:
+        Accept:
+            '4': application/vnd.net.juniper.space.device-management.change-credentials-request+xml;version=4
+        Content-Type:
+            '4': application/vnd.net.juniper.space.device-management.change-credentials-request+xml;version=4;charset=UTF-8
+/api/space/device-management/devices:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.device-management.devices+xml;version=1
+/api/space/device-management/devices/get-syslog-events:
+    POST:
+        Accept:
+            '1': application/vnd.net.juniper.space.device-management.get-syslog-events+xml;version=1
+            '2': application/vnd.net.juniper.space.device-management.get-syslog-events+xml;version=2
+        Content-Type:
+            '1': application/vnd.net.juniper.space.device-management.get-syslog-events+xml;version=1;charset=UTF-8
+            '2': application/vnd.net.juniper.space.device-management.get-syslog-events+xml;version=2;charset=UTF-8
+/api/space/device-management/devices/{id}:
+    DELETE:
+        Accept:
+            '1': application/vnd.net.juniper.space.device-management.device+xml;version=1
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.device-management.device+xml;version=1
+/api/space/device-management/devices/{id}/activate-modeled-device:
+    POST:
+        Accept:
+            '1': application/vnd.net.juniper.space.job-management.task+xml;version=1
+        Content-Type:
+            '1': application/vnd.net.juniper.space.device-management.activate-modeled-device-device-init-request+xml;version=1;charset=UTF-8
+/api/space/device-management/devices/{id}/associated-scripts:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.device-management.associated-scripts+xml;version=1
+            '2': application/vnd.net.juniper.space.device-management.view-associated-scripts+xml;version=2
+/api/space/device-management/devices/{id}/associated-softwares:
+    GET:
+        Accept:
+            '7': application/vnd.net.juniper.space.device-management.associated-softwares+xml;version=7
+/api/space/device-management/devices/{id}/clone:
+    POST:
+        Accept:
+            '1': application/vnd.net.juniper.space.job-management.task+xml;version=1
+        Content-Type:
+            '1': application/vnd.net.juniper.space.device-management.clone-request+xml;version=1;charset=UTF-8
+/api/space/device-management/devices/{id}/configlet:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.device-management.configlet+xml;version=1
+/api/space/device-management/devices/{id}/configurations:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.device-management.configurations+xml;version=1
+/api/space/device-management/devices/{id}/configurations/expanded:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.device-management.expanded-configuration+xml;version=1
+            '2': application/vnd.net.juniper.space.device-management.expanded-configuration+xml;version=2
+            '3': application/vnd.net.juniper.space.device-management.expanded-configuration+xml;version=3
+    POST:
+        Accept:
+            '1': application/vnd.net.juniper.space.device-management.expanded-configuration+xml;version=1
+            '3': application/vnd.net.juniper.space.device-management.expanded-configuration+xml;version=3
+        Content-Type:
+            '1': application/vnd.net.juniper.space.device-management.xpath+xml;version=1;charset=UTF-8
+/api/space/device-management/devices/{id}/configurations/expanded/match-content:
+    POST:
+        Accept:
+            '1': application/vnd.net.juniper.space.device-management.match-expanded-content+xml;version=1
+            '2': application/vnd.net.juniper.space.device-management.match-expanded-content+xml;version=2
+        Content-Type:
+            '1': application/vnd.net.juniper.space.device-management.match-expanded-content+xml;version=1;charset=UTF-8
+            '2': application/vnd.net.juniper.space.device-management.match-expanded-content+xml;version=2;charset=UTF-8
+/api/space/device-management/devices/{id}/configurations/raw:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.device-management.raw-configuration+xml;version=1
+            '2': application/vnd.net.juniper.space.device-management.raw-configuration+xml;version=2
+            '3': application/vnd.net.juniper.space.device-management.raw-configuration+xml;version=3
+    POST:
+        Accept:
+            '1': application/vnd.net.juniper.space.device-management.raw-configuration+xml;version=1
+            '3': application/vnd.net.juniper.space.device-management.raw-configuration+xml;version=3
+        Content-Type:
+            '1': application/vnd.net.juniper.space.device-management.xpath+xml;version=1;charset=UTF-8
+/api/space/device-management/devices/{id}/configurations/raw/match-content:
+    POST:
+        Accept:
+            '1': application/vnd.net.juniper.space.device-management.match-raw-content+xml;version=1
+            '2': application/vnd.net.juniper.space.device-management.match-raw-content+xml;version=2
+        Content-Type:
+            '1': application/vnd.net.juniper.space.device-management.match-raw-content+xml;version=1;charset=UTF-8
+            '2': application/vnd.net.juniper.space.device-management.match-raw-content+xml;version=2;charset=UTF-8
+/api/space/device-management/devices/{id}/exec-rpc:
+    POST:
+        Accept:
+            '1': application/vnd.net.juniper.space.device-management.rpc+xml;version=1
+            '2': application/vnd.net.juniper.space.device-management.rpc+xml;version=2
+            '3': application/vnd.net.juniper.space.device-management.rpc+xml;version=3
+        Content-Type:
+            '1': application/vnd.net.juniper.space.device-management.rpc+xml;version=1;charset=UTF-8
+            '2': application/vnd.net.juniper.space.device-management.rpc+xml;version=2;charset=UTF-8
+            '3': application/vnd.net.juniper.space.device-management.rpc+xml;version=3;charset=UTF-8
+/api/space/device-management/devices/{id}/modify-device-target-ip:
+    POST:
+        Accept:
+            '1': application/vnd.net.juniper.space.job-management.task+xml;version=1
+        Content-Type:
+            '1': application/vnd.net.juniper.space.device-management.modify-device-target-ip+xml;version=1;charset=UTF-8
+/api/space/device-management/discover-devices:
+    POST:
+        Accept:
+            '1': application/vnd.net.juniper.space.device-management.discover-devices+xml;version=1
+            '2': application/vnd.net.juniper.space.device-management.discover-devices+xml;version=2
+        Content-Type:
+            '1': application/vnd.net.juniper.space.device-management.discover-devices+xml;version=1;charset=UTF-8
+            '2': application/vnd.net.juniper.space.device-management.discover-devices+xml;version=2;charset=UTF-8
+/api/space/device-management/modeled-device-management:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.device-management.modeled-device-management+xml;version=1
+/api/space/device-management/modeled-device-management/connection-profiles:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.device-management.modeled-device-management.connection-profiles+xml;version=1
+/api/space/device-management/modeled-device-management/create-connection-profile:
+    POST:
+        Accept:
+            '1': application/vnd.net.juniper.space.device-management.modeled-device-management.create-connection-profile-pppoa-response+xml;version=1
+        Content-Type:
+            '1': application/vnd.net.juniper.space.device-management.modeled-device-management.create-connection-profile-pppoa-request+xml;version=1;charset=UTF-8
+/api/space/device-management/modeled-device-management/modeled-instances:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.device-management.modeled-device-management.modeled-instances+xml;version=1
+    POST:
+        Accept:
+            '1': application/vnd.net.juniper.space.job-management.task+xml;version=1
+        Content-Type:
+            '1': application/vnd.net.juniper.space.device-management.modeled-device-management.modeled-instance-activate-later+xml;version=1;charset=UTF-8
+/api/space/device-management/subscribe-change-notifications:
+    POST:
+        Accept:
+            '1': application/vnd.net.juniper.space.device-management.subscribe-change-notifications+xml;version=1
+        Content-Type:
+            '1': application/vnd.net.juniper.space.device-management.subscribe-change-notifications+xml;version=1;charset=UTF-8
+/api/space/domain-management:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.domain-management+xml;version=1
+            '2': application/vnd.net.juniper.space.domain-management+xml;version=2
+/api/space/domain-management/domains/{id}:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.domain-management.domain+xml;version=1
+    PUT:
+        Accept:
+            '1': application/vnd.net.juniper.space.domain-management.domain+xml;version=1
+        Content-Type:
+            '1': application/vnd.net.juniper.space.domain-management.domain+xml;version=1;charset=UTF-8
+/api/space/domain-management/domains/{id}/profiles:
+    GET:
+        Accept:
+            '2': application/vnd.net.juniper.space.domain-management.profiles+xml;version=2
+    POST:
+        Content-Type:
+            '2': application/vnd.net.juniper.space.domain-management.profile-ref+xml;version=2;charset=UTF-8
+/api/space/domain-management/domains/{id}/users:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.domain-management.user-refs+xml;version=1
+    POST:
+        Content-Type:
+            '1': application/vnd.net.juniper.space.domain-management.user-ref+xml;version=1;charset=UTF-8
+/api/space/job-management:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.job-management+xml;version=1
+            '2': application/vnd.net.juniper.space.job-management+xml;version=2
+            '3': application/vnd.net.juniper.space.job-management+xml;version=3
+/api/space/job-management/jobs:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.job-management.jobs+xml;version=1
+            '2': application/vnd.net.juniper.space.job-management.jobs+xml;version=2
+            '3': application/vnd.net.juniper.space.job-management.jobs+xml;version=3
+/api/space/job-management/jobs/{id}:
+    DELETE: {}
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.job-management.job+xml;version=1
+            '2': application/vnd.net.juniper.space.job-management.job+xml;version=2
+            '3': application/vnd.net.juniper.space.job-management.job+xml;version=3
+    PUT:
+        Accept:
+            '3': application/vnd.net.juniper.space.job-management.job+xml;version=3
+        Content-Type:
+            '3': application/vnd.net.juniper.space.job-management.job+xml;version=3;charset=UTF-8
+/api/space/job-management/jobs/{id}/cancel:
+    POST: {}
+/api/space/job-management/jobs/{id}/progress-update:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.job-management.progress-update+xml;version=1
+/api/space/job-management/jobs/{id}/reschedule-job:
+    POST:
+        Accept:
+            '1': application/vnd.net.juniper.space.job-management.task+xml;version=1
+/api/space/managed-domain:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.managed-domain+xml;version=1
+/api/space/managed-domain/managed-elements:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.managed-domain.managed-elements+xml;version=1
+/api/space/managed-domain/managed-elements/{id}:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.managed-domain.managed-element+xml;version=1
+/api/space/managed-domain/managed-elements/{id}/equipment-holders:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.managed-domain.equipment-holders+xml;version=1
+/api/space/managed-domain/managed-elements/{id}/equipment-holders/{id}:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.managed-domain.equipment-holder+xml;version=1
+            '2': application/vnd.net.juniper.space.managed-domain.equipment-holder+xml;version=2
+            '3': application/vnd.net.juniper.space.managed-domain.equipment-holder+xml;version=3
+/api/space/managed-domain/managed-elements/{id}/multilayer-subnetworks:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.managed-domain.multilayer-subnetworks+xml;version=1
+/api/space/managed-domain/managed-elements/{id}/routing-engines:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.managed-domain.routing-engines+xml;version=1
+/api/space/managed-domain/managed-elements/{id}/routing-engines/BUILTIN:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.managed-domain.routing-engine+xml;version=1
+/api/space/managed-domain/managed-elements/{id}/routing-instances:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.managed-domain.routing-instances+xml;version=1
+/api/space/managed-domain/managed-elements/{id}/routing-options:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.managed-domain.routing-options+xml;version=1
+/api/space/managed-domain/managed-elements/{id}/software-identities:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.managed-domain.software-identities+xml;version=1
+/api/space/managed-domain/managed-elements/{id}/virtual-chassis:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.managed-domain.virtual-chassis+xml;version=1
+/api/space/managed-domain/managed-elements/{id}/vlans:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.managed-domain.vlans+xml;version=1
+/api/space/managed-domain/ptps:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.managed-domain.ptps+xml;version=1
+/api/space/managed-domain/ptps/{id}:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.managed-domain.ptp+xml;version=1
+            '3': application/vnd.net.juniper.space.managed-domain.ptp+xml;version=3
+/api/space/opennms:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.opennms+xml;version=1
+/api/space/opennms/acks:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.opennms+xml;version=1
+    POST:
+        Accept:
+            '1': application/vnd.net.juniper.space.opennms+xml;version=1
+/api/space/opennms/alarms:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.opennms+xml;version=1
+    PUT:
+        Accept:
+            '1': application/vnd.net.juniper.space.opennms+xml;version=1
+/api/space/opennms/nodes:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.opennms+xml;version=1
+/api/space/opennms/outages:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.opennms+xml;version=1
+/api/space/opennms/requisitions:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.opennms+xml;version=1
+/api/space/opennms/sched-outages:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.opennms+xml;version=1
+    POST:
+        Accept:
+            '1': application/vnd.net.juniper.space.opennms+xml;version=1
+        Content-Type:
+            '1': application/vnd.net.juniper.space.opennms+xml;version=1
+/api/space/opennms/stats/alarms:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.opennms+xml;version=1
+/api/space/schema-service:
+    GET:
+        Accept:
+            '2': application/vnd.net.juniper.space.schema-service+xml;version=2
+/api/space/schema-service/delete-schemas:
+    POST:
+        Accept:
+            '1': application/vnd.net.juniper.space.job-management.task+xml;version=1
+        Content-Type:
+            '2': application/vnd.net.juniper.space.schema-service.delete-schemas+xml;version=2;charset=UTF-8
+/api/space/schema-service/install-schemas:
+    POST:
+        Accept:
+            '1': application/vnd.net.juniper.space.job-management.task+xml;version=1
+        Content-Type:
+            '1': application/vnd.net.juniper.space.schema-service.install-schemas-svn-request+xml;version=1;charset=UTF-8
+/api/space/schema-service/unused-schemas:
+    GET:
+        Accept:
+            '2': application/vnd.net.juniper.space.schema-service.unused-schemas+xml;version=2
+/api/space/schema-service/upload-tgz-schema-file:
+    POST:
+        Accept:
+            '1': application/vnd.net.juniper.space.schema-service.schemas+xml;version=1
+/api/space/script-management:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.script-management+xml;version=1
+            '2': application/vnd.net.juniper.space.script-management+xml;version=2
+/api/space/script-management/scripts:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.script-management.scripts+xml;version=1
+            '2': application/vnd.net.juniper.space.script-management.scripts+xml;version=2
+    POST:
+        Accept:
+            '1': application/vnd.net.juniper.space.script-management.script+xml;version=1
+        Content-Type:
+            '1': application/vnd.net.juniper.space.script-management.script+xml;version=1;charset=UTF-8
+/api/space/script-management/scripts/exec-deploy:
+    POST:
+        Accept:
+            '1': application/vnd.net.juniper.space.job-management.task+xml;version=1
+            '2': application/vnd.net.juniper.space.script-management.exec-deploy+xml;version=2
+        Content-Type:
+            '1': application/vnd.net.juniper.space.script-management.exec-deploy+xml;version=1;charset=UTF-8
+            '2': application/vnd.net.juniper.space.script-management.exec-deploy-multiple-support+xml;version=2;charset=UTF-8
+/api/space/script-management/scripts/exec-scripts:
+    POST:
+        Accept:
+            '1': application/vnd.net.juniper.space.script-management.exec-scripts+xml;version=1
+            '2': application/vnd.net.juniper.space.script-management.exec-scripts+xml;version=2
+        Content-Type:
+            '1': application/vnd.net.juniper.space.script-management.exec-scripts+xml;version=1;charset=UTF-8
+            '2': application/vnd.net.juniper.space.script-management.exec-scripts+xml;version=2;charset=UTF-8
+/api/space/script-management/scripts/{id}:
+    DELETE:
+        Accept:
+            '1': application/vnd.net.juniper.space.script-management.script+xml;version=1
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.script-management.script+xml;version=1
+    PUT:
+        Accept:
+            '1': application/vnd.net.juniper.space.script-management.script+xml;version=1
+        Content-Type:
+            '1': application/vnd.net.juniper.space.script-management.script+xml;version=1;charset=UTF-8
+/api/space/script-management/scripts/{id}/contents:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.script-management.script+xml;version=1
+/api/space/script-management/scripts/{id}/parameters:
+    GET:
+        Accept:
+            '2': application/vnd.net.juniper.space.script-management.script-parameters+xml;version=2
+/api/space/script-management/scripts/{id}/results:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.script-management.scripts-results+xml;version=1
+/api/space/script-management/scripts/{id}/view-associated-devices:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.script-management.view-associated-devices+xml;version=1
+            '2': application/vnd.net.juniper.space.script-management.view-associated-devices+xml;version=2
+/api/space/software-management:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.software-management+xml;version=1
+/api/space/software-management/packages:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.software-management.packages+xml;version=1
+    POST:
+        Accept:
+            '1': application/vnd.net.juniper.space.software-management.package+xml;version=1
+/api/space/software-management/packages/{id}:
+    DELETE: {}
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.software-management.package+xml;version=1
+    PUT:
+        Accept:
+            '1': application/vnd.net.juniper.space.software-management.package+xml;version=1
+        Content-Type:
+            '1': application/vnd.net.juniper.space.software-management.package+xml;version=1;charset=UTF-8
+/api/space/software-management/packages/{id}/associated-devices:
+    GET:
+        Accept:
+            '2': application/vnd.net.juniper.space.software-management.associated-devices+xml;version=2
+/api/space/software-management/packages/{id}/exec-deploy:
+    POST:
+        Accept:
+            '1': application/vnd.net.juniper.space.software-management.exec-deploy+xml;version=1
+        Content-Type:
+            '1': application/vnd.net.juniper.space.software-management.exec-deploy+xml;version=1;charset=UTF-8
+/api/space/software-management/packages/{id}/exec-stage:
+    POST:
+        Accept:
+            '1': application/vnd.net.juniper.space.software-management.exec-stage+xml;version=1
+        Content-Type:
+            '1': application/vnd.net.juniper.space.software-management.exec-stage+xml;version=1;charset=UTF-8
+/api/space/software-management/packages/{id}/exec-verify:
+    POST:
+        Accept:
+            '1': application/vnd.net.juniper.space.software-management.exec-verify+xml;version=1
+        Content-Type:
+            '1': application/vnd.net.juniper.space.software-management.exec-verify+xml;version=1;charset=UTF-8
+/api/space/tag-management:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.tag-management+xml;version=1
+/api/space/tag-management/tags:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.tag-management.tags+xml;version=1
+    POST:
+        Accept:
+            '1': application/vnd.net.juniper.space.tag-management.tag+xml;version=1
+        Content-Type:
+            '1': application/vnd.net.juniper.space.tag-management.tag+xml;version=1;charset=UTF-8
+/api/space/tag-management/tags/{id}:
+    DELETE: {}
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.tag-management.tag+xml;version=1
+    PUT:
+        Accept:
+            '1': application/vnd.net.juniper.space.tag-management.tag+xml;version=1
+        Content-Type:
+            '1': application/vnd.net.juniper.space.tag-management.tag+xml;version=1;charset=UTF-8
+/api/space/tag-management/tags/{id}/targets:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.tag-management.targets+xml;version=1
+    POST:
+        Accept:
+            '1': application/vnd.net.juniper.space.tag-management.targets+xml;version=1
+        Content-Type:
+            '1': application/vnd.net.juniper.space.tag-management.targets+xml;version=1;charset=UTF-8
+/api/space/tag-management/tags/{id}/targets/{id}:
+    DELETE: {}
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.tag-management.targets+xml;version=1
+/api/space/user-management:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.user-management+xml;version=1
+            '4': application/vnd.net.juniper.space.user-management+xml;version=4
+/api/space/user-management/active-user-sessions:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.user-management.active-user-sessions+xml;version=1
+/api/space/user-management/api-access-profiles:
+    GET:
+        Accept:
+            '4': application/vnd.net.juniper.space.user-management.api-access-profiles+xml;version=4
+    POST:
+        Accept:
+            '4': application/vnd.net.juniper.space.user-management.api-access-profile+xml;version=4
+        Content-Type:
+            '4': application/vnd.net.juniper.space.user-management.api-access-profile+xml;version=4;charset=UTF-8
+/api/space/user-management/capabilities:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.user-management.capabilities+xml;version=1
+/api/space/user-management/capabilities/{id}:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.user-management.capability+xml;version=1
+/api/space/user-management/profiles:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.user-management.profiles+xml;version=1
+    POST:
+        Accept:
+            '1': application/vnd.net.juniper.space.user-management.profile+xml;version=1
+        Content-Type:
+            '1': application/vnd.net.juniper.space.user-management.profile+xml;version=1;charset=UTF-8
+/api/space/user-management/roles:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.user-management.roles+xml;version=1
+            '2': application/vnd.net.juniper.space.user-management.roles+xml;version=2
+            '3': application/vnd.net.juniper.space.user-management.roles+xml;version=3
+    POST:
+        Accept:
+            '3': application/vnd.net.juniper.space.user-management.role+xml;version=3
+        Content-Type:
+            '3': application/vnd.net.juniper.space.user-management.role+xml;version=3;charset=UTF-8
+/api/space/user-management/roles/{id}:
+    DELETE: {}
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.user-management.role+xml;version=1
+            '3': application/vnd.net.juniper.space.user-management.role+xml;version=3
+    PUT:
+        Accept:
+            '3': application/vnd.net.juniper.space.user-management.role+xml;version=3
+        Content-Type:
+            '3': application/vnd.net.juniper.space.user-management.role+xml;version=3;charset=UTF-8
+/api/space/user-management/roles/{id}/tasks:
+    GET:
+        Accept:
+            '3': application/vnd.net.juniper.space.user-management.task-refs+xml;version=3
+/api/space/user-management/roles/{id}/tasks/{id}:
+    GET:
+        Accept:
+            '3': application/vnd.net.juniper.space.user-management.task-ref+xml;version=3
+/api/space/user-management/tasks:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.user-management.tasks+xml;version=1
+/api/space/user-management/tasks/{id}:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.user-management.task+xml;version=1
+/api/space/user-management/users:
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.user-management.users+xml;version=1
+            '3': application/vnd.net.juniper.space.user-management.users+xml;version=3
+    POST:
+        Accept:
+            '1': application/vnd.net.juniper.space.user-management.user+xml;version=1
+        Content-Type:
+            '1': application/vnd.net.juniper.space.user-management.user+xml;version=1;charset=UTF-8
+/api/space/user-management/users/{id}:
+    DELETE: {}
+    GET:
+        Accept:
+            '1': application/vnd.net.juniper.space.user-management.user+xml;version=1
+    PUT:
+        Accept:
+            '1': application/vnd.net.juniper.space.user-management.user+xml;version=1
+        Content-Type:
+            '1': application/vnd.net.juniper.space.user-management.user+xml;version=1;charset=UTF-8
+/api/space/user-management/users/{id}/change-password:
+    POST:
+        Accept:
+            '1': application/vnd.net.juniper.space.user-management.change-password+xml;version=1;charset=UTF-8
+            '3': application/vnd.net.juniper.space.user-management.password+xml;version=3
+        Content-Type:
+            '1': application/vnd.net.juniper.space.user-management.change-password+xml;version=1;charset=UTF-8
+            '3': application/vnd.net.juniper.space.user-management.change-password-to-temp+xml;version=3;charset=UTF-8
+    PUT:
+        Accept:
+            '1': application/vnd.net.juniper.space.user-management.password+xml;version=1;charset=UTF-8
+        Content-Type:
+            '1': application/vnd.net.juniper.space.user-management.password+xml;version=1;charset=UTF-8

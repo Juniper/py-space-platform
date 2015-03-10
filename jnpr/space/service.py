@@ -1,7 +1,8 @@
 import os
 import yaml
+from jnpr.space import base
 
-class Service(object):
+class Service(base._SpaceBase):
     """
     Represents a **service** that is exposed by Junos Space REST API.
     Some examples of services are:
@@ -35,7 +36,7 @@ class Service(object):
         self._rest_end_point = rest_end_point
         self._parent = application
         self._name = name
-        self.meta_object = MetaService(name, values, application)
+        self._meta_object = MetaService(name, values, application)
         self._collections = {}
         self._methods = {}
 
@@ -47,13 +48,13 @@ class Service(object):
         :returns: A ``jnpr.space.resource.MetaResource`` object.
 
         """
-        return self.meta_object.get_meta_resource(resource_type)
+        return self._meta_object.get_meta_resource(resource_type)
 
     def get_href(self):
         """
         Returns the href of this service.
         """
-        return self.meta_object.url
+        return self._meta_object.url
 
     def __getattr__(self, attr):
         """
@@ -73,11 +74,11 @@ class Service(object):
         if attr in self._methods:
             return self._methods[attr]
 
-        collection = self.meta_object.create_collection(self, attr)
+        collection = self._meta_object.create_collection(self, attr)
         if collection is not None :
             self._collections[attr] = collection
             return collection
-        method = self.meta_object.create_method(self, attr)
+        method = self._meta_object.create_method(self, attr)
         if method is not None:
             self._methods[attr] = method
             return method
@@ -117,6 +118,7 @@ class MetaService(object):
         """
         self.url = values['url']
         self._application = application
+        self.name = name
 
         path = os.path.abspath(__file__)
         dir_path = os.path.dirname(path)
@@ -128,6 +130,7 @@ class MetaService(object):
 
         with open(file_name) as f:
             y = yaml.load(f)
+            self.values = y
             self._meta_collections = y['collections']
             self._meta_methods = y['methods']
             self._meta_resources = y['resources']

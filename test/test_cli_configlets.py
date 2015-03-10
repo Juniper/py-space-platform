@@ -1,7 +1,7 @@
 import ConfigParser
 import time
 
-from jnpr.space import rest, factory
+from jnpr.space import rest, factory, async
 
 class TestCliConfiglets:
 
@@ -66,6 +66,39 @@ class TestCliConfiglets:
         task = cglets[0].apply_configlet.post(deviceId=devices[0].key,
                             parameters={'PortName': 'ge-0/0/0', 'Description': 'PyTest - space-ez'})
         assert task.id > 0
+
+    def test_apply_configlet_from_device_management(self):
+        devices_list = self.space.device_management.devices.get(
+                                    filter_={'connectionStatus': 'up',
+                                             'deviceFamily': 'junos'})
+        assert len(devices_list) > 0, "No devices connected!"
+
+        cglets = self.space.configuration_management.cli_configlets.get(filter_={'name': 'Set description - Pytest'})
+        assert len(cglets) > 0, "Required configlet not present on Space!"
+
+        d = devices_list[0]
+
+        tm = async.TaskMonitor(self.space, 'test_q')
+
+        try:
+            result = d.apply_cli_configlet.post(
+                                        task_monitor=tm,
+                                        configletId = cglets[0].get(attr='key'),
+                                        parameters={'PortName': 'ge-0/0/0', 'Description': 'PyTest - space-ez'}
+                                       )
+
+            from pprint import pprint
+            pprint(result)
+
+            assert result.id > 0, "Async cli configlet execution Failed"
+
+            pu = tm.wait_for_task(result.id)
+            pprint(pu)
+
+            assert ((pu.state == "DONE" and pu.percentage == 100.0) or
+                (pu.percentage == 100.0 and pu.subTask.state == "DONE"))
+        finally:
+            tm.delete()
 
     def test_get_configlets(self):
         cglets = self.space.configuration_management.cli_configlets.get()

@@ -4,8 +4,8 @@ from jnpr.space import rest, factory
 
 def main():
     # Create a Space REST end point
-    my_space = rest.Space(url='https://10.205.57.90',
-                          user='super', passwd='juniper123')
+    my_space = rest.Space(url='https://10.204.79.104',
+                          user='super', passwd='123Juniper')
 
     devices_list = my_space.device_management.devices.get(filter_={'connectionStatus': 'up'})
     for d in devices_list:

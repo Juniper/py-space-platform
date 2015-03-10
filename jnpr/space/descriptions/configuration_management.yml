@@ -6,15 +6,15 @@ collections:
         url: '/api/space/configuration-management/change-requests'
         resource_type: 'configuration_management.change_request'
         methods:
-            v2_single:
+            push_to_one_device:
                 name: '-' # Use parent's URL
                 request_type: 'application/vnd.net.juniper.space.configuration-management.change-request+xml;version=2;charset=UTF-8'
                 request_template: 'change_request_v2_single.tpl'
-            v2_multiple:
+            push_to_many_devices:
                 name: '-' # Use parent's URL
                 request_type: 'application/vnd.net.juniper.space.configuration-management.change-requests+xml;version=2;charset=UTF-8'
                 request_template: 'change_request_v2_multiple.tpl'
-            v2_multiple_async:
+            push_to_many_devices_async:
                 name: '-' # Use parent's URL
                 request_type: 'application/vnd.net.juniper.space.configuration-management.change-requests+xml;version=2;charset=UTF-8'
                 request_template: 'change_request_v2_multiple.tpl'

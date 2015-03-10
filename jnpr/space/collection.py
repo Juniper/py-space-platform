@@ -1,9 +1,8 @@
 from lxml import etree
 
-from jnpr.space import util
-from jnpr.space import rest
+from jnpr.space import base, xmlutil, rest
 
-class Collection(object):
+class Collection(base._SpaceBase):
     """
     Represents a **collection** that is exposed by Junos Space REST API.
     Some examples of collections are:
@@ -30,7 +29,7 @@ class Collection(object):
         self._parent = parent
         self._rest_end_point = parent._rest_end_point
         self._name = name
-        self.meta_object = meta_object
+        self._meta_object = meta_object
         self._methods = {}
 
     def get_href(self):
@@ -42,10 +41,10 @@ class Collection(object):
         :returns: The href of this collection.
 
         """
-        if self.meta_object.url:
-            return self.meta_object.url
+        if self._meta_object.url:
+            return self._meta_object.url
         else:
-            return self._parent.get_href() + "/" + util.make_xml_name(self._name)
+            return self._parent.get_href() + "/" + xmlutil.make_xml_name(self._name)
 
     def __getattr__(self, attr):
         """
@@ -57,16 +56,16 @@ class Collection(object):
 
         :returns: Contained Resource (named member) or Method.
         """
-        if attr in self.meta_object.named_members:
+        if attr in self._meta_object.named_members:
             r = self._create_named_resource(attr,
-                            self.meta_object.named_members[attr], None)
+                            self._meta_object.named_members[attr], None)
             r.id = attr
             return r
 
         if attr in self._methods:
             return self._methods[attr]
 
-        method = self.meta_object.create_method(self, attr)
+        method = self._meta_object.create_method(self, attr)
         if method is not None:
             self._methods[attr] = method
             return method
@@ -80,11 +79,15 @@ class Collection(object):
         See doc for __getattr__ for more details.
         """
 
-        from jnpr.space import xmlutil
         return self.__getattr__(xmlutil.unmake_xml_name(attr))
 
-    def get(self, version=None, filter_=None, domain_id=None, paging=None, sortby=None):
+    def get(self, accept=None, filter_=None, domain_id=None, paging=None, sortby=None):
         """Gets the contained resources of this collection from Space.
+
+        :param str accept: This can be used to supply a media-type that must
+            be used as the Accept header in the GET request. This defaults to
+            ``None`` and in this case SpaceEZ will use the media-type modeled
+            in the description file.
 
         :param filter_: A filter expression to apply on the collection. This
             can be given as a dict with name:value pairs to filter with. For
@@ -114,9 +117,13 @@ class Collection(object):
         """
         url = self._form_get_url(filter_, domain_id, paging, sortby)
 
-        mtype = self.meta_object.get_media_type(version)
+        if accept is not None:
+            mtype = accept
+        else:
+            mtype = self._meta_object.get_media_type(None)
+
         if mtype is not None:
-            if not self.meta_object.retain_charset_in_accept:
+            if not self._meta_object.retain_charset_in_accept:
                 end = mtype.find(';charset=')
                 if end > 0:
                     mtype = mtype[0:end]
@@ -139,10 +146,10 @@ class Collection(object):
 
         root = etree.fromstring(response.content)
 
-        if self.meta_object.single_object_collection:
+        if self._meta_object.single_object_collection:
             resource_list.append(self._create_resource(root))
-        elif self.meta_object.named_members:
-            for key, value in self.meta_object.named_members.iteritems():
+        elif self._meta_object.named_members:
+            for key, value in self._meta_object.named_members.iteritems():
                 r = self._create_named_resource(key, value,root)
                 r.id = key
                 resource_list.append(r)
@@ -178,81 +185,115 @@ class Collection(object):
         to populate entries in the list returned by the get() method of this
         collection.
         """
-        if self.meta_object.resource_type:
+        if self._meta_object.resource_type:
             from jnpr.space import resource
-            return resource.Resource(type_name=self.meta_object.resource_type,
+            return resource.Resource(type_name=self._meta_object.resource_type,
                                  rest_end_point=self._rest_end_point,
                                  xml_data=xml_data, parent=self)
         else:
-            from jnpr.space import xmlutil
             s = etree.tostring(xml_data)
             return xmlutil.xml2obj(s)
 
-    def post(self, new_obj, version=None, xml_name=None, content_type=None, accept=None):
+    def post(self, new_obj=None, accept=None, content_type=None, request_body=None, xml_name=None, task_monitor=None):
         """
         Sends a POST request to the Space server to create a new Resource in
         this collection.
 
         :param new_obj: The new Resource that needs to be created as a member
-            of this collection.
+            of this collection. This can be omitted in which case the caller
+            must supply a request body for the POST request as the
+            ``request_body`` argument.
         :type new_obj: A single ``jnpr.space.resource.Resource`` instance
             or a list of them.
+
+        :param str accept: This can be used to supply a media-type that must
+            be used as the Accept header in the request. This defaults to
+            ``None`` and in this case SpaceEZ will use the media-type modeled
+            in the description file.
+
+        :param str content_type: This can be used to supply a media-type that must
+            be used as the Content-Type header in the request. This defaults to
+            ``None`` and in this case SpaceEZ will use the media-type modeled
+            in the description file.
+
+        :param str request_body: This can be used to supply a string that must
+            be used as the request body in the request. This defaults to
+            ``None`` and in this case the caller must supply the ``new_obj``
+            argument from which the request body will be formed.
 
         :param str xml_name: Can be used to override the name of the top-level
             XML element in the generated request body. This is useful in some
             cases such as creating a quick config template.
             This parameter defaults to ``None``.
 
-        :param str content_type: Can be used to override the *content-type*
-            header of the POST request. This is useful in some
-            cases such as creating a quick config template.
-            This parameter defaults to ``None``.
-
-        :param str accept: Can be used to override the *accept*
-            header of the POST request. This is useful in some
-            cases such as creating a quick config template.
-            This parameter defaults to ``None``.
+        :param task_monitor: A TaskMonitor object that can be used to monitor
+            the progress of the POST request, in case of asynchronous
+            invocations. You need to check Junos Space API documentation to
+            see if the POST invocation on this resource has asynchronous
+            semantics and supply the task_monitor parameter only if it is
+            asynchronous. Otherwise, this will default to ``None`` and the
+            method will behave with synchronous semantics.
+        :type task_monitor: jnpr.space.async.TaskMonitor
 
         :returns: If the new_obj parameter is a list, then the same list is
             returned. Otherwise, this method creates a new Resource object
             based on the state of the newly created resource, as extracted from
-            the POST response body.
+            the POST response body. In the case of asynchronous
+            invocation, this will represent a Task object and will contain the
+            unique id of the Task executing the POST request in Space.
 
         :raises: ``jnpr.space.rest.RestException`` if the POST method results in
             an error response. The exception's ``response`` attribute will have
             the full response from Space.
 
         """
-        if content_type:
+        if content_type is not None:
             media_type = content_type
         elif isinstance(new_obj, list):
-            if self.meta_object.content_type is not None:
-                media_type = self.meta_object.content_type
+            if self._meta_object.content_type is not None:
+                media_type = self._meta_object.content_type
             else:
-                media_type = self.meta_object.get_media_type(version)
+                media_type = self._meta_object.get_media_type(None)
         else:
-            media_type = new_obj.get_meta_object().get_media_type(version)
+            if new_obj is None:
+                raise ValueError('Must provide content_type when providing request_body')
+            media_type = new_obj.get_meta_object().get_media_type(None)
 
         headers = {'content-type': media_type}
         if accept:
             headers['accept'] = accept
 
-        x = None
-        if isinstance(new_obj, list):
-            x = etree.Element(self._name)
-            for o in new_obj:
-                x.append(o.form_xml())
+        if request_body is not None:
+            body = request_body
+            saved_root_tag = None
+            if new_obj is not None:
+                raise ValueError('Cannot use both request_body and new_obj!')
         else:
-            x = new_obj.form_xml()
+            if new_obj is None:
+                raise ValueError('Cannot omit both request_body and new_obj!')
 
-        saved_root_tag = x.tag
+            x = None
+            if isinstance(new_obj, list):
+                x = etree.Element(self._meta_object.xml_name)
+                for o in new_obj:
+                    x.append(o.form_xml())
+            else:
+                x = new_obj.form_xml()
 
-        if xml_name:
-            x.tag = xml_name
+            saved_root_tag = x.tag
 
-        response = self._rest_end_point.post(self.get_href(),
+            if xml_name:
+                x.tag = xml_name
+
+            body = xmlutil.cleanup(etree.tostring(x))
+
+        url = self.get_href()
+        if task_monitor:
+            url = '?queue='.join([url, task_monitor.get_queue_url()])
+
+        response = self._rest_end_point.post(url,
                                              headers,
-                                             etree.tostring(x))
+                                             body)
 
         if response.status_code == 204: # Special case of post with null response
             return new_obj
@@ -260,6 +301,10 @@ class Collection(object):
         if response.status_code not in [200, 202]:
             raise rest.RestException("POST failed on %s" % self.get_href(),
                                      response)
+
+        if task_monitor is not None:
+            r = response.content
+            return xmlutil.xml2obj(r)
 
         if not isinstance(new_obj, list):
             # Fixing issue #17
@@ -270,7 +315,8 @@ class Collection(object):
             root = etree.fromstring(response.content)
             #new_obj._xml_data = root
             #new_obj._rest_end_point = self._rest_end_point
-            root.tag = saved_root_tag
+            if saved_root_tag is not None:
+                root.tag = saved_root_tag
             new_obj = self._create_resource(root)
 
         return new_obj
@@ -362,6 +408,14 @@ class Collection(object):
         """
         return 'sortby=(%s)' % ','.join(field_list)
 
+    def state(self):
+        """
+        Performs a GET on this collection to fetch the current state and
+        prints it as XML.
+        """
+        s = self.get()
+        print s.xml_string()
+
 class ResourceList(list):
     """
     Encapsulates a list of Resource objects and provides
@@ -391,6 +445,12 @@ class ResourceList(list):
             val.append(r.xml_string())
         return '\n\n'.join(val)
 
+    def state(self):
+        """
+        Prints the XML string into stdout.
+        """
+        print self.xml_string()
+
 class MetaCollection(object):
     """ Encapsulates the meta data for a collection type.
     """
@@ -405,6 +465,7 @@ class MetaCollection(object):
             for this collection. This is read from the descriptions yml file for
             the corresponding service.
         """
+        self.values = values
         self.app_name = app_name
         self.service_name = service_name
         self.key = key
