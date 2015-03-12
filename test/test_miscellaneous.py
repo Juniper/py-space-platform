@@ -210,7 +210,7 @@ class TestMiscellaneous:
         assert u.id > 0
 
         with pytest.raises(rest.RestException) as except_info:
-            pwd = u.change_password.post(
+            u.change_password.post(
                                     accept='',
                                     content_type='',
                                     oldPassword='123Juniper',

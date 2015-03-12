@@ -73,7 +73,7 @@ class TestLogin:
             self.space.user_management.users.get(filter_={'name':'super'})
 
     def test_login_logout_loop(self):
-        for i in range(1,10):
+        for _ in range(1,10):
             self.space.login()
             users_list = self.space.user_management.users.get()
             assert len(users_list) > 0

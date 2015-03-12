@@ -29,7 +29,7 @@ def get_media_type(url, method, header, version=None, app_name=None):
                 if version is not None:
                     try:
                         return media_type_versions[url][method][header][str(version)]
-                    except KeyError as e:
+                    except KeyError:
                         raise Exception('Version %s not available for %s header for %s on %s' % (str(version), header, method, url))
                 else:
                     return media_type_versions[url][method][header].itervalues().next()
