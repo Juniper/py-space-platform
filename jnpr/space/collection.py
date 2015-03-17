@@ -203,7 +203,7 @@ class Collection(base._SpaceBase):
                                      xml_data=xml_data,
                                      parent=self)
         else:
-            xml_str = etree.tostring(xml_data)
+            xml_str = etree.tostring(xml_data, encoding='unicode')
             return xmlutil.xml2obj(xml_str)
 
     def post(self, new_obj=None, accept=None, content_type=None,
@@ -298,7 +298,7 @@ class Collection(base._SpaceBase):
             if xml_name:
                 xml_obj.tag = xml_name
 
-            body = xmlutil.cleanup(etree.tostring(xml_obj))
+            body = xmlutil.cleanup(etree.tostring(xml_obj, encoding='unicode'))
 
         url = self.get_href()
         if task_monitor:

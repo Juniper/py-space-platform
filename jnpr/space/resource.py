@@ -66,7 +66,7 @@ class Resource(base._SpaceBase):
                 exc = Exception('Invalid xml object for this resource!')
                 exc.ignore = True
                 raise exc
-            self._xml_data = xmlutil.xml2obj(etree.tostring(xml_data))
+            self._xml_data = xmlutil.xml2obj(etree.tostring(xml_data, encoding='unicode'))
 
     def _init_meta_data(self, rest_end_point, type_name):
         """
@@ -286,9 +286,9 @@ class Resource(base._SpaceBase):
             if new_val_obj is not None:
                 raise ValueError('Cannot use both request_body and new_val_obj')
         elif new_val_obj is not None:
-            body = etree.tostring(new_val_obj.form_xml())
+            body = etree.tostring(new_val_obj.form_xml(), encoding='unicode')
         else:
-            body = etree.tostring(self.form_xml())
+            body = etree.tostring(self.form_xml(), encoding='unicode')
 
         if content_type is not None:
             mtype = content_type
@@ -512,7 +512,7 @@ class Resource(base._SpaceBase):
         state of this resource.
         """
         if self._xml_data is not None:
-            return etree.tostring(self._xml_data, pretty_print=True)
+            return etree.tostring(self._xml_data, encoding='unicode', pretty_print=True)
         else:
             return 'No XML data'
 
