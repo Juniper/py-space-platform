@@ -1,6 +1,7 @@
 """
 This module defines the Connection class.
 """
+from __future__ import unicode_literals
 from __future__ import print_function
 from future import standard_library
 standard_library.install_aliases()

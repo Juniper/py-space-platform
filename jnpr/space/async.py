@@ -1,7 +1,7 @@
 """
 This module defines the TaskMonitor class.
 """
-
+from __future__ import unicode_literals
 from __future__ import print_function
 from builtins import object
 import time

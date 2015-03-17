@@ -1,6 +1,7 @@
 """
 This module defines the Service class.
 """
+from __future__ import unicode_literals
 from builtins import object
 import os
 import yaml

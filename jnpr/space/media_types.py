@@ -3,6 +3,7 @@ Created on 25-Feb-2015
 
 @author: rjoyce
 '''
+from __future__ import unicode_literals
 from builtins import str
 import os
 import yaml

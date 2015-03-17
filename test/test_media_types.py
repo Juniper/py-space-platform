@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from builtins import object
 from jnpr.space import media_types
 

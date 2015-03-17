@@ -2,7 +2,7 @@
 A module with functions using which new resource objects can be created.
 Resources are instances of jnpr.space.resource.Resource.
 """
-
+from __future__ import unicode_literals
 from lxml import etree
 from jnpr.space import rest, resource, util
 

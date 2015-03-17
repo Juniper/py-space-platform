@@ -1,6 +1,7 @@
 """
 This module defines the Resource class.
 """
+from __future__ import unicode_literals
 from __future__ import print_function
 from builtins import str
 from builtins import object

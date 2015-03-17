@@ -1,6 +1,7 @@
 """
 Defines a few util functions.
 """
+from __future__ import unicode_literals
 
 def get_class_def(class_name):
     """

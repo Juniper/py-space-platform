@@ -3,6 +3,7 @@ This module defines a common base class called _SpaceBase from which
 other classes (Service, Collection, Resource, Method) inherit common
 functionality.
 """
+from __future__ import unicode_literals
 from __future__ import print_function
 from __future__ import absolute_import
 from builtins import object

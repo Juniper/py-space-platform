@@ -1,6 +1,7 @@
 """
 A module with utility functions for XML handling.
 """
+from __future__ import unicode_literals
 from __future__ import print_function
 from __future__ import absolute_import
 from lxml import objectify
@@ -47,7 +48,12 @@ def xml2obj(src):
 
     :returns: An instance of ```lxml.objectify.ObjectifiedElement```
     """
-    return objectify.fromstring(src)
+    start = src.find('?>')
+    if start > 0:
+        start += 2
+    else:
+        start = 0
+    return objectify.fromstring(src[start:])
 
 if __name__ == '__main__':
     print('Hello')
