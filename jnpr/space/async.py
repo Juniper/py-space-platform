@@ -1,8 +1,14 @@
+"""
+This module defines the TaskMonitor class.
+"""
+
+from __future__ import print_function
+from builtins import object
 import time
 
 from jnpr.space import xmlutil
 
-class TaskMonitor:
+class TaskMonitor(object):
     """
     Encapsulates the logic required to monitor the progress of tasks using
     a hornet-q. An instance of this class acts as a wrapper over a hornet-q.
@@ -20,7 +26,9 @@ class TaskMonitor:
     The snippet below shows an example where a TaskMonitor is used in creating
     a discover-devices task and waiting for its completion:
 
-        >>> s = rest.Space(url='https://1.1.1.1', user='super', passwd='password')
+        >>> s = rest.Space(url='https://1.1.1.1',
+                           user='super',
+                           passwd='password')
         >>> devs = s.device_management.devices.get()
         >>> tm = async.TaskMonitor(s, 'test_DD_q')
         >>> result = s.device_management.discover_devices.post(
@@ -63,6 +71,7 @@ class TaskMonitor:
         self.qname = qname
         self.wait_time = wait_time
         self.max_consecutive_attempts = max_consecutive_attempts
+        self.next_msg_url = None
         self._create_q()
         self._create_pull_consumer()
 
@@ -79,12 +88,14 @@ class TaskMonitor:
             "content-type": "application/hornetq.jms.queue+xml",
         }
         url = "/api/hornet-q/queues"
-        body = """<queue name="%s"><durable>false</durable></queue>""" % self.qname
+        body = ("""<queue name="%s"><durable>false</durable></queue>""" %
+                self.qname)
         response = self._rest_end_point.post(url, headers, body)
-        if ((response.status_code == 201) or (response.status_code == 412)):
-            self._hornetq_location = "http://localhost:8080/api/hornet-q/queues/jms.queue." + self.qname
+        if response.status_code == 201 or response.status_code == 412:
+            self._hornetq_location = \
+            "http://localhost:8080/api/hornet-q/queues/jms.queue." + self.qname
         else:
-            print response.status_code
+            print(response.status_code)
             raise Exception(response.text)
 
     def _create_pull_consumer(self):
@@ -95,12 +106,13 @@ class TaskMonitor:
 
         url = url + "/pull-consumers"
         response = self._rest_end_point.post(url, headers={}, body=None)
-        if (response.status_code == 201):
+        if response.status_code == 201:
             self.next_msg_url = self._strip_uri(response.headers["msg-consume-next"])
         else:
             raise Exception("Failed to create message consumer")
 
     def _strip_uri(self, url):
+        """Strips the URL and returns the portion that starts with /api"""
         start = url.find("/api")
         return url[start:]
 
@@ -150,19 +162,19 @@ class TaskMonitor:
 
         num_consecutive_attempts = 0
         while num_consecutive_attempts < self.max_consecutive_attempts:
-            pu = self.pull_message()
-            if not pu:
+            message = self.pull_message()
+            if not message:
                 num_consecutive_attempts += 1
                 time.sleep(self.wait_time)
                 continue
             else:
                 num_consecutive_attempts = 0
 
-            if task_id != pu.taskId:
+            if task_id != message.taskId:
                 continue
 
-            if self._task_is_done(pu):
-                return pu
+            if self._task_is_done(message):
+                return message
 
         raise Exception("Task %s does not seem to be progressing" % task_id)
 
@@ -189,8 +201,8 @@ class TaskMonitor:
         task_results = []
 
         while len(task_results) < len(task_id_list):
-            pu = self.pull_message()
-            if not pu:
+            message = self.pull_message()
+            if not message:
                 num_consecutive_attempts += 1
                 if num_consecutive_attempts > self.max_consecutive_attempts:
                     break
@@ -200,19 +212,22 @@ class TaskMonitor:
             else:
                 num_consecutive_attempts = 0
 
-            if pu.taskId in task_id_list:
-                if self._task_is_done(pu):
-                    task_results.append(pu)
+            if message.taskId in task_id_list:
+                if self._task_is_done(message):
+                    task_results.append(message)
 
         return task_results
 
-    def _task_is_done(self, pu):
-        if pu.state == "DONE":
+    def _task_is_done(self, message):
+        """
+        Checks if the task is done by examining the progress-update message.
+        """
+        if message.state == "DONE":
             return True
 
         try:
-            for s in pu.subTask:
-                if s.state != "DONE":
+            for sub_task in message.subTask:
+                if sub_task.state != "DONE":
                     return False
 
             return True
@@ -226,5 +241,5 @@ class TaskMonitor:
 
         url = "/api/hornet-q/queues/jms.queue." + self.qname
         response = self._rest_end_point.delete(url)
-        if (response.status_code != 204):
-            raise Exception("Failed to delete hornetq")
+        if response.status_code != 204:
+            raise Exception("Failed to delete hornet-q")

@@ -1,5 +1,12 @@
+"""
+This module defines the Method class.
+"""
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import str
+from builtins import object
 from jinja2 import Environment, PackageLoader
-from xmlutil import cleanup, xml2obj
+from .xmlutil import cleanup, xml2obj
 from jnpr.space import rest, base
 
 class Method(base._SpaceBase):
@@ -169,24 +176,25 @@ class Method(base._SpaceBase):
         response = self._rest_end_point.get(self.get_href(), headers)
         if response.status_code != 200:
             raise rest.RestException("GET failed on %s " % self.get_href(),
-                                    response)
+                                     response)
 
-        r = response.content
-        return xml2obj(r)
+        resp_text = response.content
+        return xml2obj(resp_text)
 
     def _describe_details(self):
-        rt = self._meta_object.request_template
-        if rt is None:
+        rtemp = self._meta_object.request_template
+        if rtemp is None:
             return
 
-        print '\tFollowing named parameters may be supplied to the post() call:\n',
-        with open(rt.filename) as f:
-            lines = [line.rstrip() for line in f]
+        print('\tFollowing named parameters may be supplied to the post() call:\n',
+              end=' ')
+        with open(rtemp.filename) as tmp_file:
+            lines = [line.rstrip() for line in tmp_file]
             for line in lines:
                 if line.endswith('#}'):
                     break
                 elif not line.strip().startswith('{#'):
-                    print '\t', line
+                    print('\t', line)
 
 
 class MetaMethod(object):
@@ -224,11 +232,14 @@ class MetaMethod(object):
             self.request_template = None
 
     def get_request_type(self, version):
+        """
+        Returns request media type modeled in yaml file.
+        """
         if isinstance(self.request_type, dict):
             if version is not None:
                 return self.request_type[str(version)]
             if len(self.request_type) == 1:
-                return self.request_type.itervalues().next()
+                return next(iter(self.request_type.values()))
             else:
                 raise Exception("You must specify the required request_type version")
         elif version is None:
@@ -238,11 +249,14 @@ class MetaMethod(object):
                         (str(version), self.key))
 
     def get_response_type(self, version):
+        """
+        Returns response media type modeled in yaml file.
+        """
         if isinstance(self.response_type, dict):
             if version is not None:
                 return self.response_type[str(version)]
             if len(self.response_type) == 1:
-                return self.response_type.itervalues().next()
+                return next(iter(self.response_type.values()))
             else:
                 raise Exception("You must specify the required response_type version")
         elif version is None:
@@ -252,11 +266,14 @@ class MetaMethod(object):
                         (str(version), self.key))
 
     def get_media_type(self, version):
+        """
+        Returns media type modeled in yaml file.
+        """
         if isinstance(self.media_type, dict):
             if version is not None:
                 return self.media_type[str(version)]
             if len(self.media_type) == 1:
-                return self.media_type.itervalues().next()
+                return next(iter(self.media_type.values()))
             else:
                 raise Exception("You must specify the required media_type version")
         elif version is None:
@@ -264,11 +281,11 @@ class MetaMethod(object):
 
         raise Exception("Media Type Version %s not defined for '%s' in descriptions!" %
                         (str(version), self.key))
-"""
-A dictionary that acts as a cache for meta objects representing methods.
-Keys are of the form <service-name>.<method-name>. Values are instances of
-jnpr.space.collection.MetaMethod.
-"""
+#
+#A dictionary that acts as a cache for meta objects representing methods.
+#Keys are of the form <service-name>.<method-name>. Values are instances of
+#jnpr.space.collection.MetaMethod.
+#
 _meta_methods = {}
 
 def get_meta_object(app_name, service_name, method_name, values):
@@ -291,6 +308,6 @@ def get_meta_object(app_name, service_name, method_name, values):
     if fullname in _meta_methods:
         return _meta_methods[fullname]
 
-    m = MetaMethod(method_name, values)
-    _meta_methods[fullname] = m
-    return m
+    meta_mthd = MetaMethod(method_name, values)
+    _meta_methods[fullname] = meta_mthd
+    return meta_mthd

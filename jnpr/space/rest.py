@@ -1,4 +1,11 @@
+"""
+This module defines the Space class.
+"""
 from __future__ import print_function
+from __future__ import division
+from builtins import range
+from builtins import object
+from past.utils import old_div
 import os
 import re
 import threading
@@ -7,7 +14,7 @@ import requests
 import logging
 import yaml
 
-class Space:
+class Space(object):
     """Encapsulates a Junos Space cluster and provides access to all RESTful
     web-service APIs provided by Space. An instance of this class is also
     referred to as a *'rest end point'* in this documentation.
@@ -21,7 +28,9 @@ class Space:
     a GET on the ``devices`` collection contained by the ``device-management``
     web service:
 
-        >>> s = rest.Space(url='https://1.1.1.1', user='super', passwd='password')
+        >>> s = rest.Space(url='https://1.1.1.1',
+                           user='super',
+                           passwd='password')
         >>> devs = s.device_management.devices.get()
 
     .. note::
@@ -77,7 +86,8 @@ class Space:
             if passwd is None:
                 raise ValueError('passwd is mandatory along with user')
             if cert is not None:
-                raise ValueError('You must provide only one of user+passwd or cert')
+                raise ValueError('You must provide only one of user+passwd"\
+                                 or cert')
             self.space_user = user
             self.space_passwd = passwd
             self.cert = None
@@ -107,20 +117,26 @@ class Space:
 
     def __str__(self):
         return ' '.join(['Space <',
-                       '@'.join([self.space_user, self.space_url]),
-                       '>'])
+                         '@'.join([self.space_user, self.space_url]),
+                         '>'])
 
     def _init_services(self):
+        """
+        Initialize services from yaml file.
+        """
         path = os.path.abspath(__file__)
         dir_path = os.path.dirname(path)
-        with open(dir_path + '/descriptions/services.yml') as f:
-            return yaml.load(f)['services']
+        with open(dir_path + '/descriptions/services.yml') as serv_file:
+            return yaml.load(serv_file)['services']
 
     def _init_applications(self):
+        """
+        Initialize applications from yaml file.
+        """
         path = os.path.abspath(__file__)
         dir_path = os.path.dirname(path)
-        with open(dir_path + '/descriptions/applications.yml') as f:
-            return yaml.load(f)['applications']
+        with open(dir_path + '/descriptions/applications.yml') as app_file:
+            return yaml.load(app_file)['applications']
 
     def __getattr__(self, attr):
         """
@@ -169,13 +185,16 @@ class Space:
         from jnpr.space import xmlutil
         return self.__getattr__(xmlutil.unmake_xml_name(attr))
 
-    def _log_time(self, op, url, response):
+    def _log_time(self, oper, url, response):
+        """
+        Log response time into profiling output file.
+        """
         if self.profile_file is not None:
             url = re.sub(r'\d+', '{id}', url)
             url = re.sub(r',', '_', url)
             num_ms = response.elapsed.seconds * 1000 + \
-                     response.elapsed.microseconds / 1000
-            print("%s, %s, %d, %d" % (op, url, response.status_code,
+                     old_div(response.elapsed.microseconds, 1000)
+            print("%s, %s, %d, %d" % (oper, url, response.status_code,
                                       num_ms),
                   file=self.profile_file)
 
@@ -187,25 +206,33 @@ class Space:
         :param dict headers: A dict with the headers that need to be sent with
             the GET request. Defaults to ``{}``.
 
-        :returns:  The response object (`requests.Response <http://docs.python-requests.org/en/latest/api/#requests.Response />`_)
-                   returned by the GET request.
+        :returns: The response object (`requests.Response <http://docs.python-requests.org/en/latest/api/#requests.Response />`_)
+            returned by the GET request.
         """
         req_url = self.space_url + url
-        self._logger.debug("GET %s" % req_url)
+        self._logger.debug("GET %s", req_url)
         self._logger.debug(headers)
         if self._use_session:
-            r = self._connection.get_session().get(req_url, headers=headers, verify=False)
+            resp = self._connection.get_session().get(req_url,
+                                                      headers=headers,
+                                                      verify=False)
         else:
             if self.cert is not None:
-                r = requests.get(req_url, cert=self.cert, headers=headers, verify=False)
+                resp = requests.get(req_url,
+                                    cert=self.cert,
+                                    headers=headers,
+                                    verify=False)
             else:
-                r = requests.get(req_url, auth=(self.space_user, self.space_passwd), headers=headers, verify=False)
-        self._logger.debug(r)
-        self._logger.debug(r.headers)
-        self._logger.debug(r.cookies)
-        self._logger.debug(r.text)
-        self._log_time('GET', url, r)
-        return r
+                resp = requests.get(req_url,
+                                    auth=(self.space_user, self.space_passwd),
+                                    headers=headers,
+                                    verify=False)
+        self._logger.debug(resp)
+        self._logger.debug(resp.headers)
+        self._logger.debug(resp.cookies)
+        self._logger.debug(resp.text)
+        self._log_time('GET', url, resp)
+        return resp
 
     def head(self, url, headers={}):
         """Performs an HTTP HEAD on the given url. Acts as a wrapper over
@@ -219,21 +246,29 @@ class Space:
             returned by the HEAD request.
         """
         req_url = self.space_url + url
-        self._logger.debug("HEAD %s" % req_url)
+        self._logger.debug("HEAD %s", req_url)
         self._logger.debug(headers)
         if self._use_session:
-            r = self._connection.get_session().head(req_url, headers=headers, verify=False)
+            resp = self._connection.get_session().head(req_url,
+                                                       headers=headers,
+                                                       verify=False)
         else:
             if self.cert is not None:
-                r = requests.head(req_url, cert=self.cert, headers=headers, verify=False)
+                resp = requests.head(req_url,
+                                     cert=self.cert,
+                                     headers=headers,
+                                     verify=False)
             else:
-                r = requests.head(req_url, auth=(self.space_user, self.space_passwd), headers=headers, verify=False)
-        self._logger.debug(r)
-        self._logger.debug(r.headers)
-        self._logger.debug(r.cookies)
-        self._logger.debug(r.text)
-        self._log_time('HEAD', url, r)
-        return r
+                resp = requests.head(req_url,
+                                     auth=(self.space_user, self.space_passwd),
+                                     headers=headers,
+                                     verify=False)
+        self._logger.debug(resp)
+        self._logger.debug(resp.headers)
+        self._logger.debug(resp.cookies)
+        self._logger.debug(resp.text)
+        self._log_time('HEAD', url, resp)
+        return resp
 
     def post(self, url, headers, body):
         """Performs an HTTP POST on the given url. Acts as a wrapper over
@@ -249,22 +284,33 @@ class Space:
                    returned by the POST request.
         """
         req_url = self.space_url + url
-        self._logger.debug("POST %s" % req_url)
+        self._logger.debug("POST %s", req_url)
         self._logger.debug(headers)
         self._logger.debug(body)
         if self._use_session:
-            r = self._connection.get_session().post(req_url, data=body, headers=headers, verify=False)
+            resp = self._connection.get_session().post(req_url,
+                                                       data=body,
+                                                       headers=headers,
+                                                       verify=False)
         else:
             if self.cert is not None:
-                r = requests.post(req_url, cert=self.cert, data=body, headers=headers, verify=False)
+                resp = requests.post(req_url,
+                                     cert=self.cert,
+                                     data=body,
+                                     headers=headers,
+                                     verify=False)
             else:
-                r = requests.post(req_url, auth=(self.space_user, self.space_passwd), data=body, headers=headers, verify=False)
-        self._logger.debug(r)
-        self._logger.debug(r.headers)
-        self._logger.debug(r.cookies)
-        self._logger.debug(r.text)
-        self._log_time('POST', url, r)
-        return r
+                resp = requests.post(req_url,
+                                     auth=(self.space_user, self.space_passwd),
+                                     data=body,
+                                     headers=headers,
+                                     verify=False)
+        self._logger.debug(resp)
+        self._logger.debug(resp.headers)
+        self._logger.debug(resp.cookies)
+        self._logger.debug(resp.text)
+        self._log_time('POST', url, resp)
+        return resp
 
     def put(self, put_url, headers, body):
         """Performs an HTTP PUT on the given url. Acts as a wrapper over
@@ -280,22 +326,33 @@ class Space:
                    returned by the PUT request.
         """
         req_url = self.space_url + put_url
-        self._logger.debug("PUT %s" % req_url)
+        self._logger.debug("PUT %s", req_url)
         self._logger.debug(headers)
         self._logger.debug(body)
         if self._use_session:
-            r = self._connection.get_session().put(req_url, data=body, headers=headers, verify=False)
+            resp = self._connection.get_session().put(req_url,
+                                                      data=body,
+                                                      headers=headers,
+                                                      verify=False)
         else:
             if self.cert is not None:
-                r = requests.put(req_url, cert=self.cert, data=body, headers=headers, verify=False)
+                resp = requests.put(req_url,
+                                    cert=self.cert,
+                                    data=body,
+                                    headers=headers,
+                                    verify=False)
             else:
-                r = requests.put(req_url, auth=(self.space_user, self.space_passwd), data=body, headers=headers, verify=False)
-        self._logger.debug(r)
-        self._logger.debug(r.headers)
-        self._logger.debug(r.cookies)
-        self._logger.debug(r.text)
-        self._log_time('PUT', put_url, r)
-        return r
+                resp = requests.put(req_url,
+                                    auth=(self.space_user, self.space_passwd),
+                                    data=body,
+                                    headers=headers,
+                                    verify=False)
+        self._logger.debug(resp)
+        self._logger.debug(resp.headers)
+        self._logger.debug(resp.cookies)
+        self._logger.debug(resp.text)
+        self._log_time('PUT', put_url, resp)
+        return resp
 
     def delete(self, delete_url):
         """Performs an HTTP DELETE on the given url. Acts as a wrapper over
@@ -307,20 +364,22 @@ class Space:
                    returned by the POST request.
         """
         req_url = self.space_url + delete_url
-        self._logger.debug("DELETE %s" % req_url)
+        self._logger.debug("DELETE %s", req_url)
         if self._use_session:
-            r = self._connection.get_session().delete(req_url, verify=False)
+            resp = self._connection.get_session().delete(req_url, verify=False)
         else:
             if self.cert is not None:
-                r = requests.delete(req_url, cert=self.cert, verify=False)
+                resp = requests.delete(req_url, cert=self.cert, verify=False)
             else:
-                r = requests.delete(req_url, auth=(self.space_user, self.space_passwd), verify=False)
-        self._logger.debug(r)
-        self._logger.debug(r.headers)
-        self._logger.debug(r.cookies)
-        self._logger.debug(r.text)
-        self._log_time('DELETE', delete_url, r)
-        return r
+                resp = requests.delete(req_url,
+                                       auth=(self.space_user, self.space_passwd),
+                                       verify=False)
+        self._logger.debug(resp)
+        self._logger.debug(resp.headers)
+        self._logger.debug(resp.cookies)
+        self._logger.debug(resp.text)
+        self._log_time('DELETE', delete_url, resp)
+        return resp
 
     def logout(self):
         """Logs out the current session being used.
@@ -329,39 +388,44 @@ class Space:
             self._connection.logout()
 
     def login(self, required_node=None):
-        """Logs into Space and creates a session (connection) that is maintained.
-        All API calls will use this session and will use the JSESSIONID,
-        JSESSIONIDSSO cookies - they will not be individually authenticated.
+        """Logs into Space and creates a session (connection) that is
+        maintained. All API calls will use this session and will use the
+        JSESSIONID, JSESSIONIDSSO cookies - they will not be individually
+        authenticated.
 
         :param str required_node: This is used to specify the name of the Junos
-            Space node in the cluster on which the session should be established.
-            It is ``None`` by default.
+            Space node in the cluster on which the session should be
+            established. It is ``None`` by default.
         """
         with self._lock:
             from jnpr.space import connection
             for i in range(10):
                 if self.space_user:
                     self._connection = connection.Connection(self.space_url,
-                                                            self.space_user,
-                                                            self.space_passwd)
+                                                             self.space_user,
+                                                             self.space_passwd)
                 else:
                     self._connection = connection.Connection(self.space_url,
-                                                            cert=self.cert)
+                                                             cert=self.cert)
                 if required_node is not None:
                     sid = self._connection.get_session().cookies['JSESSIONID']
                     end = sid.rindex(':')
                     start = sid.rindex('.') + 1
                     node_name = sid[start:end]
                     if required_node == node_name:
-                        self._logger.debug("Try %d: Got session on %s" % (i, required_node))
+                        self._logger.debug("Try %d: Got session on %s",
+                                           i, required_node)
                         return
                     else:
-                        self._logger.debug("Try %d: Got session on %s instead of %s" % (i, node_name, required_node))
+                        self._logger.debug("Try %d: Got session on %s instead"\
+                                           " of %s",
+                                           i, node_name, required_node)
                         self.logout()
                 else:
                     return
 
-            raise Exception('Unable to get a session on %s in 10 attempts' % required_node)
+            raise Exception('Unable to get a session on %s in 10 attempts' %
+                            required_node)
 
 
 class RestException(Exception):

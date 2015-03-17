@@ -1,3 +1,7 @@
+"""
+This module defines the Service class.
+"""
+from builtins import object
 import os
 import yaml
 from jnpr.space import base
@@ -75,7 +79,7 @@ class Service(base._SpaceBase):
             return self._methods[attr]
 
         collection = self._meta_object.create_collection(self, attr)
-        if collection is not None :
+        if collection is not None:
             self._collections[attr] = collection
             return collection
         method = self._meta_object.create_method(self, attr)
@@ -128,12 +132,12 @@ class MetaService(object):
         else:
             file_name = file_name + name + '.yml'
 
-        with open(file_name) as f:
-            y = yaml.load(f)
-            self.values = y
-            self._meta_collections = y['collections']
-            self._meta_methods = y['methods']
-            self._meta_resources = y['resources']
+        with open(file_name) as contents_file:
+            contents = yaml.load(contents_file)
+            self.values = contents
+            self._meta_collections = contents['collections']
+            self._meta_methods = contents['methods']
+            self._meta_resources = contents['resources']
 
     def get_application_name(self):
         """Returns the name of the containing application if there is one.
@@ -153,11 +157,11 @@ class MetaService(object):
         """
         if name in self._meta_collections:
             from jnpr.space import collection
-            mObj = collection.get_meta_object(self.get_application_name(),
-                                              service._name,
-                                              name,
-                                              self._meta_collections[name])
-            return collection.Collection(service, name, mObj)
+            m_obj = collection.get_meta_object(self.get_application_name(),
+                                               service._name,
+                                               name,
+                                               self._meta_collections[name])
+            return collection.Collection(service, name, m_obj)
 
     def create_method(self, service, name):
         """Creates a method object corresponding to the given service and
@@ -172,11 +176,11 @@ class MetaService(object):
         """
         if name in self._meta_methods:
             from jnpr.space import method
-            mObj = method.get_meta_object(self.get_application_name(),
-                                          service._name,
-                                          name,
-                                          self._meta_methods[name])
-            return method.Method(service, name, mObj)
+            m_obj = method.get_meta_object(self.get_application_name(),
+                                           service._name,
+                                           name,
+                                           self._meta_methods[name])
+            return method.Method(service, name, m_obj)
 
     def get_meta_resource(self, name):
         """Returns the MetaResource object with the given name.

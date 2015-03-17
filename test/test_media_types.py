@@ -1,8 +1,9 @@
+from builtins import object
 from jnpr.space import media_types
 
 import pytest
 
-class TestMediaTypes:
+class TestMediaTypes(object):
 
     def test_1(self):
         mt = media_types.get_media_type('/api/space/application-management', 'GET', 'Accept')

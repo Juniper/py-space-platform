@@ -1,13 +1,16 @@
-import ConfigParser
+from future import standard_library
+standard_library.install_aliases()
+from builtins import object
+import configparser
 
 from jnpr.space import rest
 from jnpr.space import async
 
-class TestChangeDeviceCredentials:
+class TestChangeDeviceCredentials(object):
 
     def setup_class(self):
         # Extract Space URL, userid, password from config file
-        config = ConfigParser.RawConfigParser()
+        config = configparser.RawConfigParser()
         config.read("./test.conf")
         url = config.get('space', 'url')
         user = config.get('space', 'user')
@@ -24,7 +27,7 @@ class TestChangeDeviceCredentials:
 
         try:
                 result = self.space.device_management.change_device_credentials.post(
-                            #task_monitor=tm,
+                            task_monitor=tm,
                             devices=devices_list[0:2],
                             user_name='regress',
                             password='MaRtInI',

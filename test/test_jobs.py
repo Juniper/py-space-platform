@@ -1,12 +1,16 @@
-import ConfigParser
+from __future__ import print_function
+from future import standard_library
+standard_library.install_aliases()
+from builtins import object
+import configparser
 
 from jnpr.space import rest
 
-class TestJobs:
+class TestJobs(object):
 
     def setup_class(self):
         # Extract Space URL, userid, password from config file
-        config = ConfigParser.RawConfigParser()
+        config = configparser.RawConfigParser()
         config.read("./test.conf")
         url = config.get('space', 'url')
         user = config.get('space', 'user')
@@ -18,50 +22,50 @@ class TestJobs:
     def test_get_first_2_jobs(self):
         jobs_list = self.space.job_management.jobs.get(
                         paging={'start': 0, 'limit': 2})
-        print len(jobs_list)
+        print(len(jobs_list))
         assert len(jobs_list) == 2, "Not enough jobs on Space"
 
     def test_get_next_2_jobs(self):
         jobs_list = self.space.job_management.jobs.get(
                         paging={'start': 2, 'limit': 2})
-        print len(jobs_list)
+        print(len(jobs_list))
         assert len(jobs_list) == 2, "Not enough jobs on Space"
 
     def test_get_2_jobs(self):
         jobs_list = self.space.job_management.jobs.get(
                         paging={'limit': 2})
-        print len(jobs_list)
+        print(len(jobs_list))
         assert len(jobs_list) == 2, "Not enough jobs on Space"
 
     def test_get_1_DONE_job(self):
         jobs_list = self.space.job_management.jobs.get(
                         filter_={'job-state': 'DONE'},
                         paging={'limit': 1})
-        print len(jobs_list)
+        print(len(jobs_list))
         assert len(jobs_list) == 1, "Not enough DONE jobs on Space"
 
     def test_get_all_DD_job(self):
         jobs_list = self.space.job_management.jobs.get(
                         filter_={'job-type': 'Discover Network Elements'})
-        print len(jobs_list)
+        print(len(jobs_list))
         assert len(jobs_list) > 1, "Not enough DD jobs on Space"
 
     def test_get_progress_update(self):
         jobs_list = self.space.job_management.jobs.get(
                         filter_={'job-state': 'DONE'},
                         paging={'limit': 1})
-        print len(jobs_list)
+        print(len(jobs_list))
         assert len(jobs_list) == 1, "Not enough DONE jobs on Space"
 
         pu = jobs_list[0].progress_update.get()
         summary = pu['data']
-        print pu.state, pu.status, pu.percentage, summary
+        print(pu.state, pu.status, pu.percentage, summary)
 
     def test_cancel_job(self):
         jobs_list = self.space.job_management.jobs.get(
                         filter_={'job-state': 'DONE'},
                         paging={'limit': 1})
-        print len(jobs_list)
+        print(len(jobs_list))
         assert len(jobs_list) == 1, "Not enough DONE jobs on Space"
 
         import pytest

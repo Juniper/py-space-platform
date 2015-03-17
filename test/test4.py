@@ -3,6 +3,7 @@ Created on 20-Jun-2014
 
 @author: rjoyce
 '''
+from __future__ import print_function
 from jnpr.space import rest
 from jnpr.space import resource
 
@@ -35,5 +36,5 @@ if __name__ == "__main__":
                                  )
 
     finally:
-        print "Completed working with ", new_tag
+        print("Completed working with ", new_tag)
         new_tag.delete()

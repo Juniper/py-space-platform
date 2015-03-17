@@ -1,12 +1,16 @@
-import ConfigParser
+from __future__ import print_function
+from future import standard_library
+standard_library.install_aliases()
+from builtins import object
+import configparser
 
 from jnpr.space import rest
 
-class TestLogin:
+class TestLogin(object):
 
     def setup_class(self):
         # Extract Space URL, userid, password from config file
-        config = ConfigParser.RawConfigParser()
+        config = configparser.RawConfigParser()
         config.read("./test.conf")
         url = config.get('space', 'url')
         user = config.get('space', 'user')
@@ -22,13 +26,13 @@ class TestLogin:
             assert d.name
             devices_list = self.space.device_management.devices.get(filter_={'domainId': d.id})
             for dev in devices_list:
-                print dev.name
+                print(dev.name)
 
     def test_alternate(self):
         ds = self.space.domain_management.domains.get()
 
         for d in ds[0].children.domain:
             assert d.name
-            devices = self.space.device_management.devices.get(domain_id = d.id)
+            devices = self.space.device_management.devices.get(domain_id=d.id)
             for d in devices:
-                print d.name, d.ipAddr, d['domain-id']
+                print(d.name, d.ipAddr, d['domain-id'])

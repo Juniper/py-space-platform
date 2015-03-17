@@ -3,6 +3,7 @@ Created on 25-Feb-2015
 
 @author: rjoyce
 '''
+from builtins import str
 import os
 import yaml
 import re
@@ -10,6 +11,9 @@ import re
 media_type_versions = None
 
 def get_media_type(url, method, header, version=None, app_name=None):
+    """
+    Returns the requested media-type read from the yaml file.
+    """
     global media_type_versions
     if media_type_versions is None:
         path = os.path.abspath(__file__)
@@ -19,8 +23,8 @@ def get_media_type(url, method, header, version=None, app_name=None):
             file_name = file_name + 'apps/' + app_name + '/media_type_versions.yml'
         else:
             file_name = file_name + '/media_type_versions.yml'
-        with open(file_name) as f:
-            media_type_versions = yaml.load(f)
+        with open(file_name) as mt_file:
+            media_type_versions = yaml.load(mt_file)
 
     url = re.sub(r'\d+', '{id}', url)
     if url in media_type_versions:
@@ -30,9 +34,10 @@ def get_media_type(url, method, header, version=None, app_name=None):
                     try:
                         return media_type_versions[url][method][header][str(version)]
                     except KeyError:
-                        raise Exception('Version %s not available for %s header for %s on %s' % (str(version), header, method, url))
+                        raise Exception('Version %s not available for %s header for %s on %s' %
+                                        (str(version), header, method, url))
                 else:
-                    return media_type_versions[url][method][header].itervalues().next()
+                    return next(iter(media_type_versions[url][method][header].values()))
             else:
                 raise Exception('Header %s not available for %s on %s' % (header, method, url))
         else:

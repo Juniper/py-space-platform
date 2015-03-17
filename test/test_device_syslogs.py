@@ -1,4 +1,8 @@
-import ConfigParser
+from __future__ import print_function
+from future import standard_library
+standard_library.install_aliases()
+from builtins import object
+import configparser
 import pytest
 import time
 
@@ -12,11 +16,11 @@ def task_id():
     global _task_id
     return _task_id
 
-class TestDeviceSyslogs:
+class TestDeviceSyslogs(object):
 
     def setup_class(self):
         # Extract Space URL, userid, password from config file
-        config = ConfigParser.RawConfigParser()
+        config = configparser.RawConfigParser()
         config.read("./test.conf")
         url = config.get('space', 'url')
         user = config.get('space', 'user')
@@ -51,12 +55,12 @@ class TestDeviceSyslogs:
 
     def test_stop_syslog_events(self, task_id):
         my_task_id = task_id
-        print my_task_id
+        print(my_task_id)
         assert my_task_id > 0
 
         time.sleep(30)
 
         result = self.space.device_management.devices.stop_syslog_events.post(
-                    id = my_task_id)
+                    id=my_task_id)
         from pprint import pprint
         pprint(result)

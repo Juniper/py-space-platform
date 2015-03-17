@@ -1,13 +1,16 @@
-import ConfigParser
+from future import standard_library
+standard_library.install_aliases()
+from builtins import object
+import configparser
 import time
 
 from jnpr.space import rest, factory, async
 
-class TestConfigTemplates:
+class TestConfigTemplates(object):
 
     def setup_class(self):
         # Extract Space URL, userid, password from config file
-        config = ConfigParser.RawConfigParser()
+        config = configparser.RawConfigParser()
         config.read("./test.conf")
         url = config.get('space', 'url')
         user = config.get('space', 'user')
@@ -22,7 +25,7 @@ class TestConfigTemplates:
         t.name = 'Space_EZ_Test_Quick_Template_3'
         t.description = 'Quick Template for testing from space-ez'
         t.device_family = 'junos'
-        t.os_version = '12.3R1.7' # Crap: Some value must be given! Otherwise it throws exception!
+        t.os_version = '12.3R1.7'  # Crap: Some value must be given! Otherwise it throws exception!
 
         t = self.space.config_template_management.config_templates.post(
                             t,
@@ -133,5 +136,5 @@ class TestConfigTemplates:
             details = d.get()
             assert details.state
 
-            #config = d.configuration.get()
-            #assert config.data
+            # config = d.configuration.get()
+            # assert config.data

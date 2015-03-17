@@ -7,7 +7,7 @@ from lxml import etree
 from jnpr.space import rest, resource, util
 
 def make_resource(type_name, rest_end_point,
-                 xml_data=None, attributes=None, parent=None):
+                  xml_data=None, attributes=None, parent=None):
     """Creates a new instance of jnpr.space.resource.Resource based on the
     given parameters. This method creates it in-memory locally and *not* on
     the Space server. The post() method must be invoked on the Resource object

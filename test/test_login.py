@@ -1,13 +1,17 @@
-import ConfigParser
+from future import standard_library
+standard_library.install_aliases()
+from builtins import range
+from builtins import object
+import configparser
 import pytest
 
 from jnpr.space import rest, factory
 
-class TestLogin:
+class TestLogin(object):
 
     def setup_class(self):
         # Extract Space URL, userid, password from config file
-        config = ConfigParser.RawConfigParser()
+        config = configparser.RawConfigParser()
         config.read("./test.conf")
         url = config.get('space', 'url')
         user = config.get('space', 'user')
@@ -73,7 +77,7 @@ class TestLogin:
             self.space.user_management.users.get(filter_={'name':'super'})
 
     def test_login_logout_loop(self):
-        for _ in range(1,10):
+        for _ in range(1, 10):
             self.space.login()
             users_list = self.space.user_management.users.get()
             assert len(users_list) > 0

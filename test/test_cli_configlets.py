@@ -1,13 +1,17 @@
-import ConfigParser
+from __future__ import print_function
+from future import standard_library
+standard_library.install_aliases()
+from builtins import object
+import configparser
 import time
 
 from jnpr.space import rest, factory, async
 
-class TestCliConfiglets:
+class TestCliConfiglets(object):
 
     def setup_class(self):
         # Extract Space URL, userid, password from config file
-        config = ConfigParser.RawConfigParser()
+        config = configparser.RawConfigParser()
         config.read("./test.conf")
         url = config.get('space', 'url')
         user = config.get('space', 'user')
@@ -44,7 +48,7 @@ class TestCliConfiglets:
 
         cg.name = 'Set description - Pytest'
         cg.category = 'PythonTest'
-        cg.execution_type='Single'
+        cg.execution_type = 'Single'
         cg.device_family = 'ACX/J/M/MX/T/TX/PTX/EX92xx'
         cg.cli_configlet_params = [param1, param2]
         cg.cli_configlet_pages = [pg1]
@@ -54,7 +58,7 @@ class TestCliConfiglets:
 
         assert cg.id > 0
 
-        print "Created <%s, %s>" % (cg.name, cg.category)
+        print("Created <%s, %s>" % (cg.name, cg.category))
 
     def test_apply_configlet(self):
         cglets = self.space.configuration_management.cli_configlets.get(filter_={'name': 'Set description - Pytest'})
@@ -83,7 +87,7 @@ class TestCliConfiglets:
         try:
             result = d.apply_cli_configlet.post(
                                         task_monitor=tm,
-                                        configletId = cglets[0].get(attr='key'),
+                                        configletId=cglets[0].get(attr='key'),
                                         parameters={'PortName': 'ge-0/0/0', 'Description': 'PyTest - space-ez'}
                                        )
 
@@ -116,7 +120,7 @@ class TestCliConfiglets:
         n = len(cglets)
         assert n > 0, "No cli configlets on Space!"
 
-        for cglet in cglets[n-2: n]:
+        for cglet in cglets[n - 2: n]:
             time.sleep(5)
             details = cglet.get()
             assert details
@@ -126,7 +130,7 @@ class TestCliConfiglets:
         assert len(cglets) > 0, "No cli configlets on Space!"
 
         n = len(cglets)
-        for cglet in cglets[n-2: n]:
+        for cglet in cglets[n - 2: n]:
             params = cglet.cli_configlet_params.get()
             for p in params:
                 assert p.parameter
@@ -142,7 +146,7 @@ class TestCliConfiglets:
         assert len(cglets) > 0, "No cli configlets on Space!"
 
         n = len(cglets)
-        for cglet in cglets[n-2: n]:
+        for cglet in cglets[n - 2: n]:
             pages = cglet.cli_configlet_pages.get()
             assert pages
             for p in pages:

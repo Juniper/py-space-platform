@@ -1,12 +1,15 @@
-import ConfigParser
+from future import standard_library
+standard_library.install_aliases()
+from builtins import object
+import configparser
 
 from jnpr.space import rest, factory
 
-class TestUserManagement:
+class TestUserManagement(object):
 
     def setup_class(self):
         # Extract Space URL, userid, password from config file
-        config = ConfigParser.RawConfigParser()
+        config = configparser.RawConfigParser()
         config.read("./test.conf")
         url = config.get('space', 'url')
         user = config.get('space', 'user')
@@ -89,7 +92,7 @@ class TestUserManagement:
         n = len(ss)
         assert n >= 0, "No sessions on Space!"
 
-        for s in ss[n-2:]:
+        for s in ss[n - 2:]:
             details = s.get()
             assert details
 
@@ -102,7 +105,7 @@ class TestUserManagement:
         n = len(tsks)
         assert n > 0, "No tasks on Space!"
 
-        for tsk in tsks[n-2:]:
+        for tsk in tsks[n - 2:]:
             details = tsk.get()
             assert details
 
