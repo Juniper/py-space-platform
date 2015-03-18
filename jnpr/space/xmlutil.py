@@ -4,7 +4,7 @@ A module with utility functions for XML handling.
 from __future__ import unicode_literals
 from __future__ import print_function
 from __future__ import absolute_import
-from lxml import objectify
+from lxml import objectify, etree
 
 def make_xml_name(attr_name):
     """ Convert an attribute name to its XML equivalent by replacing
@@ -25,6 +25,26 @@ def unmake_xml_name(attr_name):
     :returns: Attribute name in pythonic format.
     """
     return attr_name.replace('-', '_')
+
+def get_text_from_response(response):
+    """
+    Returns text from ``Response`` object that will be str (unicode) in
+    both python 2 and 3.
+    """
+    return response.text
+
+def get_xml_obj_from_response(response):
+    """
+    Returns an XML object (``lxml.Element``) from the text inside the
+    ``Response`` object.
+    """
+    src = get_text_from_response(response)
+    start = src.find('?>')
+    if start > 0:
+        start += 2
+    else:
+        start = 0
+    return etree.fromstring(src[start:])
 
 def cleanup(src):
     """

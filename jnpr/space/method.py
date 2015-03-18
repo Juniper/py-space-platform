@@ -7,8 +7,7 @@ from __future__ import absolute_import
 from builtins import str
 from builtins import object
 from jinja2 import Environment, PackageLoader
-from .xmlutil import cleanup, xml2obj
-from jnpr.space import rest, base
+from jnpr.space import rest, base, xmlutil
 
 class Method(base._SpaceBase):
     """
@@ -139,7 +138,9 @@ class Method(base._SpaceBase):
             raise rest.RestException("POST failed on %s " % url, response)
 
         try:
-            return xml2obj(cleanup(response.content)) if response.content else None
+            if response.text is not None:
+                src = xmlutil.get_text_from_response(response)
+                return xmlutil.xml2obj(xmlutil.cleanup(src))
         except:
             raise rest.RestException("Failed to parse XML response for %s " % url, response)
 
@@ -179,8 +180,8 @@ class Method(base._SpaceBase):
             raise rest.RestException("GET failed on %s " % self.get_href(),
                                      response)
 
-        resp_text = response.content
-        return xml2obj(resp_text)
+        resp_text = xmlutil.get_text_from_response(response)
+        return xmlutil.xml2obj(resp_text)
 
     def _describe_details(self):
         rtemp = self._meta_object.request_template

@@ -135,8 +135,7 @@ class TaskMonitor(object):
             self.next_msg_url = self._strip_uri(next_msg)
 
         if response.status_code == 200:
-            #xml = xmlutil.cleanup(response.text)
-            xml = response.content
+            xml = xmlutil.get_text_from_response(response)
             return xmlutil.xml2obj(xml)
 
     def wait_for_task(self, task_id):

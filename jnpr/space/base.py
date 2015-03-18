@@ -21,7 +21,7 @@ class _SpaceBase(object):
         Prints info about this object onto stdout.
         """
         info = self._get_info()
-        print('\n', yaml.dump(info, indent=4, default_flow_style=False))
+        print('\n', yaml.safe_dump(info, indent=4, default_flow_style=False))
 
     def describe(self):
         """
@@ -50,7 +50,7 @@ class _SpaceBase(object):
             from . import rest
             raise rest.RestException("GET failed on %s" % url, response)
 
-        obj = xmlutil.xml2obj(response.content)
+        obj = xmlutil.xml2obj(xmlutil.get_text_from_response(response))
         """
         Create a dict such as this:
         {

@@ -240,7 +240,7 @@ class Resource(base._SpaceBase):
                                      response)
 
         #r = response.text
-        resp_txt = response.content # Fix as part of issue #27
+        resp_txt = xmlutil.get_text_from_response(response)
         return xmlutil.xml2obj(resp_txt)
 
     def put(self, new_val_obj=None, request_body=None,
@@ -315,7 +315,8 @@ class Resource(base._SpaceBase):
         #root = etree.fromstring(response.content)
 
         # Fixing issue #19 self._xml_data = root
-        self._xml_data = xmlutil.xml2obj(response.content) # Changed text to content
+        resp_text = xmlutil.get_text_from_response(response)
+        self._xml_data = xmlutil.xml2obj(resp_text)
 
     def delete(self):
         """Deletes this resource on Space by sending a DELETE request with the
@@ -419,7 +420,8 @@ class Resource(base._SpaceBase):
         if (response.status_code != 202) and (response.status_code != 200):
             raise rest.RestException("POST failed on %s" % url, response)
 
-        return xmlutil.xml2obj(xmlutil.cleanup(response.content)) # Changed text to content
+        resp_text = xmlutil.get_text_from_response(response)
+        return xmlutil.xml2obj(xmlutil.cleanup(resp_text))
 
     def get_href(self):
         """Gets the href for this resource. If ``href`` is available as an attr

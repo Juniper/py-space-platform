@@ -153,7 +153,7 @@ class Collection(base._SpaceBase):
         #start = r.index('?><') + 2
         #root = etree.fromstring(r[start:])
 
-        root = etree.fromstring(response.content)
+        root = xmlutil.get_xml_obj_from_response(response)
 
         if self._meta_object.single_object_collection:
             resource_list.append(self._create_resource(root))
@@ -316,7 +316,7 @@ class Collection(base._SpaceBase):
                                      response)
 
         if task_monitor is not None:
-            resp_str = response.content
+            resp_str = xmlutil.get_text_from_response(response)
             return xmlutil.xml2obj(resp_str)
 
         if not isinstance(new_obj, list):
@@ -325,7 +325,7 @@ class Collection(base._SpaceBase):
             # Skip the <?xml> line to avoid encoding errors in lxml
             #start = r.index('?><') + 2
             #root = etree.fromstring(r[start:])
-            root = etree.fromstring(response.content)
+            root = xmlutil.get_xml_obj_from_response(response)
             #new_obj._xml_data = root
             #new_obj._rest_end_point = self._rest_end_point
             if saved_root_tag is not None:
