@@ -8,7 +8,7 @@
 #}
 <cli-configlet-mgmt>
   <configletId>{{ configletId }}</configletId>
-{% for key, value in parameters.iteritems() %}
+{% for key, value in parameters.items() %}
   <cli-configlet-param>
     <parameter>{{ key }}</parameter>
     <param-value>{{ value }}</param-value>

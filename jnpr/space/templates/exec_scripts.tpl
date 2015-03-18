@@ -21,7 +21,7 @@
 {%- endif %}
 {%- if scriptParams %}
      <scriptParams>
-{%- for key, value in scriptParams.iteritems() %}
+{%- for key, value in scriptParams.items() %}
        <scriptParam>
          <paramName>{{key}}</paramName>
          <paramValue>{{value}}</paramValue>

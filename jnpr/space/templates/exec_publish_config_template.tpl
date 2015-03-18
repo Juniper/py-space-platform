@@ -20,7 +20,7 @@
            <device>
                <device-id>{{d.key}}</device-id>
                <variables>
-{%- for key, value in resolved_variables[d.key].iteritems() %}
+{%- for key, value in resolved_variables[d.key].items() %}
                      <variable>
 {%- if value is string %}
                          <values>
