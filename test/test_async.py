@@ -45,7 +45,7 @@ class TestAsync(object):
         try:
             tm.wait_for_task(task_id)
         except Exception as e:
-            err = e.message
+            err = e.args[0]
             pass
 
         assert err == "Task %s does not seem to be progressing" % task_id
