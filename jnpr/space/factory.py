@@ -2,12 +2,12 @@
 A module with functions using which new resource objects can be created.
 Resources are instances of jnpr.space.resource.Resource.
 """
-
+from __future__ import unicode_literals
 from lxml import etree
-from jnpr.space import rest, resource, util
+from jnpr.space import rest, resource, xmlutil
 
 def make_resource(type_name, rest_end_point,
-                 xml_data=None, attributes=None, parent=None):
+                  xml_data=None, attributes=None, parent=None):
     """Creates a new instance of jnpr.space.resource.Resource based on the
     given parameters. This method creates it in-memory locally and *not* on
     the Space server. The post() method must be invoked on the Resource object
@@ -75,9 +75,9 @@ def fetch_resource(rest_end_point, href):
     type_ = parts[len(parts)-1]
 
     if app_ == 'space':
-        type_name = util.unmake_xml_name('.'.join([service_, type_]))
+        type_name = xmlutil.unmake_xml_name('.'.join([service_, type_]))
     else:
-        type_name = util.unmake_xml_name('.'.join([app_, service_, type_]))
+        type_name = xmlutil.unmake_xml_name('.'.join([app_, service_, type_]))
 
-    xml_data = etree.fromstring(response.content)
+    xml_data = xmlutil.get_xml_obj_from_response(response)
     return make_resource(type_name, rest_end_point, xml_data)

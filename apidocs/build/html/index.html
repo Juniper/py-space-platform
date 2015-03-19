@@ -101,6 +101,7 @@
 </div>
 <div class="section" id="module-jnpr.space.rest">
 <span id="rest"></span><h2>Rest<a class="headerlink" href="#module-jnpr.space.rest" title="Permalink to this headline">¶</a></h2>
+<p>This module defines the Space class.</p>
 <dl class="exception">
 <dt id="jnpr.space.rest.RestException">
 <em class="property">exception </em><tt class="descclassname">jnpr.space.rest.</tt><tt class="descname">RestException</tt><big>(</big><em>message</em>, <em>response</em><big>)</big><a class="headerlink" href="#jnpr.space.rest.RestException" title="Permalink to this definition">¶</a></dt>
@@ -133,7 +134,9 @@ access contained services and collections and invoke methods on them.</p>
 <p>For example, the snippet below creates a Space instance and then performs
 a GET on the <tt class="docutils literal"><span class="pre">devices</span></tt> collection contained by the <tt class="docutils literal"><span class="pre">device-management</span></tt>
 web service:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">rest</span><span class="o">.</span><span class="n">Space</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s">&#39;https://1.1.1.1&#39;</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="s">&#39;super&#39;</span><span class="p">,</span> <span class="n">passwd</span><span class="o">=</span><span class="s">&#39;password&#39;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">rest</span><span class="o">.</span><span class="n">Space</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s">&#39;https://1.1.1.1&#39;</span><span class="p">,</span>
+<span class="go">                   user=&#39;super&#39;,</span>
+<span class="go">                   passwd=&#39;password&#39;)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">devs</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">device_management</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -290,16 +293,17 @@ returned by the HEAD request.</p>
 <dl class="method">
 <dt id="jnpr.space.rest.Space.login">
 <tt class="descname">login</tt><big>(</big><em>required_node=None</em><big>)</big><a class="headerlink" href="#jnpr.space.rest.Space.login" title="Permalink to this definition">¶</a></dt>
-<dd><p>Logs into Space and creates a session (connection) that is maintained.
-All API calls will use this session and will use the JSESSIONID,
-JSESSIONIDSSO cookies - they will not be individually authenticated.</p>
+<dd><p>Logs into Space and creates a session (connection) that is
+maintained. All API calls will use this session and will use the
+JSESSIONID, JSESSIONIDSSO cookies - they will not be individually
+authenticated.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>required_node</strong> (<em>str</em>) &#8211; This is used to specify the name of the Junos
-Space node in the cluster on which the session should be established.
-It is <tt class="docutils literal"><span class="pre">None</span></tt> by default.</td>
+Space node in the cluster on which the session should be
+established. It is <tt class="docutils literal"><span class="pre">None</span></tt> by default.</td>
 </tr>
 </tbody>
 </table>
@@ -370,6 +374,7 @@ returned by the PUT request.</p>
 </div>
 <div class="section" id="module-jnpr.space.resource">
 <span id="resource"></span><h2>Resource<a class="headerlink" href="#module-jnpr.space.resource" title="Permalink to this headline">¶</a></h2>
+<p>This module defines the Resource class.</p>
 <dl class="class">
 <dt id="jnpr.space.resource.MetaResource">
 <em class="property">class </em><tt class="descclassname">jnpr.space.resource.</tt><tt class="descname">MetaResource</tt><big>(</big><em>app_name</em>, <em>service_name</em>, <em>key</em>, <em>values</em><big>)</big><a class="headerlink" href="#jnpr.space.resource.MetaResource" title="Permalink to this definition">¶</a></dt>
@@ -414,6 +419,12 @@ returned by the PUT request.</p>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="method">
+<dt id="jnpr.space.resource.MetaResource.get_media_type">
+<tt class="descname">get_media_type</tt><big>(</big><em>version</em><big>)</big><a class="headerlink" href="#jnpr.space.resource.MetaResource.get_media_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns media-type modelled in the yaml file.</p>
 </dd></dl>
 
 </dd></dl>
@@ -684,6 +695,7 @@ type name of the form <tt class="docutils literal"><span class="pre">&lt;service
 </div>
 <div class="section" id="module-jnpr.space.collection">
 <span id="collection"></span><h2>Collection<a class="headerlink" href="#module-jnpr.space.collection" title="Permalink to this headline">¶</a></h2>
+<p>This module defines the Collection class.</p>
 <dl class="class">
 <dt id="jnpr.space.collection.Collection">
 <em class="property">class </em><tt class="descclassname">jnpr.space.collection.</tt><tt class="descname">Collection</tt><big>(</big><em>parent</em>, <em>name</em>, <em>meta_object</em><big>)</big><a class="headerlink" href="#jnpr.space.collection.Collection" title="Permalink to this definition">¶</a></dt>
@@ -847,7 +859,8 @@ name.</p>
 <dl class="method">
 <dt id="jnpr.space.collection.MetaCollection.get_media_type">
 <tt class="descname">get_media_type</tt><big>(</big><em>version</em><big>)</big><a class="headerlink" href="#jnpr.space.collection.MetaCollection.get_media_type" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns the media-type defined inside the meta object.</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -905,6 +918,7 @@ type name of the form <tt class="docutils literal"><span class="pre">&lt;service
 </div>
 <div class="section" id="module-jnpr.space.method">
 <span id="method"></span><h2>Method<a class="headerlink" href="#module-jnpr.space.method" title="Permalink to this headline">¶</a></h2>
+<p>This module defines the Method class.</p>
 <dl class="class">
 <dt id="jnpr.space.method.MetaMethod">
 <em class="property">class </em><tt class="descclassname">jnpr.space.method.</tt><tt class="descname">MetaMethod</tt><big>(</big><em>key</em>, <em>values</em><big>)</big><a class="headerlink" href="#jnpr.space.method.MetaMethod" title="Permalink to this definition">¶</a></dt>
@@ -912,17 +926,20 @@ type name of the form <tt class="docutils literal"><span class="pre">&lt;service
 <dl class="method">
 <dt id="jnpr.space.method.MetaMethod.get_media_type">
 <tt class="descname">get_media_type</tt><big>(</big><em>version</em><big>)</big><a class="headerlink" href="#jnpr.space.method.MetaMethod.get_media_type" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns media type modeled in yaml file.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="jnpr.space.method.MetaMethod.get_request_type">
 <tt class="descname">get_request_type</tt><big>(</big><em>version</em><big>)</big><a class="headerlink" href="#jnpr.space.method.MetaMethod.get_request_type" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns request media type modeled in yaml file.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="jnpr.space.method.MetaMethod.get_response_type">
 <tt class="descname">get_response_type</tt><big>(</big><em>version</em><big>)</big><a class="headerlink" href="#jnpr.space.method.MetaMethod.get_response_type" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns response media type modeled in yaml file.</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -1062,6 +1079,7 @@ type name of the form <tt class="docutils literal"><span class="pre">&lt;service
 </div>
 <div class="section" id="module-jnpr.space.service">
 <span id="service"></span><h2>Service<a class="headerlink" href="#module-jnpr.space.service" title="Permalink to this headline">¶</a></h2>
+<p>This module defines the Service class.</p>
 <dl class="class">
 <dt id="jnpr.space.service.MetaService">
 <em class="property">class </em><tt class="descclassname">jnpr.space.service.</tt><tt class="descname">MetaService</tt><big>(</big><em>name</em>, <em>values</em>, <em>application=None</em><big>)</big><a class="headerlink" href="#jnpr.space.service.MetaService" title="Permalink to this definition">¶</a></dt>
@@ -1172,6 +1190,7 @@ Some examples of services are:</p>
 </div>
 <div class="section" id="module-jnpr.space.application">
 <span id="application"></span><h2>Application<a class="headerlink" href="#module-jnpr.space.application" title="Permalink to this headline">¶</a></h2>
+<p>This module defines the Application class.</p>
 <dl class="class">
 <dt id="jnpr.space.application.Application">
 <em class="property">class </em><tt class="descclassname">jnpr.space.application.</tt><tt class="descname">Application</tt><big>(</big><em>rest_end_point</em>, <em>name</em>, <em>values</em><big>)</big><a class="headerlink" href="#jnpr.space.application.Application" title="Permalink to this definition">¶</a></dt>
@@ -1200,6 +1219,7 @@ Some examples of applications are:</p>
 </div>
 <div class="section" id="module-jnpr.space.async">
 <span id="async"></span><h2>Async<a class="headerlink" href="#module-jnpr.space.async" title="Permalink to this headline">¶</a></h2>
+<p>This module defines the TaskMonitor class.</p>
 <dl class="class">
 <dt id="jnpr.space.async.TaskMonitor">
 <em class="property">class </em><tt class="descclassname">jnpr.space.async.</tt><tt class="descname">TaskMonitor</tt><big>(</big><em>rest_end_point</em>, <em>qname</em>, <em>wait_time=10</em>, <em>max_consecutive_attempts=10</em><big>)</big><a class="headerlink" href="#jnpr.space.async.TaskMonitor" title="Permalink to this definition">¶</a></dt>
@@ -1217,7 +1237,9 @@ using the <tt class="docutils literal"><span class="pre">wait_for_tasks</span></
 <tt class="docutils literal"><span class="pre">ProgressUpdate</span></tt> messages - one for each task.</p>
 <p>The snippet below shows an example where a TaskMonitor is used in creating
 a discover-devices task and waiting for its completion:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">rest</span><span class="o">.</span><span class="n">Space</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s">&#39;https://1.1.1.1&#39;</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="s">&#39;super&#39;</span><span class="p">,</span> <span class="n">passwd</span><span class="o">=</span><span class="s">&#39;password&#39;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">rest</span><span class="o">.</span><span class="n">Space</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s">&#39;https://1.1.1.1&#39;</span><span class="p">,</span>
+<span class="go">                   user=&#39;super&#39;,</span>
+<span class="go">                   passwd=&#39;password&#39;)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">devs</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">device_management</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">tm</span> <span class="o">=</span> <span class="n">async</span><span class="o">.</span><span class="n">TaskMonitor</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="s">&#39;test_DD_q&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">device_management</span><span class="o">.</span><span class="n">discover_devices</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
@@ -1456,11 +1478,6 @@ E.g. &#8216;&amp;lt;&#8217; for &#8216;&lt;&#8217;, etc. This method removes the
 </tbody>
 </table>
 </dd></dl>
-
-<dl class="function">
-<dt id="jnpr.space.xmlutil.info">
-<tt class="descclassname">jnpr.space.xmlutil.</tt><tt class="descname">info</tt><big>(</big><em>obj</em><big>)</big><a class="headerlink" href="#jnpr.space.xmlutil.info" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 <dl class="function">
 <dt id="jnpr.space.xmlutil.make_xml_name">

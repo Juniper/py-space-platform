@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+from __future__ import print_function
 import logging.config
 
 from jnpr.space import rest, factory
@@ -9,7 +11,7 @@ def main():
 
     devices_list = my_space.device_management.devices.get(filter_={'connectionStatus': 'up'})
     for d in devices_list:
-        print d.name, d.ipAddr, d.platform
+        print(d.name, d.ipAddr, d.platform)
         c = d.configurations.expanded.post(xpaths=['configuration/snmp/location'])
         try:
             tag_device(my_space, d, c.configuration.location)

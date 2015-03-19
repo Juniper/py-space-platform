@@ -1,12 +1,16 @@
-import ConfigParser
+from __future__ import unicode_literals
+from future import standard_library
+standard_library.install_aliases()
+from builtins import object
+import configparser
 
 from jnpr.space import rest, factory
 
-class TestDomainManagement:
+class TestDomainManagement(object):
 
     def setup_class(self):
         # Extract Space URL, userid, password from config file
-        config = ConfigParser.RawConfigParser()
+        config = configparser.RawConfigParser()
         config.read("./test.conf")
         url = config.get('space', 'url')
         user = config.get('space', 'user')

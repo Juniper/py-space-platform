@@ -1,3 +1,8 @@
+"""
+This module defines the Application class.
+"""
+from __future__ import unicode_literals
+from builtins import object
 import os
 import yaml
 
@@ -81,6 +86,7 @@ class MetaApplication(object):
         self.url = values['url']
         path = os.path.abspath(__file__)
         dir_path = os.path.dirname(path)
-        with open(dir_path + '/descriptions/apps/' + name + '/services.yml') as f:
-            y = yaml.load(f)
-            self._meta_services = y['services']
+        with open(dir_path + '/descriptions/apps/' +
+                  name + '/services.yml') as services_file:
+            contents = yaml.load(services_file)
+            self._meta_services = contents['services']

@@ -1,13 +1,18 @@
-import ConfigParser
+from __future__ import unicode_literals
+from __future__ import print_function
+from future import standard_library
+standard_library.install_aliases()
+from builtins import object
+import configparser
 
 from jnpr.space import rest
 from jnpr.space import resource
 
-class TestInventory:
+class TestInventory(object):
 
     def setup_class(self):
         # Extract Space URL, userid, password from config file
-        config = ConfigParser.RawConfigParser()
+        config = configparser.RawConfigParser()
         config.read("./test.conf")
         url = config.get('space', 'url')
         user = config.get('space', 'user')
@@ -67,8 +72,8 @@ class TestInventory:
                 re_details = re.get()
                 assert re_details.name.text.startswith("Routing Engine")
                 assert re_details.installedSerialNumber
-                print type(re_details.name)
-                print type(re_details.installedSerialNumber)
+                print(type(re_details.name))
+                print(type(re_details.installedSerialNumber))
 
     """
     def test_get_mlsn_from_each_managed_element(self):

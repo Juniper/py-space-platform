@@ -1,12 +1,17 @@
-import ConfigParser
+from __future__ import unicode_literals
+from __future__ import print_function
+from future import standard_library
+standard_library.install_aliases()
+from builtins import object
+import configparser
 
 from jnpr.space import rest
 
-class TestDeviceGroups:
+class TestDeviceGroups(object):
 
     def setup_class(self):
         # Extract Space URL, userid, password from config file
-        config = ConfigParser.RawConfigParser()
+        config = configparser.RawConfigParser()
         config.read("./test.conf")
         url = config.get('space', 'url')
         user = config.get('space', 'user')
@@ -20,7 +25,7 @@ class TestDeviceGroups:
         assert len(dg_list) >= 0
 
         for d in dg_list:
-            print d.deviceGroupName
+            print(d.deviceGroupName)
 
         devices_list = self.space.servicenow.device_management.devices.get()
         for d in devices_list:

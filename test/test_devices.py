@@ -1,13 +1,18 @@
-import ConfigParser
+from __future__ import unicode_literals
+from __future__ import print_function
+from future import standard_library
+standard_library.install_aliases()
+from builtins import object
+import configparser
 
 from jnpr.space import xmlutil
 from jnpr.space import rest
 
-class TestDevices:
+class TestDevices(object):
 
     def setup_class(self):
         # Extract Space URL, userid, password from config file
-        config = ConfigParser.RawConfigParser()
+        config = configparser.RawConfigParser()
         config.read("./test.conf")
         url = config.get('space', 'url')
         user = config.get('space', 'user')
@@ -29,12 +34,12 @@ class TestDevices:
             c = exp.configuration
             if c.interface is not None:
                 for i in c.interface:
-                    if isinstance(i.name, basestring):
-                        print i.name
+                    if isinstance(i.name, str):
+                        print(i.name)
                         assert i.name.startswith('ge-'), \
                             "Intf name %s failed check" % i.name
                     else:
-                        print i.name.pyval
+                        print(i.name.pyval)
                         assert i.name.pyval.startswith('ge-'), \
                             "Intf name %s failed check" % i.name.data
 
@@ -54,7 +59,7 @@ class TestDevices:
 
             if 'groups' in raw_config:
                 for g in raw_config.groups:
-                    print "Found config group %s on device %s" % (g.name, d.name)
+                    print("Found config group %s on device %s" % (g.name, d.name))
 
     def test_devices_raw_config_post(self):
         devices_list = self.space.device_management.devices.get(
@@ -68,7 +73,7 @@ class TestDevices:
             c = raw.configuration
             if c.interface is not None:
                 for i in c.interface:
-                    print i.name
+                    print(i.name)
                     assert i.name.pyval.startswith('ge-')
 
             assert c.version[:7] == d.OSVersion[:7]

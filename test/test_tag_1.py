@@ -1,15 +1,22 @@
-import ConfigParser
+from __future__ import unicode_literals
+from __future__ import print_function
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
+from builtins import range
+from builtins import object
+import configparser
 
 import pytest
 
 from jnpr.space import rest, factory
 from jnpr.space import resource
 
-class TestTag:
+class TestTag(object):
 
     def setup_class(self):
         # Extract Space URL, userid, password from config file
-        config = ConfigParser.RawConfigParser()
+        config = configparser.RawConfigParser()
         config.read("./test.conf")
         url = config.get('space', 'url')
         user = config.get('space', 'user')
@@ -19,7 +26,7 @@ class TestTag:
         self.space = rest.Space(url, user, passwd)
         try:
             tags_list = self.space.tag_management.tags.get(
-                        filter_ = "name starts-with 'ApiTestTag'")
+                        filter_="name starts-with 'ApiTestTag'")
             for t in tags_list:
                 t.delete()
         except:
@@ -47,7 +54,7 @@ class TestTag:
         new_tag.type = 'private'
         new_tag = self.space.tag_management.tags.post(new_tag)
 
-        print "Created <%s, %s>" % (new_tag.name, new_tag.type)
+        print("Created <%s, %s>" % (new_tag.name, new_tag.type))
 
         assert new_tag.id > 0, "Tag creation failed"
 
@@ -67,29 +74,29 @@ class TestTag:
     def test_get_all_tags(self):
         tags_list = self.space.tag_management.tags.get()
         for t in tags_list:
-            print "Got tag <%s, %s>" % (t.name, t.type)
+            print("Got tag <%s, %s>" % (t.name, t.type))
 
         assert len(tags_list) >= 10, "Failed to get all tags on Space?"
 
     def test_get_public_tags(self):
         tags_list = self.space.tag_management.tags.get(
-                        filter_ = {'type': 'public'})
+                        filter_={'type': 'public'})
         for t in tags_list:
-            print "Got public tag <%s, %s>" % (t.name, t.type)
+            print("Got public tag <%s, %s>" % (t.name, t.type))
 
         assert len(tags_list) >= 5, "Failed to get all public tags on Space"
 
     def test_get_private_tags(self):
         tags_list = self.space.tag_management.tags.get(
-                        filter_ = {'type': 'private'})
+                        filter_={'type': 'private'})
         for t in tags_list:
-            print "Got private tag <%s, %s>" % (t.name, t.type)
+            print("Got private tag <%s, %s>" % (t.name, t.type))
 
         assert len(tags_list) >= 5, "Failed to get all private tags on Space"
 
     def test_assign_tag_on_1_device(self):
         tags_list = self.space.tag_management.tags.get(
-                        filter_ = {'name': 'ApiTestTag1'})
+                        filter_={'name': 'ApiTestTag1'})
         assert tags_list[0].name == 'ApiTestTag1', "No tag ApiTestTag1"
 
         devices_list = self.space.device_management.devices.get()
@@ -105,7 +112,7 @@ class TestTag:
 
     def test_delete_tag_on_1_device(self):
         tags_list = self.space.tag_management.tags.get(
-                        filter_ = {'name': 'ApiTestTag1'})
+                        filter_={'name': 'ApiTestTag1'})
         assert tags_list[0].name == 'ApiTestTag1', "No tag ApiTestTag1"
 
         targets_list = tags_list[0].targets.get()
@@ -115,7 +122,7 @@ class TestTag:
 
     def test_assign_tag_on_2_devices(self):
         tags_list = self.space.tag_management.tags.get(
-                        filter_ = {'name': 'ApiTestTag2'})
+                        filter_={'name': 'ApiTestTag2'})
         assert tags_list[0].name == 'ApiTestTag2', "No tag ApiTestTag2"
 
         devices_list = self.space.device_management.devices.get()
@@ -133,7 +140,7 @@ class TestTag:
 
     def test_delete_tag_on_2_devices(self):
         tags_list = self.space.tag_management.tags.get(
-                        filter_ = {'name': 'ApiTestTag2'})
+                        filter_={'name': 'ApiTestTag2'})
         assert tags_list[0].name == 'ApiTestTag2', "No tag ApiTestTag2"
 
         targets_list = tags_list[0].targets.get()
@@ -144,7 +151,7 @@ class TestTag:
 
     def test_delete_10_tags(self):
         tags_list = self.space.tag_management.tags.get(
-                        filter_ = "name starts-with 'ApiTestTag'")
+                        filter_="name starts-with 'ApiTestTag'")
         for t in tags_list:
             t.delete()
-            print "Deleted tag <%s, %s>" % (t.name, t.type)
+            print("Deleted tag <%s, %s>" % (t.name, t.type))

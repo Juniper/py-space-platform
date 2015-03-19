@@ -1,13 +1,17 @@
-import ConfigParser
+from __future__ import unicode_literals
+from future import standard_library
+standard_library.install_aliases()
+from builtins import object
+import configparser
 
 from jnpr.space import rest
 from jnpr.space import async
 
-class TestAsync:
+class TestAsync(object):
 
     def setup_class(self):
         # Extract Space URL, userid, password from config file
-        config = ConfigParser.RawConfigParser()
+        config = configparser.RawConfigParser()
         config.read("./test.conf")
         url = config.get('space', 'url')
         user = config.get('space', 'user')
@@ -41,7 +45,7 @@ class TestAsync:
         try:
             tm.wait_for_task(task_id)
         except Exception as e:
-            err = e.message
+            err = e.args[0]
             pass
 
         assert err == "Task %s does not seem to be progressing" % task_id

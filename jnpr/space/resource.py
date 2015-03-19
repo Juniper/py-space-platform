@@ -1,3 +1,10 @@
+"""
+This module defines the Resource class.
+"""
+from __future__ import unicode_literals
+from __future__ import print_function
+from builtins import str
+from builtins import object
 from pprint import pformat
 from lxml import etree, objectify
 from jinja2 import Environment, PackageLoader
@@ -56,10 +63,10 @@ class Resource(base._SpaceBase):
         self._init_meta_data(rest_end_point, type_name)
         if xml_data is not None:
             if self._meta_object.xml_name != xml_data.tag:
-                e = Exception('Invalid xml object for this resource!')
-                e.ignore = True
-                raise e
-            self._xml_data = xmlutil.xml2obj(etree.tostring(xml_data))
+                exc = Exception('Invalid xml object for this resource!')
+                exc.ignore = True
+                raise exc
+            self._xml_data = xmlutil.xml2obj(etree.tostring(xml_data, encoding='unicode'))
 
     def _init_meta_data(self, rest_end_point, type_name):
         """
@@ -122,7 +129,7 @@ class Resource(base._SpaceBase):
             return self._methods[attr]
 
         collection = self._meta_object.create_collection(self, attr)
-        if collection is not None :
+        if collection is not None:
             self._collections[attr] = collection
             return collection
 
@@ -233,10 +240,11 @@ class Resource(base._SpaceBase):
                                      response)
 
         #r = response.text
-        r = response.content # Fix as part of issue #27
-        return xmlutil.xml2obj(r)
+        resp_txt = xmlutil.get_text_from_response(response)
+        return xmlutil.xml2obj(resp_txt)
 
-    def put(self, new_val_obj = None, request_body=None, accept=None, content_type=None):
+    def put(self, new_val_obj=None, request_body=None,
+            accept=None, content_type=None):
         """Modifies the state of this resource on Space by sending a PUT request
         with the new state. The attributes of *new_val_obj* are
         formatted to form the XML request body for the PUT request. If the
@@ -278,9 +286,9 @@ class Resource(base._SpaceBase):
             if new_val_obj is not None:
                 raise ValueError('Cannot use both request_body and new_val_obj')
         elif new_val_obj is not None:
-            body = etree.tostring(new_val_obj.form_xml())
+            body = etree.tostring(new_val_obj.form_xml(), encoding='unicode')
         else:
-            body = etree.tostring(self.form_xml())
+            body = etree.tostring(self.form_xml(), encoding='unicode')
 
         if content_type is not None:
             mtype = content_type
@@ -289,14 +297,12 @@ class Resource(base._SpaceBase):
 
         headers = {'content-type': mtype}
 
-        if accept:
+        if accept is not None:
             headers['accept'] = accept
 
-        response = self._rest_end_point.put(
-                            self.get_href(),
-                            headers,
-                            body
-                        )
+        response = self._rest_end_point.put(self.get_href(),
+                                            headers,
+                                            body)
         if response.status_code != 200:
             raise rest.RestException("PUT failed on %s" % self.get_href(),
                                      response)
@@ -309,7 +315,8 @@ class Resource(base._SpaceBase):
         #root = etree.fromstring(response.content)
 
         # Fixing issue #19 self._xml_data = root
-        self._xml_data = xmlutil.xml2obj(response.content) # Changed text to content
+        resp_text = xmlutil.get_text_from_response(response)
+        self._xml_data = xmlutil.xml2obj(resp_text)
 
     def delete(self):
         """Deletes this resource on Space by sending a DELETE request with the
@@ -332,7 +339,8 @@ class Resource(base._SpaceBase):
            response.status_code != 202:
             raise rest.RestException("DELETE failed on %s" % url, response)
 
-    def post(self, accept=None, content_type=None, request_body=None, task_monitor=None, schedule=None, *args, **kwargs):
+    def post(self, accept=None, content_type=None, request_body=None,
+             task_monitor=None, schedule=None, *args, **kwargs):
         """
         Some resources support the POST method. For example, the configuration
         of a device supports the POST method which can be used to fetch
@@ -385,34 +393,35 @@ class Resource(base._SpaceBase):
 
         """
         url = self.get_href()
-        if task_monitor:
+        if task_monitor is not None:
             url = '?queue='.join([url, task_monitor.get_queue_url()])
-            if schedule:
+            if schedule is not None:
                 url = '&schedule='.join([url, schedule])
 
         headers = {}
         if accept is not None:
             headers['accept'] = accept
-        elif self._meta_object.response_type:
+        elif self._meta_object.response_type is not None:
             headers['accept'] = self._meta_object.response_type
 
         if content_type is not None:
             headers['content-type'] = content_type
-        elif self._meta_object.request_type:
+        elif self._meta_object.request_type is not None:
             headers['content-type'] = self._meta_object.request_type
 
         if request_body is not None:
             body = request_body
-        elif self._meta_object.request_template:
+        elif self._meta_object.request_template is not None:
             body = self._meta_object.request_template.render(**kwargs)
         else:
             body = None
 
-        response = self._rest_end_point.post(url,headers,body)
+        response = self._rest_end_point.post(url, headers, body)
         if (response.status_code != 202) and (response.status_code != 200):
             raise rest.RestException("POST failed on %s" % url, response)
 
-        return xmlutil.xml2obj(xmlutil.cleanup(response.content)) # Changed text to content
+        resp_text = xmlutil.get_text_from_response(response)
+        return xmlutil.xml2obj(xmlutil.cleanup(resp_text))
 
     def get_href(self):
         """Gets the href for this resource. If ``href`` is available as an attr
@@ -427,16 +436,23 @@ class Resource(base._SpaceBase):
 
         """
         if self._xml_data is not None:
-            h = self._xml_data.get('href')
+            href = self._xml_data.get('href')
             # Fixing issue #19 h = self._xml_data.get('href')
-            if h:
-                return h
+            if href is not None:
+                return href
 
-            u = self._xml_data.get('uri')
-            if u and not u.endswith(self._meta_object.collection_name):
-                return u
+            uri = self._xml_data.get('uri')
+            if uri is not None and \
+                not uri.endswith(self._meta_object.collection_name):
+                return uri
 
-        if self._parent:
+        if self._parent is not None:
+            if self._xml_data is not None:
+                # To work around issues in managed-element/equipment.
+                # If "key" attribute is present, use it.
+                my_key = self._xml_data.get('key')
+                if my_key is not None:
+                    return '/'.join([self._parent.get_href(), str(my_key)])
             return '/'.join([self._parent.get_href(), str(self.id)])
 
         """
@@ -451,7 +467,9 @@ class Resource(base._SpaceBase):
                 # of the tag!
                 return h
         """
-        return self._meta_object.service_url + "/" + self._meta_object.collection_name + "/" + str(self.id)
+        return '/'.join([self._meta_object.service_url,
+                         self._meta_object.collection_name,
+                         str(self.id)])
 
     def form_xml(self):
         """Forms an XML representation of the state of this resource based on
@@ -461,37 +479,38 @@ class Resource(base._SpaceBase):
             this resource.
 
         """
-        e = etree.Element(self._meta_object.xml_name)
+        ele = etree.Element(self._meta_object.xml_name)
         attributes = {}
         if self._attributes is not None:
             attributes = self._attributes
         else:
             attributes = self.__dict__
 
-        for key, value in attributes.iteritems():
+        for key, value in attributes.items():
             if key.startswith('_'):
                 continue
 
             xml_name = util.make_xml_name(key)
             if xml_name == 'href':
-                e.attrib[xml_name] = str(value)
+                ele.attrib[xml_name] = str(value)
             elif isinstance(value, Resource):
-                e.append(value.form_xml())
+                ele.append(value.form_xml())
             elif isinstance(value, list):
-                l = etree.SubElement(e, xml_name)
+                lst = etree.SubElement(ele, xml_name)
                 for each in value:
-                    l.append(each.form_xml());
+                    lst.append(each.form_xml())
             elif isinstance(value, dict):
-                l = etree.SubElement(e, xml_name)
-                for k, v in value.iteritems():
-                    if k == 'href':
-                        l.attrib[k] = str(v)
+                dct = etree.SubElement(ele, xml_name)
+                for key, val in value.items():
+                    if key == 'href':
+                        dct.attrib[key] = str(val)
                     else:
-                        etree.SubElement(l, util.make_xml_name(k)).text = str(v)
+                        etree.SubElement(dct,
+                                         util.make_xml_name(key)).text = str(val)
             else:
-                etree.SubElement(e, xml_name).text = str(value)
+                etree.SubElement(ele, xml_name).text = str(value)
 
-        return e
+        return ele
 
     def __str__(self):
         return pformat(self, depth=6)
@@ -502,7 +521,7 @@ class Resource(base._SpaceBase):
         state of this resource.
         """
         if self._xml_data is not None:
-            return etree.tostring(self._xml_data, pretty_print=True)
+            return etree.tostring(self._xml_data, encoding='unicode', pretty_print=True)
         else:
             return 'No XML data'
 
@@ -519,7 +538,7 @@ class Resource(base._SpaceBase):
         """
         Prints the XML string into stdout.
         """
-        print self.xml_string()
+        print(self.xml_string())
 
 """
 A dictionary that acts as a cache for meta objects representing resources.
@@ -553,9 +572,9 @@ def get_meta_object(full_name, values):
     else:
         raise Exception("Invalid resource type given: '%s'" % full_name)
 
-    m = MetaResource(app_name, service_name, resource_type, values)
-    _meta_resources[full_name] = m
-    return m
+    meta_res = MetaResource(app_name, service_name, resource_type, values)
+    _meta_resources[full_name] = meta_res
+    return meta_res
 
 class MetaResource(object):
     """ Encapsulates the meta data for a resource type.
@@ -616,16 +635,18 @@ class MetaResource(object):
             env = Environment(loader=PackageLoader('jnpr.space',
                                                    'templates'))
             self.request_template = env.get_template(values['request_template'])
+        else:
+            self.request_template = None
 
         try:
             from jnpr.space import collection
             for key in values['collections']:
                 value = values['collections'][key]
-                mObj = collection.get_meta_object(self.app_name,
-                                                  self.service_name,
-                                                  self.key + ':' + key,
-                                                  value)
-                self.collections[key] = mObj
+                m_obj = collection.get_meta_object(self.app_name,
+                                                   self.service_name,
+                                                   self.key + ':' + key,
+                                                   value)
+                self.collections[key] = m_obj
         except KeyError:
             pass
 
@@ -633,20 +654,23 @@ class MetaResource(object):
             from jnpr.space import method
             for key in values['methods']:
                 value = values['methods'][key]
-                mObj = method.get_meta_object(self.app_name,
-                                              self.service_name,
-                                              key,
-                                              value)
-                self.methods[key] = mObj
+                m_obj = method.get_meta_object(self.app_name,
+                                               self.service_name,
+                                               key,
+                                               value)
+                self.methods[key] = m_obj
         except KeyError:
             pass
 
     def get_media_type(self, version):
+        """
+        Returns media-type modelled in the yaml file.
+        """
         if isinstance(self.media_type, dict):
             if version is not None:
                 return self.media_type[str(version)]
             if len(self.media_type) == 1:
-                return self.media_type.itervalues().next()
+                return next(iter(self.media_type.values()))
             else:
                 raise Exception("You must specify the required media-type version")
         elif version is None:
@@ -683,8 +707,8 @@ class MetaResource(object):
         """
         if name in self.methods:
             from jnpr.space import method
-            mObj = method.get_meta_object(self.app_name,
-                                          self.service_name,
-                                          name,
-                                          self.methods[name])
-            return method.Method(resrc, name, mObj)
+            m_obj = method.get_meta_object(self.app_name,
+                                           self.service_name,
+                                           name,
+                                           self.methods[name])
+            return method.Method(resrc, name, m_obj)

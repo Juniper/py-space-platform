@@ -1,12 +1,16 @@
-import ConfigParser
+from __future__ import unicode_literals
+from future import standard_library
+standard_library.install_aliases()
+from builtins import object
+import configparser
 
 from jnpr.space import rest, async, factory
 
-class TestChangeRequests:
+class TestChangeRequests(object):
 
     def setup_class(self):
         # Extract Space URL, userid, password from config file
-        config = ConfigParser.RawConfigParser()
+        config = configparser.RawConfigParser()
         config.read("./test.conf")
         url = config.get('space', 'url')
         user = config.get('space', 'user')
@@ -25,7 +29,7 @@ class TestChangeRequests:
         n = len(crs)
         assert n > 0, "No change-requests on Space!"
 
-        for cr in crs[n-2:]:
+        for cr in crs[n - 2:]:
             details = cr.get()
             assert details
 
@@ -34,10 +38,10 @@ class TestChangeRequests:
         assert len(devices) > 1, 'No Junos devices present on Space!'
 
         cr = self.space.configuration_management.change_requests.push_to_one_device.post(
-                    name = 'Test-from-space-ez',
-                    description = 'Test case for space-ez via PyTest',
-                    device = devices[1],
-                    xmlData = '''<configuration>
+                    name='Test-from-space-ez',
+                    description='Test case for space-ez via PyTest',
+                    device=devices[1],
+                    xmlData='''<configuration>
                                    <snmp>
                                      <contact>space-ez Test Case</contact>
                                    </snmp>
@@ -50,10 +54,10 @@ class TestChangeRequests:
         assert len(devices) > 1, 'Not enough Junos devices present on Space!'
 
         crs = self.space.configuration_management.change_requests.push_to_many_devices.post(
-                    name = 'Test-from-space-ez',
-                    description = 'Test case for space-ez via PyTest',
-                    devices = devices[len(devices)-2:],
-                    xmlData = '''<configuration>
+                    name='Test-from-space-ez',
+                    description='Test case for space-ez via PyTest',
+                    devices=devices[len(devices) - 2:],
+                    xmlData='''<configuration>
                                    <snmp>
                                      <contact>space-ez Test Case</contact>
                                    </snmp>
@@ -69,11 +73,11 @@ class TestChangeRequests:
             assert len(devices) > 1, 'Not enough Junos devices present on Space!'
 
             result = self.space.configuration_management.change_requests.push_to_many_devices_async.post(
-                    task_monitor = tm,
-                    name = 'Test-from-space-ez',
-                    description = 'Test case for space-ez via PyTest',
-                    devices = devices[len(devices)-2:],
-                    xmlData = '''<configuration>
+                    task_monitor=tm,
+                    name='Test-from-space-ez',
+                    description='Test case for space-ez via PyTest',
+                    devices=devices[len(devices) - 2:],
+                    xmlData='''<configuration>
                                    <snmp>
                                      <contact>space-ez Test Case</contact>
                                    </snmp>
@@ -100,9 +104,9 @@ class TestChangeRequests:
                            </snmp>
                          </configuration>]]> '''
         cr = self.space.configuration_management.change_requests.post(
-                    new_obj = chg,
-                    accept = 'application/vnd.net.juniper.space.configuration-management.change-request+xml;version=2;q=.02',
-                    content_type = 'application/vnd.net.juniper.space.configuration-management.change-request+xml;version=2;charset=UTF-8')
+                    new_obj=chg,
+                    accept='application/vnd.net.juniper.space.configuration-management.change-request+xml;version=2;q=.02',
+                    content_type='application/vnd.net.juniper.space.configuration-management.change-request+xml;version=2;charset=UTF-8')
 
         assert cr.name == chg.name, "Did not get the same CR back"
 
@@ -111,7 +115,7 @@ class TestChangeRequests:
         assert len(devices) > 1, 'No Junos devices present on Space!'
 
         chgs = []
-        for d in devices[len(devices)-2:]:
+        for d in devices[len(devices) - 2:]:
             chg = factory.make_resource(type_name='configuration_management.change_request',
                                             rest_end_point=self.space)
             chg.name = 'Test-multiple-cr-sync'
@@ -125,9 +129,9 @@ class TestChangeRequests:
             chgs.append(chg)
 
         crs = self.space.configuration_management.change_requests.post(
-                    new_obj = chgs,
-                    accept = 'application/vnd.net.juniper.space.configuration-management.change-requests+xml;version=2;q=.02',
-                    content_type = 'application/vnd.net.juniper.space.configuration-management.change-requests+xml;version=2;charset=UTF-8')
+                    new_obj=chgs,
+                    accept='application/vnd.net.juniper.space.configuration-management.change-requests+xml;version=2;q=.02',
+                    content_type='application/vnd.net.juniper.space.configuration-management.change-requests+xml;version=2;charset=UTF-8')
 
         assert len(crs) == len(chgs), "Did not get the same number of CRs back"
 
@@ -136,7 +140,7 @@ class TestChangeRequests:
         assert len(devices) > 1, 'No Junos devices present on Space!'
 
         chgs = []
-        for d in devices[len(devices)-2:]:
+        for d in devices[len(devices) - 2:]:
             chg = factory.make_resource(type_name='configuration_management.change_request',
                                             rest_end_point=self.space)
             chg.name = 'Test-multiple-cr-async'
@@ -153,9 +157,9 @@ class TestChangeRequests:
 
         try:
             task = self.space.configuration_management.change_requests.post(
-                    new_obj = chgs,
-                    accept = 'application/vnd.net.juniper.space.job-management.task+xml;version=1;q=.01',
-                    content_type = 'application/vnd.net.juniper.space.configuration-management.change-requests+xml;version=2;charset=UTF-8',
+                    new_obj=chgs,
+                    accept='application/vnd.net.juniper.space.job-management.task+xml;version=1;q=.01',
+                    content_type='application/vnd.net.juniper.space.configuration-management.change-requests+xml;version=2;charset=UTF-8',
                     task_monitor=tm)
 
             assert task.id, "Did not get Task back"

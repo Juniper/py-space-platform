@@ -1,8 +1,10 @@
 """
 A module with utility functions for XML handling.
-
 """
-from lxml import objectify
+from __future__ import unicode_literals
+from __future__ import print_function
+from __future__ import absolute_import
+from lxml import objectify, etree
 
 def make_xml_name(attr_name):
     """ Convert an attribute name to its XML equivalent by replacing
@@ -23,6 +25,26 @@ def unmake_xml_name(attr_name):
     :returns: Attribute name in pythonic format.
     """
     return attr_name.replace('-', '_')
+
+def get_text_from_response(response):
+    """
+    Returns text from ``Response`` object that will be str (unicode) in
+    both python 2 and 3.
+    """
+    return response.text
+
+def get_xml_obj_from_response(response):
+    """
+    Returns an XML object (``lxml.Element``) from the text inside the
+    ``Response`` object.
+    """
+    src = get_text_from_response(response)
+    start = src.find('?>')
+    if start > 0:
+        start += 2
+    else:
+        start = 0
+    return etree.fromstring(src[start:])
 
 def cleanup(src):
     """
@@ -46,44 +68,15 @@ def xml2obj(src):
 
     :returns: An instance of ```lxml.objectify.ObjectifiedElement```
     """
-    return objectify.fromstring(src)
-
-def info(obj):
-    url = '/api/info?uri=' + obj.get_href()
-    response = obj._rest_end_point.get(url)
-    if response.status_code != 200:
-        import rest
-        raise rest.RestException("GET failed on %s" % url, response)
-
-    obj = xml2obj(response.content)
-    info = {}
-    methods = {}
-    info['methods'] = methods
-    for m in obj['http-methods']['http-method']:
-        method_name = m.get('type')
-        if method_name in methods:
-            method = methods[method_name]
-        else:
-            method = {}
-            methods[method_name] = method
-
-        for h in m.headers.header:
-            header_name = h.get('type')
-            if header_name in method:
-                headers = method[header_name]
-            else:
-                headers = []
-                method[header_name] = headers
-
-            for r in h.representations.representation:
-                if '+xml' in r.text:
-                    headers.append(r.text)
-
-    import yaml
-    print yaml.dump(info, indent=4, default_flow_style=False)
+    start = src.find('?>')
+    if start > 0:
+        start += 2
+    else:
+        start = 0
+    return objectify.fromstring(src[start:])
 
 if __name__ == '__main__':
-    print 'Hello'
+    print('Hello')
     sample = """<?xml version="1.0" encoding="UTF-8" standalone="yes"?><netconf><status>Success</status><rpcCommands><rpcCommand>&lt;get-system-information/&gt;</rpcCommand></rpcCommands><netConfReplies><netConfReply><status>Success</status><replyMsgData>&lt;system-information  xmlns:junos=&quot;http://xml.jnpr.net/junos/13.1X49/junos&quot;&gt;
 &lt;hardware-model&gt;mx240&lt;/hardware-model&gt;
 &lt;os-name&gt;junos&lt;/os-name&gt;
@@ -94,14 +87,14 @@ if __name__ == '__main__':
 </replyMsgData></netConfReply></netConfReplies><deviceFamily>junos</deviceFamily><isCluster>false</isCluster><enableDiscardChanges>false</enableDiscardChanges><netconfConfirmedCommit>false</netconfConfirmedCommit></netconf>
 """
     sample = sample.replace('&lt;', '<').replace('&gt;', '>').replace('&quot;', '"')
-    print sample
+    print(sample)
     r = xml2obj(sample)
-    print r.status
+    print(r.status)
     from pprint import pprint
     pprint(r)
-    pprint (r.netConfReplies.netConfReply.replyMsgData)
+    pprint(r.netConfReplies.netConfReply.replyMsgData)
 
-    print "New"
+    print("New")
 
     for i in r._attrs:
         pprint(i)

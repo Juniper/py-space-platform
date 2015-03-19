@@ -1,13 +1,17 @@
-import ConfigParser
+from __future__ import unicode_literals
+from future import standard_library
+standard_library.install_aliases()
+from builtins import object
+import configparser
 import pytest
 
 from jnpr.space import rest, factory
 
-class TestMiscellaneous:
+class TestMiscellaneous(object):
 
     def setup_class(self):
         # Extract Space URL, userid, password from config file
-        config = ConfigParser.RawConfigParser()
+        config = configparser.RawConfigParser()
         config.read("./test.conf")
         url = config.get('space', 'url')
         user = config.get('space', 'user')
@@ -210,7 +214,7 @@ class TestMiscellaneous:
         assert u.id > 0
 
         with pytest.raises(rest.RestException) as except_info:
-            pwd = u.change_password.post(
+            u.change_password.post(
                                     accept='',
                                     content_type='',
                                     oldPassword='123Juniper',

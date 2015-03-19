@@ -1,3 +1,10 @@
+"""
+This module defines the Collection class.
+"""
+from __future__ import unicode_literals
+from __future__ import print_function
+from builtins import str
+from builtins import object
 from lxml import etree
 
 from jnpr.space import base, xmlutil, rest
@@ -41,7 +48,7 @@ class Collection(base._SpaceBase):
         :returns: The href of this collection.
 
         """
-        if self._meta_object.url:
+        if self._meta_object.url is not None:
             return self._meta_object.url
         else:
             return self._parent.get_href() + "/" + xmlutil.make_xml_name(self._name)
@@ -57,10 +64,11 @@ class Collection(base._SpaceBase):
         :returns: Contained Resource (named member) or Method.
         """
         if attr in self._meta_object.named_members:
-            r = self._create_named_resource(attr,
-                            self._meta_object.named_members[attr], None)
-            r.id = attr
-            return r
+            resource = self._create_named_resource(attr,
+                                                   self._meta_object.named_members[attr],
+                                                   None)
+            resource.id = attr
+            return resource
 
         if attr in self._methods:
             return self._methods[attr]
@@ -81,7 +89,8 @@ class Collection(base._SpaceBase):
 
         return self.__getattr__(xmlutil.unmake_xml_name(attr))
 
-    def get(self, accept=None, filter_=None, domain_id=None, paging=None, sortby=None):
+    def get(self, accept=None, filter_=None,
+            domain_id=None, paging=None, sortby=None):
         """Gets the contained resources of this collection from Space.
 
         :param str accept: This can be used to supply a media-type that must
@@ -144,25 +153,25 @@ class Collection(base._SpaceBase):
         #start = r.index('?><') + 2
         #root = etree.fromstring(r[start:])
 
-        root = etree.fromstring(response.content)
+        root = xmlutil.get_xml_obj_from_response(response)
 
         if self._meta_object.single_object_collection:
             resource_list.append(self._create_resource(root))
         elif self._meta_object.named_members:
-            for key, value in self._meta_object.named_members.iteritems():
-                r = self._create_named_resource(key, value,root)
-                r.id = key
-                resource_list.append(r)
+            for key, value in self._meta_object.named_members.items():
+                resrc = self._create_named_resource(key, value, root)
+                resrc.id = key
+                resource_list.append(resrc)
         else:
             for child in root:
                 try:
-                    r = self._create_resource(child)
-                    resource_list.append(r)
-                except Exception as e:
-                    if e.ignore:
+                    resrc = self._create_resource(child)
+                    resource_list.append(resrc)
+                except Exception as ex:
+                    if ex.ignore:
                         pass
                     else:
-                        raise e
+                        raise ex
 
         return ResourceList(resource_list)
 
@@ -174,10 +183,12 @@ class Collection(base._SpaceBase):
         xml_data = xml_root.find(meta_object['xml_name']) \
             if xml_root is not None else None
         from jnpr.space.resource import Resource
-        return Resource(type_name=type_name,
-                        rest_end_point=self._rest_end_point,
-                        xml_data=xml_data,
-                        parent=self)
+        resrc = Resource(type_name=type_name,
+                         rest_end_point=self._rest_end_point,
+                         xml_data=xml_data,
+                         parent=self)
+        resrc.id = key
+        return resrc
 
     def _create_resource(self, xml_data):
         """
@@ -188,13 +199,15 @@ class Collection(base._SpaceBase):
         if self._meta_object.resource_type:
             from jnpr.space import resource
             return resource.Resource(type_name=self._meta_object.resource_type,
-                                 rest_end_point=self._rest_end_point,
-                                 xml_data=xml_data, parent=self)
+                                     rest_end_point=self._rest_end_point,
+                                     xml_data=xml_data,
+                                     parent=self)
         else:
-            s = etree.tostring(xml_data)
-            return xmlutil.xml2obj(s)
+            xml_str = etree.tostring(xml_data, encoding='unicode')
+            return xmlutil.xml2obj(xml_str)
 
-    def post(self, new_obj=None, accept=None, content_type=None, request_body=None, xml_name=None, task_monitor=None):
+    def post(self, new_obj=None, accept=None, content_type=None,
+             request_body=None, xml_name=None, task_monitor=None):
         """
         Sends a POST request to the Space server to create a new Resource in
         this collection.
@@ -260,7 +273,7 @@ class Collection(base._SpaceBase):
             media_type = new_obj.get_meta_object().get_media_type(None)
 
         headers = {'content-type': media_type}
-        if accept:
+        if accept is not None:
             headers['accept'] = accept
 
         if request_body is not None:
@@ -272,23 +285,23 @@ class Collection(base._SpaceBase):
             if new_obj is None:
                 raise ValueError('Cannot omit both request_body and new_obj!')
 
-            x = None
+            xml_obj = None
             if isinstance(new_obj, list):
-                x = etree.Element(self._meta_object.xml_name)
-                for o in new_obj:
-                    x.append(o.form_xml())
+                xml_obj = etree.Element(self._meta_object.xml_name)
+                for obj in new_obj:
+                    xml_obj.append(obj.form_xml())
             else:
-                x = new_obj.form_xml()
+                xml_obj = new_obj.form_xml()
 
-            saved_root_tag = x.tag
+            saved_root_tag = xml_obj.tag
 
-            if xml_name:
-                x.tag = xml_name
+            if xml_name is not None:
+                xml_obj.tag = xml_name
 
-            body = xmlutil.cleanup(etree.tostring(x))
+            body = xmlutil.cleanup(etree.tostring(xml_obj, encoding='unicode'))
 
         url = self.get_href()
-        if task_monitor:
+        if task_monitor is not None:
             url = '?queue='.join([url, task_monitor.get_queue_url()])
 
         response = self._rest_end_point.post(url,
@@ -303,8 +316,8 @@ class Collection(base._SpaceBase):
                                      response)
 
         if task_monitor is not None:
-            r = response.content
-            return xmlutil.xml2obj(r)
+            resp_str = xmlutil.get_text_from_response(response)
+            return xmlutil.xml2obj(resp_str)
 
         if not isinstance(new_obj, list):
             # Fixing issue #17
@@ -312,7 +325,7 @@ class Collection(base._SpaceBase):
             # Skip the <?xml> line to avoid encoding errors in lxml
             #start = r.index('?><') + 2
             #root = etree.fromstring(r[start:])
-            root = etree.fromstring(response.content)
+            root = xmlutil.get_xml_obj_from_response(response)
             #new_obj._xml_data = root
             #new_obj._rest_end_point = self._rest_end_point
             if saved_root_tag is not None:
@@ -328,36 +341,36 @@ class Collection(base._SpaceBase):
         """
         url = self.get_href()
 
-        f, d, p, s = None, None, None, None
+        fltr, dmn, pgng, srtby = None, None, None, None
         if filter_ is not None:
-            f = self._stringify_filter(filter_)
+            fltr = self._stringify_filter(filter_)
         if domain_id is not None:
-            d = "domainContext=(filterDomainIds eq %d)" % domain_id
+            dmn = "domainContext=(filterDomainIds eq %d)" % domain_id
         if paging is not None:
-            p = self._stringify_paging(paging)
+            pgng = self._stringify_paging(paging)
         if sortby is not None:
-            s = self._stringify_sortby(sortby)
+            srtby = self._stringify_sortby(sortby)
 
-        if d is not None:
-            url = '?'.join([url, d])
-            if f is not None:
-                url = '&'.join([url, f])
-            if p is not None:
-                url = '&'.join([url, p])
-            if s is not None:
-                url = '&'.join([url, s])
-        elif f is not None:
-            url = '?'.join([url, f])
-            if p is not None:
-                url = '&'.join([url, p])
-            if s is not None:
-                url = '&'.join([url, s])
-        elif p is not None:
-            url = '?'.join([url, p])
-            if s is not None:
-                url = '&'.join([url, s])
-        elif s is not None:
-                url = '?'.join([url, s])
+        if dmn is not None:
+            url = '?'.join([url, dmn])
+            if fltr is not None:
+                url = '&'.join([url, fltr])
+            if pgng is not None:
+                url = '&'.join([url, pgng])
+            if srtby is not None:
+                url = '&'.join([url, srtby])
+        elif fltr is not None:
+            url = '?'.join([url, fltr])
+            if pgng is not None:
+                url = '&'.join([url, pgng])
+            if srtby is not None:
+                url = '&'.join([url, srtby])
+        elif pgng is not None:
+            url = '?'.join([url, pgng])
+            if srtby is not None:
+                url = '&'.join([url, srtby])
+        elif srtby is not None:
+            url = '?'.join([url, srtby])
 
         return url
 
@@ -366,14 +379,14 @@ class Collection(base._SpaceBase):
         Helper method to stringify the given filter_ parameter and form a
         proper filter clause for the GET URL.
         """
-        if isinstance(filter_, basestring):
+        if isinstance(filter_, str):
             return ''.join(['filter=(', filter_, ')'])
 
         if isinstance(filter_, dict):
             filter_list = ['filter=(']
             index = 1
-            for key, value in filter_.iteritems():
-                if (index < len(filter_)):
+            for key, value in filter_.items():
+                if index < len(filter_):
                     filter_list.extend(["(", key, " eq '", str(value), "') and "])
                 else:
                     filter_list.extend(["(", key, " eq '", str(value), "')"])
@@ -393,10 +406,10 @@ class Collection(base._SpaceBase):
             limit = 'limit eq %d' % paging['limit']
 
         if start and limit:
-            pg_str = 'paging=(%s, %s)' % (start,limit)
-        elif start:
+            pg_str = 'paging=(%s, %s)' % (start, limit)
+        elif start is not None:
             pg_str = 'paging=(%s)' % (start)
-        elif limit:
+        elif limit is not None:
             pg_str = 'paging=(%s)' % (limit)
 
         return pg_str
@@ -413,8 +426,8 @@ class Collection(base._SpaceBase):
         Performs a GET on this collection to fetch the current state and
         prints it as XML.
         """
-        s = self.get()
-        print s.xml_string()
+        coll_state = self.get()
+        print(coll_state.xml_string())
 
 class ResourceList(list):
     """
@@ -431,8 +444,8 @@ class ResourceList(list):
         in this list.
         """
         val = []
-        for r in self.resources:
-            val.append(r.xml_data())
+        for resrc in self.resources:
+            val.append(resrc.xml_data())
         return '\n\n'.join(val)
 
     def xml_string(self):
@@ -441,15 +454,15 @@ class ResourceList(list):
         state of all resources in this list.
         """
         val = []
-        for r in self.resources:
-            val.append(r.xml_string())
+        for resrc in self.resources:
+            val.append(resrc.xml_string())
         return '\n\n'.join(val)
 
     def state(self):
         """
         Prints the XML string into stdout.
         """
-        print self.xml_string()
+        print(self.xml_string())
 
 class MetaCollection(object):
     """ Encapsulates the meta data for a collection type.
@@ -491,11 +504,13 @@ class MetaCollection(object):
             if ('methods' in values) else {}
 
     def get_media_type(self, version):
+        """Returns the media-type defined inside the meta object.
+        """
         if isinstance(self.media_type, dict):
             if version is not None:
                 return self.media_type[str(version)]
             if len(self.media_type) == 1:
-                return self.media_type.itervalues().next()
+                return next(iter(self.media_type.values()))
             else:
                 raise Exception("You must specify the required media-type version")
         elif version is None:
@@ -517,19 +532,17 @@ class MetaCollection(object):
         """
         if name in self.methods:
             from jnpr.space import method
-            mObj = method.get_meta_object(
-                                          self.app_name,
-                                          service._name,
-                                          name,
-                                          self.methods[name]
-                                          )
-            return method.Method(service, name, mObj)
+            m_obj = method.get_meta_object(self.app_name,
+                                           service._name,
+                                           name,
+                                           self.methods[name])
+            return method.Method(service, name, m_obj)
 
-"""
-A dictionary that acts as a cache for meta objects representing collections.
-Keys are collection names. Values are instances of
-jnpr.space.collection.MetaCollection.
-"""
+#
+# A dictionary that acts as a cache for meta objects representing collections.
+# Keys are collection names. Values are instances of
+# jnpr.space.collection.MetaCollection.
+#
 _meta_collections = {}
 
 def get_meta_object(app_name, service_name, coll_name, values):
@@ -552,6 +565,6 @@ def get_meta_object(app_name, service_name, coll_name, values):
     if fullname in _meta_collections:
         return _meta_collections[fullname]
 
-    c = MetaCollection(app_name, service_name, coll_name, values)
-    _meta_collections[fullname] = c
-    return c
+    meta_coll = MetaCollection(app_name, service_name, coll_name, values)
+    _meta_collections[fullname] = meta_coll
+    return meta_coll
