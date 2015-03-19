@@ -40,7 +40,7 @@ if __name__ == "__main__":
                 traceback.print_exc()
                 print(e, "Failed to test targets")
 
-            if (t.name.startswith("NewTag")):
+            if t.name.startswith("NewTag"):
                 t.delete()
     except Exception as e:
         traceback.print_exc()

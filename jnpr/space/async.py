@@ -131,7 +131,7 @@ class TaskMonitor(object):
         headers = {"accept-wait": self.wait_time}
         response = self._rest_end_point.post(self.next_msg_url, headers, body=None)
         next_msg = response.headers["msg-consume-next"]
-        if next_msg:
+        if len(next_msg) > 0:
             self.next_msg_url = self._strip_uri(next_msg)
 
         if response.status_code == 200:
@@ -162,7 +162,7 @@ class TaskMonitor(object):
         num_consecutive_attempts = 0
         while num_consecutive_attempts < self.max_consecutive_attempts:
             message = self.pull_message()
-            if not message:
+            if message is None:
                 num_consecutive_attempts += 1
                 time.sleep(self.wait_time)
                 continue
@@ -201,7 +201,7 @@ class TaskMonitor(object):
 
         while len(task_results) < len(task_id_list):
             message = self.pull_message()
-            if not message:
+            if message is None:
                 num_consecutive_attempts += 1
                 if num_consecutive_attempts > self.max_consecutive_attempts:
                     break

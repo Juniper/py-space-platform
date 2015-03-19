@@ -128,7 +128,7 @@ class MetaService(object):
         path = os.path.abspath(__file__)
         dir_path = os.path.dirname(path)
         file_name = dir_path + '/descriptions/'
-        if application:
+        if application is not None:
             file_name = file_name + 'apps/' + application._name + '/' + name + '.yml'
         else:
             file_name = file_name + name + '.yml'
@@ -143,7 +143,7 @@ class MetaService(object):
     def get_application_name(self):
         """Returns the name of the containing application if there is one.
         """
-        if self._application:
+        if self._application is not None:
             return self._application._name
 
     def create_collection(self, service, name):

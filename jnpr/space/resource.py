@@ -297,7 +297,7 @@ class Resource(base._SpaceBase):
 
         headers = {'content-type': mtype}
 
-        if accept:
+        if accept is not None:
             headers['accept'] = accept
 
         response = self._rest_end_point.put(self.get_href(),
@@ -393,25 +393,25 @@ class Resource(base._SpaceBase):
 
         """
         url = self.get_href()
-        if task_monitor:
+        if task_monitor is not None:
             url = '?queue='.join([url, task_monitor.get_queue_url()])
-            if schedule:
+            if schedule is not None:
                 url = '&schedule='.join([url, schedule])
 
         headers = {}
         if accept is not None:
             headers['accept'] = accept
-        elif self._meta_object.response_type:
+        elif self._meta_object.response_type is not None:
             headers['accept'] = self._meta_object.response_type
 
         if content_type is not None:
             headers['content-type'] = content_type
-        elif self._meta_object.request_type:
+        elif self._meta_object.request_type is not None:
             headers['content-type'] = self._meta_object.request_type
 
         if request_body is not None:
             body = request_body
-        elif self._meta_object.request_template:
+        elif self._meta_object.request_template is not None:
             body = self._meta_object.request_template.render(**kwargs)
         else:
             body = None
@@ -442,7 +442,8 @@ class Resource(base._SpaceBase):
                 return href
 
             uri = self._xml_data.get('uri')
-            if uri and not uri.endswith(self._meta_object.collection_name):
+            if uri is not None and \
+                not uri.endswith(self._meta_object.collection_name):
                 return uri
 
         if self._parent is not None:
@@ -628,6 +629,8 @@ class MetaResource(object):
             env = Environment(loader=PackageLoader('jnpr.space',
                                                    'templates'))
             self.request_template = env.get_template(values['request_template'])
+        else:
+            self.request_template = None
 
         try:
             from jnpr.space import collection

@@ -48,7 +48,7 @@ class Collection(base._SpaceBase):
         :returns: The href of this collection.
 
         """
-        if self._meta_object.url:
+        if self._meta_object.url is not None:
             return self._meta_object.url
         else:
             return self._parent.get_href() + "/" + xmlutil.make_xml_name(self._name)
@@ -273,7 +273,7 @@ class Collection(base._SpaceBase):
             media_type = new_obj.get_meta_object().get_media_type(None)
 
         headers = {'content-type': media_type}
-        if accept:
+        if accept is not None:
             headers['accept'] = accept
 
         if request_body is not None:
@@ -295,13 +295,13 @@ class Collection(base._SpaceBase):
 
             saved_root_tag = xml_obj.tag
 
-            if xml_name:
+            if xml_name is not None:
                 xml_obj.tag = xml_name
 
             body = xmlutil.cleanup(etree.tostring(xml_obj, encoding='unicode'))
 
         url = self.get_href()
-        if task_monitor:
+        if task_monitor is not None:
             url = '?queue='.join([url, task_monitor.get_queue_url()])
 
         response = self._rest_end_point.post(url,
@@ -407,9 +407,9 @@ class Collection(base._SpaceBase):
 
         if start and limit:
             pg_str = 'paging=(%s, %s)' % (start, limit)
-        elif start:
+        elif start is not None:
             pg_str = 'paging=(%s)' % (start)
-        elif limit:
+        elif limit is not None:
             pg_str = 'paging=(%s)' % (limit)
 
         return pg_str

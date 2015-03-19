@@ -101,10 +101,7 @@ class Connection(object):
 
     def is_logged_in(self):
         """ Checks if a login has been established """
-        if self.session:
-            return True
-        else:
-            return False
+        return self.session is not None
 
     def check_login_status(self):
         """ Check login-status """

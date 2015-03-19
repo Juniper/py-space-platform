@@ -20,7 +20,7 @@ def get_media_type(url, method, header, version=None, app_name=None):
         path = os.path.abspath(__file__)
         dir_path = os.path.dirname(path)
         file_name = dir_path + '/descriptions/'
-        if app_name:
+        if app_name is not None:
             file_name = file_name + 'apps/' + app_name + '/media_type_versions.yml'
         else:
             file_name = file_name + '/media_type_versions.yml'

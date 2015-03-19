@@ -109,16 +109,16 @@ class Method(base._SpaceBase):
         url = self.get_href()
         if 'id' in kwargs:
             url = '/'.join([url, kwargs['id']])
-        if task_monitor:
+        if task_monitor is not None:
             url = '?queue='.join([url, task_monitor.get_queue_url()])
-            if schedule:
+            if schedule is not None:
                 url = '&schedule='.join([url, schedule])
 
         headers = {}
         if content_type is not None:
             headers['content-type'] = content_type
         else:
-            if self._meta_object.request_template:
+            if self._meta_object.request_template is not None:
                 headers['content-type'] = self._meta_object.get_request_type(None)
 
         if accept is not None:
@@ -128,7 +128,7 @@ class Method(base._SpaceBase):
 
         if request_body is not None:
             body = request_body
-        elif self._meta_object.request_template:
+        elif self._meta_object.request_template is not None:
             body = self._meta_object.request_template.render(**kwargs)
         else:
             body = None

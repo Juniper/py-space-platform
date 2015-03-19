@@ -30,7 +30,7 @@ class TestDevices(object):
 
         for d in devices_list:
             try:
-                if d.deviceGroup:
+                if d.deviceGroup is not None:
                     print("%s is already put in group %s" % (d.hostName, d.deviceGroup.id))
             except AttributeError:
                 pass
