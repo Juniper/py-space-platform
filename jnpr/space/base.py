@@ -187,8 +187,3 @@ class _SpaceBase(object):
     def _describe_details(self):
         pass
 
-if __name__ == '__main__':
-    from jnpr.space import rest
-    s = rest.Space('https://10.204.79.104', 'super', '123Juniper')
-    s.configuration_management.describe()
-

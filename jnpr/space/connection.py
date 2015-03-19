@@ -149,21 +149,3 @@ class Connection(object):
         if resp.status_code == 200:
             self.session = None
 
-if __name__ == '__main__':
-
-    import http.client
-    http.client.HTTPConnection.debuglevel = 1
-
-    logging.basicConfig()
-    logging.getLogger().setLevel(logging.DEBUG)
-    requests_log = logging.getLogger("requests.packages.urllib3")
-    requests_log.setLevel(logging.DEBUG)
-    requests_log.propagate = True
-
-    c = Connection('https://10.155.78.212', '', '',
-                   cert=('/Users/rjoyce/ssl-cert-test/super.pem',
-                         '/Users/rjoyce/ssl-cert-test/super_unencrypted.key'))
-    r = c.session.get("https://10.155.78.212/api/space/user-management/users",
-                      verify=False)
-    print(r.text)
-    c.logout()

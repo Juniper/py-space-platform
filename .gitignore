@@ -1,1 +1,16 @@
-*.pyc
+*.py[cod]
+test.conf
+
+#Packaging related
+*.egg
+*.egg-info
+dist
+build
+eggs
+parts
+var
+sdist
+develop-eggs
+.installed.cfg
+lib64
+env
