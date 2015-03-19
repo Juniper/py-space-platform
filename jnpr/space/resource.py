@@ -447,6 +447,12 @@ class Resource(base._SpaceBase):
                 return uri
 
         if self._parent is not None:
+            if self._xml_data is not None:
+                # To work around issues in managed-element/equipment.
+                # If "key" attribute is present, use it.
+                my_key = self._xml_data.get('key')
+                if my_key is not None:
+                    return '/'.join([self._parent.get_href(), str(my_key)])
             return '/'.join([self._parent.get_href(), str(self.id)])
 
         """
