@@ -1,3 +1,3 @@
-# space-api-python-lib #
+# SpaceEZ (py-space-platform) #
 
 Python library for easy access to Junos Space APIs
