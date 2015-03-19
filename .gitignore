@@ -1,5 +1,7 @@
 *.py[cod]
 test.conf
+.project
+.pydevproject
 
 #Packaging related
 *.egg
