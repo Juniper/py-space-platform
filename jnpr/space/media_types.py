@@ -38,7 +38,8 @@ def get_media_type(url, method, header, version=None, app_name=None):
                         raise Exception('Version %s not available for %s header for %s on %s' %
                                         (str(version), header, method, url))
                 else:
-                    return next(iter(media_type_versions[url][method][header].values()))
+                    d = media_type_versions[url][method][header]
+                    return d[sorted(d)[0]]
             else:
                 raise Exception('Header %s not available for %s on %s' % (header, method, url))
         else:
