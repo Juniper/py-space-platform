@@ -1,5 +1,5 @@
 *.py[cod]
-test.conf
+test/test.conf
 .project
 .pydevproject
 
