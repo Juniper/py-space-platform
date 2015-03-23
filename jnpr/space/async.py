@@ -172,8 +172,9 @@ class TaskMonitor(object):
             this TaskMonitor object. If you created multiple tasks, you must
             use the wait_for_tasks() method to wait for their completion.
 
-        :returns:  The progress-update message indicating task completion is
-            parsed into a Python object and returned.
+        :returns:  The final progress-update message for the task is fetched
+            and returned inside a Python object. The ``data`` attribute of this
+            object will contain the full result from the task.
         """
 
         num_consecutive_attempts = 0
@@ -190,9 +191,27 @@ class TaskMonitor(object):
                 continue
 
             if self._task_is_done(message):
-                return message
+                return self.get_final_progress_update(message)
 
         raise Exception("Task %s does not seem to be progressing" % task_id)
+
+    def get_final_progress_update(self, pu_message):
+        """
+        Gets the final progress-update message for a job, based on the href
+        inside the ``pu_message`` argument supplied. The ``pu_message`` arg
+        is the last progress-update message obtained from a hornet-q and it
+        does not contain the full result of the job. The progress-update
+        message fetched and returned by this method will contain the full
+        result inside the ``data`` field.
+        """
+        job_pu_href = '/'.join([pu_message.job.get('href'),
+                                'progress-update'])
+        response = self._rest_end_point.get(job_pu_href)
+        if response.status_code != 200:
+            raise Exception("Failed in GET on %s" % job_pu_href)
+        response_txt = xmlutil.get_text_from_response(response)
+        response_txt = xmlutil.cleanup(response_txt)
+        return xmlutil.xml2obj(response_txt)
 
     def wait_for_tasks(self, task_id_list):
         """
@@ -210,7 +229,9 @@ class TaskMonitor(object):
 
         :returns:  A list of progress-update messages indicating the completion
             state and status of all the given tasks. Each entry in the list is
-            a Python object parsed from a progress-update message..
+            a Python object representing the final progress-update message for
+            a task. The ``data`` attribute of this object will contain the full
+            result from the task.
         """
 
         num_consecutive_attempts = 0
@@ -230,7 +251,7 @@ class TaskMonitor(object):
 
             if message.taskId in task_id_list:
                 if self._task_is_done(message):
-                    task_results.append(message)
+                    task_results.append(self.get_final_progress_update(message))
 
         return task_results
 

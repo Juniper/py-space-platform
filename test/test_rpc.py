@@ -111,6 +111,7 @@ class TestRpc(object):
             for r in task_results:
                 assert (r.state == "DONE" and r.status == "SUCCESS" and
                         str(r.percentage) == "100.0")
+                assert r.data is not None
         finally:
             tm.delete()
 
@@ -135,5 +136,6 @@ class TestRpc(object):
             pprint(r)
             assert (r.state == "DONE" and r.status == "SUCCESS" and
                         str(r.percentage) == "100.0")
+            assert r.data is not None
         finally:
             tm.delete()

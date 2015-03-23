@@ -15,10 +15,16 @@ resources:
         service_url: '/api/space/job-management'
 
         methods:
-            cancel:
-                name: 'cancel'
             progress_update:
                 name: 'progress-update'
+            cancel:
+                name: 'cancel'
+
+    progress_update:
+        xml_name: 'progress-update'
+        service_url: '/api/space/job-management'
+        media_type: 'application/vnd.net.juniper.space.job-management.progress-update+xml;q=0.01;version=1'
+
 
 methods:
 ...
