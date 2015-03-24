@@ -36,7 +36,7 @@ OR
 
 ## SUPPORT
 
-For questions and general support, please visit the [Junos Space Developer forum](http://forums.juniper.net/t5/Junos-Space-Developer/bd-p/JSD)
+For questions and general support, please visit the [Junos Space Developer forum.](http://forums.juniper.net/t5/Junos-Space-Developer/bd-p/JSD)
 
 Issues and bugs can be opened in the repository.
 
