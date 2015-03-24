@@ -1,0 +1,10 @@
+#
+# You must create a file named 'test.conf' in this directory.
+# This file must have the following contents - fill in the URL,
+# user, and passwd for the Junos Space cluster that you want to
+# test against.
+#
+[space]
+url = https://localhost
+user = super
+passwd = mypassword
