@@ -32,5 +32,22 @@ setup(name='space-ez',
                         'lxml>=3.3.5',
                         'PyYAML>=3.11',
                         'pytest>=2.5.2',
-                        'jinja2>=2.7.3']
+                        'jinja2>=2.7.3'],
+      classifiers=[
+                   'Development Status :: 5 - Production/Stable',
+                   'Intended Audience :: Developers',
+                   'Intended Audience :: Information Technology',
+                   'Intended Audience :: System Administrators',
+                   'Intended Audience :: Telecommunications Industry',
+                   'License :: OSI Approved :: Apache Software License',
+                   'Operating System :: OS Independent',
+                   'Programming Language :: Python',
+                   'Programming Language :: Python :: 2.7',
+                   'Programming Language :: Python :: 3.3',
+                   'Topic :: Software Development :: Libraries',
+                   'Topic :: Software Development :: Libraries :: Application Frameworks',
+                   'Topic :: Software Development :: Libraries :: Python Modules',
+                   'Topic :: System :: Networking',
+                   'Topic :: Text Processing :: Markup :: XML'
+                   ]
       )
