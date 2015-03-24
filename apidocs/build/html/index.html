@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>SpaceEZ APIs &mdash; SpaceEZ v0.1.1 documentation</title>
+    <title>SpaceEZ APIs &mdash; SpaceEZ v0.2.0 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     'v0.1.1',
+        VERSION:     'v0.2.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="SpaceEZ v0.1.1 documentation" href="#" /> 
+    <link rel="top" title="SpaceEZ v0.2.0 documentation" href="#" /> 
   </head>
   <body>
     <div class="related">
@@ -35,7 +35,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="#">SpaceEZ v0.1.1 documentation</a> &raquo;</li> 
+        <li><a href="#">SpaceEZ v0.2.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -1302,6 +1302,17 @@ given name (<tt class="docutils literal"><span class="pre">qname</span></tt>).</
 </dd></dl>
 
 <dl class="method">
+<dt id="jnpr.space.async.TaskMonitor.get_final_progress_update">
+<tt class="descname">get_final_progress_update</tt><big>(</big><em>pu_message</em><big>)</big><a class="headerlink" href="#jnpr.space.async.TaskMonitor.get_final_progress_update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the final progress-update message for a job, based on the href
+inside the <tt class="docutils literal"><span class="pre">pu_message</span></tt> argument supplied. The <tt class="docutils literal"><span class="pre">pu_message</span></tt> arg
+is the last progress-update message obtained from a hornet-q and it
+does not contain the full result of the job. The progress-update
+message fetched and returned by this method will contain the full
+result inside the <tt class="docutils literal"><span class="pre">data</span></tt> field.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="jnpr.space.async.TaskMonitor.get_queue_url">
 <tt class="descname">get_queue_url</tt><big>(</big><big>)</big><a class="headerlink" href="#jnpr.space.async.TaskMonitor.get_queue_url" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the full URL for the encapsulated hornet-q</p>
@@ -1347,8 +1358,9 @@ use the wait_for_tasks() method to wait for their completion.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The progress-update message indicating task completion is
-parsed into a Python object and returned.</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The final progress-update message for the task is fetched
+and returned inside a Python object. The <tt class="docutils literal"><span class="pre">data</span></tt> attribute of this
+object will contain the full result from the task.</td>
 </tr>
 </tbody>
 </table>
@@ -1373,7 +1385,9 @@ method will raise an Exception.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of progress-update messages indicating the completion
 state and status of all the given tasks. Each entry in the list is
-a Python object parsed from a progress-update message..</td>
+a Python object representing the final progress-update message for
+a task. The <tt class="docutils literal"><span class="pre">data</span></tt> attribute of this object will contain the full
+result from the task.</td>
 </tr>
 </tbody>
 </table>
@@ -1477,6 +1491,20 @@ E.g. &#8216;&amp;lt;&#8217; for &#8216;&lt;&#8217;, etc. This method removes the
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="function">
+<dt id="jnpr.space.xmlutil.get_text_from_response">
+<tt class="descclassname">jnpr.space.xmlutil.</tt><tt class="descname">get_text_from_response</tt><big>(</big><em>response</em><big>)</big><a class="headerlink" href="#jnpr.space.xmlutil.get_text_from_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns text from <tt class="docutils literal"><span class="pre">Response</span></tt> object that will be str (unicode) in
+both python 2 and 3.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="jnpr.space.xmlutil.get_xml_obj_from_response">
+<tt class="descclassname">jnpr.space.xmlutil.</tt><tt class="descname">get_xml_obj_from_response</tt><big>(</big><em>response</em><big>)</big><a class="headerlink" href="#jnpr.space.xmlutil.get_xml_obj_from_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an XML object (<tt class="docutils literal"><span class="pre">lxml.Element</span></tt>) from the text inside the
+<tt class="docutils literal"><span class="pre">Response</span></tt> object.</p>
 </dd></dl>
 
 <dl class="function">
@@ -1597,7 +1625,7 @@ object.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="#">SpaceEZ v0.1.1 documentation</a> &raquo;</li> 
+        <li><a href="#">SpaceEZ v0.2.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
