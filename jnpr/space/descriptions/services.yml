@@ -28,6 +28,10 @@ services:
         service_name: 'config-template-management'
         url: '/api/space/config-template-management'
 
+    schema_management:
+        service_name: 'schema-service'
+        url: '/api/space/schema-service'
+
     script_management:
         service_name: 'script-management'
         url: '/api/space/script-management'
