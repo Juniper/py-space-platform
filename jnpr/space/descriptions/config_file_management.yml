@@ -1,0 +1,43 @@
+---
+collections:
+    config_files:
+        xml_name: 'config-files'
+        media_type: 'application/vnd.net.juniper.space.config-file-management.config-files+xml;version=1;q=0.01'
+        url: '/api/space/config-file-management/config-files'
+        resource_type: 'config_file_management.config_file'
+
+resources:
+    config_file:
+        xml_name: 'config-file'
+        media_type: 'application/vnd.net.juniper.space.config-file-management.config-file+xml;version=1;q=0.01'
+        collection_name: 'config_files'
+        service_url: '/api/space/config-file-management'
+        collections:
+            config_file_versions:
+                xml_name: 'config-file-versions'
+                media_type: 'application/vnd.net.juniper.space.config-file-management.config-file-versions+xml;version=1;q=0.01'
+                resource_type: 'config_file_management.config_file_version'
+    config_file_version:
+        xml_name: 'config-file-version'
+        media_type: 'application/vnd.net.juniper.space.config-file-management.config-file-version+xml;version=1;q=0.01'
+        collection_name: 'config_file_versions'
+        service_url: '/api/space/config-file-management'
+
+methods:
+        exec_backup:
+            name: 'exec-backup'
+            request_type: 'application/vnd.net.juniper.space.config-file-management.exec-backup+xml;version=1;charset=UTF-8'
+            request_template: 'exec_backup_config_files.tpl'
+            response_type: 'application/vnd.net.juniper.space.job-management.task+xml;version=1;q=0.01'
+        exec_restore:
+            name: 'exec-restore'
+            request_type: 'application/vnd.net.juniper.space.config-file-management.exec-restore+xml;version=1;charset=UTF-8'
+            request_template: 'exec_restore_config_files.tpl'
+            response_type: 'application/vnd.net.juniper.space.job-management.task+xml;version=1;q=0.01'
+        versions_diff:
+            name: 'versions-diff'
+            request_type: 'application/vnd.net.juniper.space.config-file-management.versions-diff+xml;version=1;charset=UTF-8'
+            request_template: 'versions_diff_config_files.tpl'
+            response_type: 'application/vnd.net.juniper.space.config-file-management.versions-diff+xml;version=1;q=0.01'
+            keep_xml_escaping: True
+...

@@ -157,7 +157,9 @@ class Method(base._SpaceBase):
         try:
             if response.text is not None:
                 src = xmlutil.get_text_from_response(response)
-                return xmlutil.xml2obj(xmlutil.cleanup(src))
+                if not self._meta_object.keep_xml_escaping:
+                    src = xmlutil.cleanup(src)
+                return xmlutil.xml2obj(src)
         except:
             raise rest.RestException("Failed to parse XML response for %s " % url, response)
 
@@ -242,6 +244,8 @@ class MetaMethod(object):
             if ('media_type' in values) else None
         self.retain_charset_in_accept = values['retain_charset_in_accept'] \
             if ('retain_charset_in_accept' in values) else False
+        self.keep_xml_escaping = values['keep_xml_escaping'] \
+            if ('keep_xml_escaping' in values) else False
 
         if 'request_template' in values:
             env = Environment(loader=PackageLoader('jnpr.space',

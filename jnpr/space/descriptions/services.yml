@@ -16,6 +16,10 @@ services:
         service_name: 'device-management'
         url: '/api/space/device-management'
 
+    config_file_management:
+        service_name: 'config-file-management'
+        url: '/api/space/config-file-management'
+
     configuration_management:
         service_name: 'configuration-management'
         url: '/api/space/configuration-management'
