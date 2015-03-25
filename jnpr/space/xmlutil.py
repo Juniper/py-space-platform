@@ -74,7 +74,7 @@ def remove_junos_group(src):
 
     :returns: String with junos:group occurrences removed.
     """
-    return re.sub(r' junos:group=".+"', '', src)
+    return re.sub(r' junos:group="[^"]+"', '', src)
 
 def cleanup(src):
     """
