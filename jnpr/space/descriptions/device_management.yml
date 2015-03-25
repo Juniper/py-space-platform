@@ -89,6 +89,7 @@ resources:
         request_type: 'application/vnd.net.juniper.space.device-management.xpath+xml;version=1;charset=UTF-8'
         request_template: 'config_xpath_post.tpl'
         response_type: 'application/vnd.net.juniper.space.device-management.expanded-configuration+xml;q=".01";version="1"'
+        remove_junos_group: True
 
 methods:
     discover_devices:

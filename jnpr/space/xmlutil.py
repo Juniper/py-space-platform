@@ -24,6 +24,7 @@ from __future__ import unicode_literals
 from __future__ import print_function
 from __future__ import absolute_import
 from lxml import objectify, etree
+import re
 
 def make_xml_name(attr_name):
     """ Convert an attribute name to its XML equivalent by replacing
@@ -64,6 +65,16 @@ def get_xml_obj_from_response(response):
     else:
         start = 0
     return etree.fromstring(src[start:])
+
+def remove_junos_group(src):
+    """
+    Remove XML attribute junos:group from the given string.
+
+    :param str src: Source string
+
+    :returns: String with junos:group occurrences removed.
+    """
+    return re.sub(r' junos:group=".+"', '', src)
 
 def cleanup(src):
     """

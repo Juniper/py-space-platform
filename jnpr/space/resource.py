@@ -440,7 +440,10 @@ class Resource(base._SpaceBase):
             raise rest.RestException("POST failed on %s" % url, response)
 
         resp_text = xmlutil.get_text_from_response(response)
-        return xmlutil.xml2obj(xmlutil.cleanup(resp_text))
+        resp_text = xmlutil.cleanup(resp_text)
+        if self._meta_object.remove_junos_group:
+            resp_text = xmlutil.remove_junos_group(resp_text)
+        return xmlutil.xml2obj(resp_text)
 
     def get_href(self):
         """Gets the href for this resource. If ``href`` is available as an attr
@@ -642,6 +645,8 @@ class MetaResource(object):
             if ('service_url' in values) else None
         self.use_uri_for_delete = values['use_uri_for_delete'] \
             if ('use_uri_for_delete' in values) else False
+        self.remove_junos_group = values['remove_junos_group'] \
+            if ('remove_junos_group' in values) else False
         self.collections = {}
         self.methods = {}
 

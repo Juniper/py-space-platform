@@ -39,43 +39,19 @@ class TestDevices(object):
         # Create a Space REST end point
         self.space = rest.Space(url, user, passwd)
 
-    def test_devices_expanded_config_post(self):
-        devices_list = self.space.device_management.devices.get(
-                            filter_={'managedStatus': 'In Sync'},
-                            sortby=['name', 'platform'])
-        assert len(devices_list) > 1, "Not enough devices on Space"
-
-        for d in devices_list[:1]:
-            exp = d.configurations.expanded.post(xpaths=['/configuration/version',
-            '/configuration/interfaces/interface[starts-with(name, "ge-")]'])
-
-            c = exp.configuration
-            if c.interface is not None:
-                for i in c.interface:
-                    if isinstance(i.name, str):
-                        print(i.name)
-                        assert i.name.startswith('ge-'), \
-                            "Intf name %s failed check" % i.name
-                    else:
-                        print(i.name.pyval)
-                        assert i.name.pyval.startswith('ge-'), \
-                            "Intf name %s failed check" % i.name.data
-
-            assert c.version[:7] == d.OSVersion[:7]
-
     def test_devices_raw_config(self):
         devices_list = self.space.device_management.devices.get(
                             filter_={'managedStatus': 'In Sync'})
         assert len(devices_list) > 1, "Not enough devices on Space"
 
-        for d in devices_list[:1]:
+        for d in devices_list:
             raw = d.configurations.raw.get()
             assert raw is not None
             raw_config = xmlutil.xml2obj(raw.configuration.text)
 
             assert raw_config.version[:7] == d.OSVersion[:7]
 
-            if 'groups' in raw_config:
+            if hasattr(raw_config, 'groups'):
                 for g in raw_config.groups:
                     print("Found config group %s on device %s" % (g.name, d.name))
 
@@ -84,15 +60,17 @@ class TestDevices(object):
                             filter_={'managedStatus': 'In Sync'})
         assert len(devices_list) > 1, "Not enough devices on Space"
 
-        for d in devices_list[:1]:
+        for d in devices_list:
             raw = d.configurations.raw.post(xpaths=['/configuration/version',
             '/configuration/interfaces/interface[starts-with(name, "ge-")]'])
 
             c = raw.configuration
-            if c.interface is not None:
+            if hasattr(c, 'interface'):
                 for i in c.interface:
                     print(i.name)
                     assert i.name.pyval.startswith('ge-')
+            else:
+                print('Device %s has no interfaces' % d.name)
 
             assert c.version[:7] == d.OSVersion[:7]
 
@@ -101,7 +79,7 @@ class TestDevices(object):
                             filter_={'managedStatus': 'In Sync'})
         assert len(devices_list) > 1, "Not enough devices on Space"
 
-        for d in devices_list[:1]:
+        for d in devices_list:
             exp = d.configurations.expanded.get()
             assert exp
             exp_config = xmlutil.xml2obj(exp.configuration.text)
@@ -112,12 +90,41 @@ class TestDevices(object):
 
             assert exp_config.version[:7] == d.OSVersion[:7]
 
+    def test_devices_expanded_config_post(self):
+        devices_list = self.space.device_management.devices.get(
+                            filter_={'managedStatus': 'In Sync'},
+                            sortby=['name', 'platform'])
+        assert len(devices_list) > 1, "Not enough devices on Space"
+
+        for d in devices_list:
+            exp = d.configurations.expanded.post(xpaths=['/configuration/version',
+            '/configuration/interfaces/interface[starts-with(name, "ge-")]'])
+
+            c = exp.configuration
+            if hasattr(c, 'interface'):
+                for i in c.interface:
+                    print(i.name)
+                    assert i.name.pyval.startswith('ge-'), \
+                        "Intf name %s failed check" % i.name
+
+                    """
+                    if isinstance(i.name, str):
+                        print(i.name)
+                        assert i.name.startswith('ge-'), \
+                            "Intf name %s failed check" % i.name
+                    else:
+                        print(i.name.pyval)
+                        assert i.name.pyval.startswith('ge-'), \
+                            "Intf name %s failed check" % i.name.data
+                    """
+            assert c.version[:7] == d.OSVersion[:7]
+
     def test_devices_configs(self):
         devices_list = self.space.device_management.devices.get(
                             filter_={'managedStatus': 'In Sync'})
         assert len(devices_list) > 1, "Not enough devices on Space"
 
-        for d in devices_list[:1]:
+        for d in devices_list:
             configs = d.configurations.get()
             assert len(configs) == 2
             for c in configs:
