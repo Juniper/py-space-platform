@@ -5,7 +5,7 @@ SpaceEZ is an open-source Python library to allow easy access to Junos Space RES
 * the effort required to create Python programs that interact with Junos Space using REST APIs. 
 * the number of lines of Python code required to create such programs and thus makes it easier to develop, test, and maintain them.
 
-This library is designed to work with both Python 2 (2.7+) and Python 3 (3.3+).
+This library is designed to work with both **Python 2 (2.7+)** and **Python 3 (3.3+)**.
 
 ## DOCUMENTATION
 
@@ -15,6 +15,9 @@ Please read the wiki pages at:
 * [Accessing XML fields and attributes](https://github.com/Juniper/py-space-platform/wiki/3.-Accessing-XML-fields-and-attributes)
 
 API Documentation hosted by [readthedocs](http://space-ez.readthedocs.org)
+
+## EXAMPLES
+You can find working examples using this library under the `examples` package. Please see [here](https://github.com/Juniper/py-space-platform/tree/master/examples) for more details.
 
 ## INSTALLATION
 
@@ -46,4 +49,4 @@ Apache 2.0
   
 ## CONTRIBUTORS
 
-  - Roshan Joyce
+  - Roshan Joyce (@rjoyce)
