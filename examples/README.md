@@ -7,6 +7,7 @@ You can find brief descriptions about some of these examples below:
 
 | Module        | Description|
 | :------------ |:-------------|
+| collect_config_files.py | Collects all versions of all config files stored on Space and stores them into the local file system.|
 | collect_inventory.py | Collects physical inventory and portions of the config for all devices in a Space cluster. It uses a thread-pool of workers to do it concurrently.|
 | do_rpc_async.py      | Invokes an RPC on multiple devices asynchronosly and collects results from all of them.|
 | get_devices_in_domains.py | Gets all devices from a Space cluster and prints their name and the name of the domain to which they belong.|
