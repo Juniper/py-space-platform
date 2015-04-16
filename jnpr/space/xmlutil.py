@@ -76,6 +76,17 @@ def remove_junos_group(src):
     """
     return re.sub(r' junos:group="[^"]+"', '', src)
 
+def remove_default_namespace(src):
+    """
+    Remove default xmlns from the given string.
+
+    :param str src: Source string
+
+    :returns: String with xmlns definitions removed.
+    """
+    return re.sub(r' xmlns="[^"]+"', '', src)
+
+
 def cleanup(src):
     """
     Some responses from Space contains escaped form for XML special characters.

@@ -59,6 +59,7 @@ resources:
                 request_type: 'application/vnd.net.juniper.space.device-management.rpc+xml;version=1;charset=UTF-8'
                 request_template: 'rpc.tpl'
                 response_type: 'application/vnd.net.juniper.space.device-management.rpc+xml;version=1'
+                remove_default_xmlns: True
             exec_rpc_async:
                 name: 'exec-rpc'
                 request_type: 'application/vnd.net.juniper.space.device-management.rpc+xml;version=3;charset=UTF-8'

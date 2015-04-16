@@ -161,6 +161,8 @@ class Method(base._SpaceBase):
                 src = xmlutil.get_text_from_response(response)
                 if not self._meta_object.keep_xml_escaping:
                     src = xmlutil.cleanup(src)
+                if self._meta_object.remove_default_xmlns:
+                    src = xmlutil.remove_default_namespace(src)
                 return xmlutil.xml2obj(src)
         except:
             raise rest.RestException("Failed to parse XML response for %s " % url, response)
@@ -248,6 +250,8 @@ class MetaMethod(object):
             if ('retain_charset_in_accept' in values) else False
         self.keep_xml_escaping = values['keep_xml_escaping'] \
             if ('keep_xml_escaping' in values) else False
+        self.remove_default_xmlns = values['remove_default_xmlns'] \
+            if ('remove_default_xmlns' in values) else False
 
         if 'request_template' in values:
             env = Environment(loader=PackageLoader('jnpr.space',
