@@ -25,7 +25,9 @@ from builtins import object
 import os
 import yaml
 
-class Application(object):
+from jnpr.space import base
+
+class Application(base._SpaceBase):
     """
     Represents an **application** that is hosted on Junos Space platform.
     Some examples of applications are:
@@ -54,14 +56,14 @@ class Application(object):
         """
         self._rest_end_point = rest_end_point
         self._name = name
-        self.meta_object = MetaApplication(name, values)
+        self._meta_object = MetaApplication(name, values)
         self._services = {}
 
     def get_href(self):
         """
         Returns the href of this application.
         """
-        return self.meta_object.url
+        return self._meta_object.url
 
     def __getattr__(self, attr):
         """
@@ -78,9 +80,9 @@ class Application(object):
         if attr in self._services:
             return self._services[attr]
 
-        if attr in self.meta_object._meta_services:
+        if attr in self._meta_object._meta_services:
             from jnpr.space import service
-            value = self.meta_object._meta_services[attr]
+            value = self._meta_object._meta_services[attr]
             self._services[attr] = service.Service(self._rest_end_point,
                                                    attr, value, self)
             return self._services[attr]
@@ -103,6 +105,7 @@ class MetaApplication(object):
 
         """
         self.url = values['url']
+        self.values = values
         path = os.path.abspath(__file__)
         dir_path = os.path.dirname(path)
         with open(dir_path + '/descriptions/apps/' +

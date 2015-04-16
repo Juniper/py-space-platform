@@ -37,7 +37,7 @@ class TestSchemas(object):
         passwd = config.get('space', 'passwd')
 
         # Create a Space REST end point
-        self.space = rest.Space(url, user, passwd)
+        self.space = rest.Space(url, user, passwd, use_session=True)
 
     def test_get_ununsed_schemas(self):
         schemas = self.space.schema_management.unused_schemas.get()

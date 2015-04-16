@@ -50,6 +50,7 @@ class _SpaceBase(object):
         cname = self.__class__.__name__
 
         print('\n\t%s at URL: %s' % (cname, data['URL']))
+
         if len(data['collections']) > 0:
             print('\tContains following collections:')
             for c in data['collections']:

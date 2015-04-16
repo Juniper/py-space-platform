@@ -217,6 +217,18 @@ class Space(object):
             print("%s, %s, %d, %d" % (oper, url, response.status_code,
                                       num_ms),
                   file=self.profile_file)
+    def describe(self):
+        print('\tJunos Space at URL: %s' % self.space_url)
+        if len(self._meta_services) > 0:
+            print('\tContains following web services:')
+            for k in sorted(self._meta_services):
+                print('\t\t%s (%s)' % (k, self._meta_services[k]['url']))
+
+        if len(self._meta_applications) > 0:
+            print('\tContains following applications:')
+            for k in sorted(self._meta_applications):
+                print('\t\t%s (%s)' % (k, self._meta_applications[k]['url']))
+
 
     def get(self, url, headers={}):
         """Performs an HTTP GET on the given url. Acts as a wrapper over
