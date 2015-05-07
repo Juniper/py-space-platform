@@ -398,8 +398,6 @@ class Collection(base._SpaceBase):
         Helper method to stringify the given filter_ parameter and form a
         proper filter clause for the GET URL.
         """
-        if isinstance(filter_, str):
-            return ''.join(['filter=(', filter_, ')'])
 
         if isinstance(filter_, dict):
             filter_list = ['filter=(']
@@ -412,6 +410,9 @@ class Collection(base._SpaceBase):
                 index += 1
             filter_list.append(')')
             return ''.join(filter_list)
+
+        elif filter_ is not None:
+            return ''.join(['filter=(', str(filter_), ')'])
 
     def _stringify_paging(self, paging):
         """
