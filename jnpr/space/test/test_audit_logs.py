@@ -16,7 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-#from __future__ import unicode_literals
+
+from __future__ import unicode_literals
 from __future__ import print_function
 from future import standard_library
 standard_library.install_aliases()
@@ -25,12 +26,14 @@ import configparser
 
 from jnpr.space import rest
 
-class TestFiltering(object):
+class TestAuditLogs(object):
 
     def setup_class(self):
         # Extract Space URL, userid, password from config file
         config = configparser.RawConfigParser()
-        config.read("./test.conf")
+        import os
+        config.read(os.path.dirname(os.path.realpath(__file__)) +
+                    "/test.conf")
         url = config.get('space', 'url')
         user = config.get('space', 'user')
         passwd = config.get('space', 'passwd')
@@ -38,9 +41,24 @@ class TestFiltering(object):
         # Create a Space REST end point
         self.space = rest.Space(url, user, passwd)
 
-    def test_filter(self):
-        list_1 = self.space.device_management.devices.get(
-                            filter_={'managedStatus': 'In Sync'})
-        list_2 = self.space.device_management.devices.get(
-                            filter_="managedStatus eq 'In Sync'")
-        assert len(list_1) == len(list_2)
+    def test_get_first_2_logs(self):
+        logs_list = self.space.audit_log_management.audit_logs.get(
+                        paging={'start': 0, 'limit': 2})
+        print(len(logs_list))
+        assert len(logs_list) == 2, "Not enough logs on Space"
+
+    def test_get_next_2_logs(self):
+        logs_list = self.space.audit_log_management.audit_logs.get(
+                        paging={'start': 2, 'limit': 2})
+        print(len(logs_list))
+        assert len(logs_list) == 2, "Not enough logs on Space"
+
+    def test_get_2_logs(self):
+        logs_list = self.space.audit_log_management.audit_logs.get(
+                        paging={'start': 0, 'limit': 2})
+        print(len(logs_list))
+        assert len(logs_list) == 2, "Not enough logs on Space"
+
+        for log in logs_list:
+            log_detail = log.get()
+            assert log_detail.userName

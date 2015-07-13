@@ -17,5 +17,7 @@ See the License for the specific language governing permissions and limitations
 under the License.
 """
 # Initialize logging
+import os
 import logging.config
-logging.config.fileConfig('./pkg_level_logging.conf')
+logging.config.fileConfig(os.path.dirname(os.path.realpath(__file__)) +
+                          '/pkg_level_logging.conf')

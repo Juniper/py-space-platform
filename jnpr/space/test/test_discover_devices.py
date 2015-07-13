@@ -30,7 +30,9 @@ class TestDiscoverDevices(object):
     def setup_class(self):
         # Extract Space URL, userid, password from config file
         config = configparser.RawConfigParser()
-        config.read("./test.conf")
+        import os
+        config.read(os.path.dirname(os.path.realpath(__file__)) +
+                    "/test.conf")
         url = config.get('space', 'url')
         user = config.get('space', 'user')
         passwd = config.get('space', 'passwd')

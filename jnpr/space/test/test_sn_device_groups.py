@@ -25,12 +25,14 @@ import configparser
 
 from jnpr.space import rest
 
-class TestDevices(object):
+class TestDeviceGroups(object):
 
     def setup_class(self):
         # Extract Space URL, userid, password from config file
         config = configparser.RawConfigParser()
-        config.read("./test.conf")
+        import os
+        config.read(os.path.dirname(os.path.realpath(__file__)) +
+                    "/test.conf")
         url = config.get('space', 'url')
         user = config.get('space', 'user')
         passwd = config.get('space', 'passwd')
@@ -38,17 +40,13 @@ class TestDevices(object):
         # Create a Space REST end point
         self.space = rest.Space(url, user, passwd)
 
-    def test_devices(self):
-        devs = self.space.device_management.devices.get()
-        for d in devs:
-            print(d.name)
+    def test_device_groups(self):
+        dg_list = self.space.servicenow.device_group_management.device_groups.get()
+        assert len(dg_list) >= 0
+
+        for d in dg_list:
+            print(d.deviceGroupName)
 
         devices_list = self.space.servicenow.device_management.devices.get()
-        assert len(devices_list) > 0, "Not enough devices on Service Now"
-
         for d in devices_list:
-            try:
-                if d.deviceGroup is not None:
-                    print("%s is already put in group %s" % (d.hostName, d.deviceGroup.id))
-            except AttributeError:
-                pass
+            d.associateDeviceGroup.post(devicegroup=dg_list[0])

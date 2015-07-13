@@ -1,7 +1,8 @@
 *.py[cod]
-test/test.conf
+jnpr/space/test/test.conf
 .project
 .pydevproject
+.DS_Store
 
 #Packaging related
 *.egg

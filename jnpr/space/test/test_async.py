@@ -16,21 +16,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
 from __future__ import unicode_literals
-from __future__ import print_function
 from future import standard_library
 standard_library.install_aliases()
 from builtins import object
 import configparser
 
 from jnpr.space import rest
+from jnpr.space import async
 
-class TestDeviceGroups(object):
+class TestAsync(object):
 
     def setup_class(self):
         # Extract Space URL, userid, password from config file
         config = configparser.RawConfigParser()
-        config.read("./test.conf")
+        import os
+        config.read(os.path.dirname(os.path.realpath(__file__)) +
+                    "/test.conf")
         url = config.get('space', 'url')
         user = config.get('space', 'user')
         passwd = config.get('space', 'passwd')
@@ -38,13 +41,33 @@ class TestDeviceGroups(object):
         # Create a Space REST end point
         self.space = rest.Space(url, user, passwd)
 
-    def test_device_groups(self):
-        dg_list = self.space.servicenow.device_group_management.device_groups.get()
-        assert len(dg_list) >= 0
+    def test_create_only(self):
+        tm = async.TaskMonitor(self.space, 'testq')
+        assert tm is not None
+        assert tm._hornetq_location == 'http://localhost:8080/api/hornet-q/queues/jms.queue.testq'
 
-        for d in dg_list:
-            print(d.deviceGroupName)
+    def test_create_delete(self):
+        tm = async.TaskMonitor(self.space, 'testqq')
+        assert tm is not None
+        assert tm._hornetq_location == 'http://localhost:8080/api/hornet-q/queues/jms.queue.testqq'
+        tm.delete()
 
-        devices_list = self.space.servicenow.device_management.devices.get()
-        for d in devices_list:
-            d.associateDeviceGroup.post(devicegroup=dg_list[0])
+    def test_pull_msg(self):
+        tm = async.TaskMonitor(self.space, 'testqqq', wait_time=2)
+        msg = tm.pull_message()
+        assert msg is None
+        tm.delete()
+
+    def test_wait_for_task(self):
+        tm = async.TaskMonitor(self.space, 'testqqqq', wait_time=1, max_consecutive_attempts=10)
+        err = None
+        task_id = 100
+
+        try:
+            tm.wait_for_task(task_id)
+        except Exception as e:
+            err = e.args[0]
+            pass
+
+        assert err == "Task %s does not seem to be progressing" % task_id
+        tm.delete()

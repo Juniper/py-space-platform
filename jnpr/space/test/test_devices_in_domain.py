@@ -16,51 +16,44 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
 from __future__ import unicode_literals
+from __future__ import print_function
 from future import standard_library
 standard_library.install_aliases()
 from builtins import object
 import configparser
 
 from jnpr.space import rest
-from jnpr.space import async
 
-class TestChangeDeviceCredentials(object):
+class TestLogin(object):
 
     def setup_class(self):
         # Extract Space URL, userid, password from config file
         config = configparser.RawConfigParser()
-        config.read("./test.conf")
+        import os
+        config.read(os.path.dirname(os.path.realpath(__file__)) +
+                    "/test.conf")
         url = config.get('space', 'url')
         user = config.get('space', 'user')
         passwd = config.get('space', 'passwd')
 
         # Create a Space REST end point
-        self.space = rest.Space(url, user, passwd)
+        self.space = rest.Space(url, user, passwd, use_session=True)
 
-    def test_change_1(self):
-        tm = async.TaskMonitor(self.space, 'test_DC_q')
-        devices_list = self.space.device_management.devices.get(
-                            filter_={'managedStatus': 'In Sync'})
-        assert len(devices_list) > 0, "Not enough devices on Space"
+    def test_get_devices_in_domains(self):
+        ds = self.space.domain_management.domains.get()
 
-        try:
-                result = self.space.device_management.change_device_credentials.post(
-                            task_monitor=tm,
-                            devices=devices_list[0:2],
-                            user_name='regress',
-                            password='MaRtInI',
-                            change_to='CREDENTIAL',
-                            change_on_device=True)
+        for d in ds[0].children.domain:
+            assert d.name
+            devices_list = self.space.device_management.devices.get(filter_={'domainId': d.id})
+            for dev in devices_list:
+                print(dev.name)
 
-                from pprint import pprint
-                pprint(result)
+    def test_alternate(self):
+        ds = self.space.domain_management.domains.get()
 
-                assert result.id > 0, "Device Change Credential execution Failed"
-
-                pu = tm.wait_for_task(result.id)
-                assert (pu.state == "DONE")
-                pprint(pu)
-        finally:
-                tm.delete()
+        for d in ds[0].children.domain:
+            assert d.name
+            devices = self.space.device_management.devices.get(domain_id=d.id)
+            for d in devices:
+                print(d.name, d.ipAddr, d['domain-id'])
