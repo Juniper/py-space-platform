@@ -19,14 +19,16 @@
 from setuptools import setup, find_packages
 
 setup(name='space-ez',
-      version='1.0.0',
+      version='1.0.1',
       author='Roshan Joyce',
       author_email='rjoyce@juniper.net',
       packages=find_packages(),
       package_data={'jnpr.space': ['descriptions/*.*',
                                    'descriptions/apps/servicenow/*.*',
                                    'descriptions/apps/serviceinsight/*.*',
-                                   'templates/*.*']},
+                                   'templates/*.*'],
+                    'jnpr.space.test': ['logging.conf',
+                                        'pkg_level_logging.conf']},
       install_requires=['future>=0.14.3',
                         'requests>=2.5.1',
                         'lxml>=3.3.5',
