@@ -212,7 +212,6 @@ class TaskMonitor(object):
         if response.status_code != 200:
             raise Exception("Failed in GET on %s" % job_pu_href)
         response_txt = xmlutil.get_text_from_response(response)
-        response_txt = xmlutil.cleanup(response_txt)
         return xmlutil.xml2obj(response_txt)
 
     def wait_for_tasks(self, task_id_list):
